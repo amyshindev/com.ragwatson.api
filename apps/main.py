@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from typing import List
 
 from fastapi import FastAPI
@@ -5,12 +6,21 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+from sqlalchemy import text
 
+from adapters.db_check_adapter import db_check_adapter
+from db.session import DbSession, engine
 from titanic.app.james_controller import JamesController
 from doro.app.doro_director import DoroDirector
 
 
-app = FastAPI(title="Amy Shin Main Page")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    yield
+    await engine.dispose()
+
+
+app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,6 +44,17 @@ class TitanicQAResponse(BaseModel):
 @app.get("/")
 def read_root():
     return {"message": "FAST API 메인 페이지 ", "docs": "/docs"}
+
+
+@app.get("/health/db")
+async def health_db(session: DbSession):
+    await session.execute(text("SELECT 1"))
+    return {"db": "ok"}
+
+
+@app.get("/db-check")
+async def check_db(session: DbSession):
+    return await db_check_adapter.check_now(session)
 
 
 @app.get("/titanic/data")

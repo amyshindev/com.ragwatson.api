@@ -2,3 +2,6 @@
 uvicorn[standard]
 pandas
 scikit-learn
+sqlalchemy[asyncio]>=2.0
+psycopg[binary]>=3.0
+python-dotenv
