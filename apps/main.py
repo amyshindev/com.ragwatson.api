@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 
-from adapters.db_check_adapter import db_check_adapter
+from .adapters.db_check_adapter import db_check_adapter
 from db.session import DbSession, engine
 from doro.app.doro_director import DoroDirector
 from matrix.app.keymaker import keymaker
