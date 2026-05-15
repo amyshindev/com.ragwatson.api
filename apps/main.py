@@ -1,7 +1,10 @@
+import asyncio
 from contextlib import asynccontextmanager
 from typing import List
 
-from fastapi import FastAPI
+from pathlib import Path
+
+from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -10,15 +13,34 @@ from sqlalchemy import text
 
 from adapters.db_check_adapter import db_check_adapter
 from db.session import DbSession, engine
-from titanic.app.james_controller import JamesController
 from doro.app.doro_director import DoroDirector
+from matrix.app.keymaker import keymaker
+from titanic.app.james_controller import JamesController
+
+# Same `.env` rule as before: `backend/.env` when `main` lives under `apps/`.
+_env_path = Path(__file__).resolve().parent.parent / ".env"
+keymaker.bootstrap(env_file=_env_path if _env_path.is_file() else None)
+
+
+class ChatRequest(BaseModel):
+    """채팅 요청 본문. 사용자 메시지를 JSON으로 전달합니다."""
+
+    message: str = Field(..., min_length=1, description="사용자 메시지")
+
+
+class ChatResponse(BaseModel):
+    reply: str
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    yield
-    await engine.dispose()
+    try:
+        yield
+    finally:
+        await engine.dispose()
 
+
+# ------------------------------------------------------------------------------------------------
 
 app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
 
@@ -41,9 +63,43 @@ class TitanicQAResponse(BaseModel):
     sources: List[str]
 
 
+
+
+
 @app.get("/")
 def read_root():
     return {"message": "FAST API 메인 페이지 ", "docs": "/docs"}
+
+
+@app.post("/chat", response_model=ChatResponse)
+async def chat(body: ChatRequest) -> ChatResponse:
+    if not keymaker.has_gemini():
+        raise HTTPException(
+            status_code=503,
+            detail="GEMINI_API_KEY is not set (use backend/.env or environment).",
+        )
+
+    model = keymaker.get_gemini_model()
+    if model is None:
+        raise HTTPException(status_code=503, detail="Gemini model is not configured.")
+
+    def _generate():
+        return model.generate_content(body.message)
+
+    try:
+        response = await asyncio.to_thread(_generate)
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    try:
+        text = response.text
+    except ValueError:
+        raise HTTPException(
+            status_code=500,
+            detail="Model returned no text (empty or blocked).",
+        )
+
+    return ChatResponse(reply=text)
 
 
 @app.get("/health/db")
@@ -64,12 +120,14 @@ def read_titanic_data():
 
     return df.to_dict(orient="records")
 
+
 @app.get("/titanic/count")
 def read_titanic_count():
     james = JamesController()
     count = james.get_count()
 
     return {"count": count}
+
 
 @app.get("/titanic/tree")
 def read_titanic_tree():
