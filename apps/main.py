@@ -12,8 +12,9 @@ from pydantic import BaseModel, Field
 from sqlalchemy import text
 
 from .adapters.db_check_adapter import db_check_adapter
-from db.session import DbSession, engine
+from db.session import DbSession, dispose_engine
 from doro.app.doro_director import DoroDirector
+from core.config import is_database_configured
 from matrix.app.keymaker import keymaker
 from titanic.app.james_controller import JamesController
 
@@ -37,7 +38,7 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
-        await engine.dispose()
+        await dispose_engine()
 
 
 # ------------------------------------------------------------------------------------------------
@@ -69,6 +70,15 @@ class TitanicQAResponse(BaseModel):
 @app.get("/")
 def read_root():
     return {"message": "FAST API 메인 페이지 ", "docs": "/docs"}
+
+
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "gemini": keymaker.has_gemini(),
+        "database": is_database_configured(),
+    }
 
 
 @app.post("/chat", response_model=ChatResponse)

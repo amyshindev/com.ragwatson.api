@@ -21,6 +21,11 @@ def _ensure_env_loaded() -> None:
     _env_loaded = True
 
 
+def is_database_configured() -> bool:
+    _ensure_env_loaded()
+    return bool(os.getenv("DATABASE_URL", "").strip())
+
+
 def get_database_url() -> str:
     """Return SQLAlchemy async URL for psycopg (async)."""
     _ensure_env_loaded()
