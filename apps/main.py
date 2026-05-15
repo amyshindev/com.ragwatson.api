@@ -12,11 +12,9 @@ from pydantic import BaseModel, Field
 from sqlalchemy import text
 
 from adapters.db_check_adapter import db_check_adapter
-from db.session import DbSession, dispose_engine
-from doro.app.doro_director import DoroDirector
 from core.config import is_database_configured
+from db.session import DbSession, dispose_engine
 from matrix.app.keymaker import keymaker
-from titanic.app.james_controller import JamesController
 
 # Same `.env` rule as before: `backend/.env` when `main` lives under `apps/`.
 _env_path = Path(__file__).resolve().parent.parent / ".env"
@@ -125,6 +123,8 @@ async def check_db(session: DbSession):
 
 @app.get("/titanic/data")
 def read_titanic_data():
+    from titanic.app.james_controller import JamesController
+
     james = JamesController()
     df = james.get_data()
 
@@ -133,6 +133,8 @@ def read_titanic_data():
 
 @app.get("/titanic/count")
 def read_titanic_count():
+    from titanic.app.james_controller import JamesController
+
     james = JamesController()
     count = james.get_count()
 
@@ -141,6 +143,8 @@ def read_titanic_count():
 
 @app.get("/titanic/tree")
 def read_titanic_tree():
+    from titanic.app.james_controller import JamesController
+
     james = JamesController()
     tree = james.has_decision_tree_model()
 
@@ -149,6 +153,8 @@ def read_titanic_tree():
 
 @app.get("/titanic/model")
 def read_titanic_model():
+    from titanic.app.james_controller import JamesController
+
     controller = JamesController()
     model_name = controller.get_model_name_and_accuracy()
     return JSONResponse(content=jsonable_encoder(model_name))
@@ -156,6 +162,8 @@ def read_titanic_model():
 
 @app.get("/doro/data")
 def read_doro_data():
+    from doro.app.doro_director import DoroDirector
+
     doro_director = DoroDirector()
     df = doro_director.get_data()
 
