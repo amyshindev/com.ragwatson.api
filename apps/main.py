@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from contextlib import asynccontextmanager
 from typing import List
 
@@ -15,6 +16,15 @@ from adapters.db_check_adapter import db_check_adapter
 from core.config import is_database_configured
 from db.session import DbSession, dispose_engine
 from matrix.app.keymaker import keymaker
+from secom.app.schemas import SignupRequest, SignupResponse
+from secom.app.services.user_service import UserService
+
+log = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s %(name)s %(message)s",
+    force=True,
+)
 
 # Same `.env` rule as before: `backend/.env` when `main` lives under `apps/`.
 _env_path = Path(__file__).resolve().parent.parent / ".env"
@@ -31,8 +41,26 @@ class ChatResponse(BaseModel):
     reply: str
 
 
+async def _startup_db() -> None:
+    if not is_database_configured():
+        log.info("DB skipped (DATABASE_URL not set)")
+        return
+    from db.session import AsyncSessionLocal, _ensure_engine
+    from secom.app.db_init import init_secom_tables
+
+    await init_secom_tables()
+    _ensure_engine()
+    if AsyncSessionLocal is None:
+        return
+    async with AsyncSessionLocal() as session:
+        await UserService(session).seed_defaults_if_empty()
+        await session.commit()
+    log.info("DB ready (tables + seed check)")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await _startup_db()
     try:
         yield
     finally:
@@ -60,9 +88,6 @@ class TitanicQAResponse(BaseModel):
     answer: str
     confidence: float
     sources: List[str]
-
-
-
 
 
 @app.get("/")
@@ -169,6 +194,36 @@ def read_doro_data():
 
     return df.to_dict(orient="records")
 
+
+@app.post("/signup", response_model=SignupResponse)
+async def signup(req: SignupRequest) -> SignupResponse:
+    log.info(
+        "signup: email=%s username=%s nickname=%s password=%s",
+        req.email,
+        req.username,
+        req.nickname,
+        req.password,
+    )
+    
+    user_schema = UserSchema(
+        email=req.email,
+        username=req.username,
+        nickname=req.nickname,
+        password=req.password,
+    )
+
+    user_repository = UserRepository()
+    user_repository.save_user(user_schema)
+
+    return SignupResponse(user=user_schema) 
+        log.info("signup ok: id=%s email=%s role=%s", user.id, user.email, user.role.value)
+        return SignupResponse(user=user)
+    except HTTPException as e:
+        log.warning("signup rejected: %s", e.detail)
+        raise
+    except Exception:
+        log.exception("signup failed")
+        raise
 
 if __name__ == "__main__":
     import uvicorn
