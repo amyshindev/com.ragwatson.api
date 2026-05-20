@@ -14,7 +14,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     username: Mapped[str] = mapped_column(String(64), unique=True, index=True, nullable=False)
     nickname: Mapped[str] = mapped_column(String(64), nullable=False)
-    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    password: Mapped[str] = mapped_column("password_hash", String(255), nullable=False)
     role: Mapped[UserRole] = mapped_column(
         SQLEnum(
             UserRole,

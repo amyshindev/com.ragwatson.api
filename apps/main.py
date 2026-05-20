@@ -13,18 +13,24 @@ from pydantic import BaseModel, Field
 from sqlalchemy import text
 
 from adapters.db_check_adapter import db_check_adapter
+from domain_intake.router import router as domain_intake_router
 from core.config import is_database_configured
-from db.session import DbSession, dispose_engine
+from database import dispose_engine
+from db.session import DbSession
 from matrix.app.keymaker import keymaker
-from secom.app.schemas import SignupRequest, SignupResponse
-from secom.app.services.user_service import UserService
+from secom.app.controllers.user_controller import UserController
+from secom.app.models.schemas import UserResponse
+from secom.app.schemas import LoginRequest, LoginResponse, SignupRequest, SignupResponse
+def _configure_logging() -> None:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(levelname)s:\t%(message)s",
+        force=True,
+    )
 
+
+_configure_logging()
 log = logging.getLogger(__name__)
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(levelname)s %(name)s %(message)s",
-    force=True,
-)
 
 # Same `.env` rule as before: `backend/.env` when `main` lives under `apps/`.
 _env_path = Path(__file__).resolve().parent.parent / ".env"
@@ -45,21 +51,15 @@ async def _startup_db() -> None:
     if not is_database_configured():
         log.info("DB skipped (DATABASE_URL not set)")
         return
-    from db.session import AsyncSessionLocal, _ensure_engine
     from secom.app.db_init import init_secom_tables
 
     await init_secom_tables()
-    _ensure_engine()
-    if AsyncSessionLocal is None:
-        return
-    async with AsyncSessionLocal() as session:
-        await UserService(session).seed_defaults_if_empty()
-        await session.commit()
-    log.info("DB ready (tables + seed check)")
+    log.info("DB ready (tables)")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    _configure_logging()
     await _startup_db()
     try:
         yield
@@ -67,9 +67,10 @@ async def lifespan(app: FastAPI):
         await dispose_engine()
 
 
-# ------------------------------------------------------------------------------------------------
 
 app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
+
+app.include_router(domain_intake_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -78,6 +79,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    log.info("→ %s %s", request.method, request.url.path)
+    response = await call_next(request)
+    log.info("← %s %s %s", request.method, request.url.path, response.status_code)
+    return response
 
 
 class TitanicQARequest(BaseModel):
@@ -196,36 +205,56 @@ def read_doro_data():
 
 
 @app.post("/signup", response_model=SignupResponse)
-async def signup(req: SignupRequest) -> SignupResponse:
-    log.info(
-        "signup: email=%s username=%s nickname=%s password=%s",
-        req.email,
-        req.username,
-        req.nickname,
-        req.password,
-    )
-    
-    user_schema = UserSchema(
-        email=req.email,
-        username=req.username,
-        nickname=req.nickname,
-        password=req.password,
-    )
-
-    user_repository = UserRepository()
-    user_repository.save_user(user_schema)
-
-    return SignupResponse(user=user_schema) 
-        log.info("signup ok: id=%s email=%s role=%s", user.id, user.email, user.role.value)
-        return SignupResponse(user=user)
-    except HTTPException as e:
-        log.warning("signup rejected: %s", e.detail)
+async def signup(req: SignupRequest, session: DbSession) -> SignupResponse:
+    log.info("POST /signup 요청 수신 email=%s", req.email)
+    if not is_database_configured():
+        raise HTTPException(status_code=503, detail="DATABASE_URL is not set.")
+    try:
+        await UserController(session).save_user(req)
+        await session.commit()
+        return SignupResponse(
+            user=UserResponse(
+                id=req.userId,
+                email=str(req.email),
+                username=req.username,
+                nickname=req.nickname,
+                role=req.role,
+            )
+        )
+    except HTTPException:
+        await session.rollback()
         raise
-    except Exception:
+    except Exception as exc:
+        await session.rollback()
         log.exception("signup failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/login", response_model=LoginResponse)
+async def login(req: LoginRequest, session: DbSession) -> LoginResponse:
+    log.info("POST /login 요청 수신 email=%s", req.email)
+    if not is_database_configured():
+        raise HTTPException(status_code=503, detail="DATABASE_URL is not set.")
+    try:
+        user = await UserController(session).login(req)
+        await session.commit()
+        return LoginResponse(user=user)
+    except HTTPException:
+        await session.rollback()
         raise
+    except Exception as exc:
+        await session.rollback()
+        log.exception("login failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
 
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run(
+        "main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=True,
+        log_level="info",
+    )

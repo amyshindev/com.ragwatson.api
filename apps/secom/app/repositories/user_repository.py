@@ -1,15 +1,19 @@
-from sqlalchemy import func, select
+import logging
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from secom.app.models.role import UserRole
 from secom.app.models.user import User
 
+logger = logging.getLogger(__name__)
+
 
 class UserRepository:
     def __init__(self, session: AsyncSession) -> None:
-        self._session = session
+        self.session = session
 
-    async def create(
+    async def save_user(
         self,
         *,
         email: str,
@@ -25,23 +29,20 @@ class UserRepository:
             password=password,
             role=role,
         )
-        self._session.add(user)
-        await self._session.flush()
-        await self._session.refresh(user)
+        self.session.add(user)
+        await self.session.flush()
+        await self.session.refresh(user)
+        logger.info("[UserRepository] save_user 레이어 완료 — id=%s", user.id)
         return user
 
     async def get_by_email(self, email: str) -> User | None:
-        r = await self._session.execute(
+        result = await self.session.execute(
             select(User).where(User.email == email.strip().lower())
         )
-        return r.scalar_one_or_none()
+        return result.scalar_one_or_none()
 
     async def get_by_username(self, username: str) -> User | None:
-        r = await self._session.execute(
+        result = await self.session.execute(
             select(User).where(User.username == username.strip())
         )
-        return r.scalar_one_or_none()
-
-    async def count(self) -> int:
-        r = await self._session.execute(select(func.count()).select_from(User))
-        return int(r.scalar_one())
+        return result.scalar_one_or_none()

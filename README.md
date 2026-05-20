@@ -10,7 +10,9 @@ LLM 코딩에서 반복되는 실패(가정 은닉, 과설계, diff 난립, 약�
 
 | 문서 | 역할 |
 |------|------|
-| [`.cursorrules`](.cursorrules) | **실행 하네스.** Cursor에 항상 주입되는 짧은 명령형 규칙. |
+| [`.cursorrules`](.cursorrules) | **실행 하네스.** Cursor에 주입; 구현 전 `docs/` 코딩 규칙 필수. |
+| [`docs/DevOps/Backend/BACKEND_RULES.md`](../docs/DevOps/Backend/BACKEND_RULES.md) | **백엔드 구현 규칙** (레이어, DB, API). |
+| [`docs/DevOps/README.md`](../docs/DevOps/README.md) | Frontend/Backend 규칙 인덱스. |
 | [`CLAUDE.md`](CLAUDE.md) | **상세 지침·예시·출처.** 에이전트·사람 모두 참고. |
 | [`CURSOR..md`](CURSOR..md) | **설계·점검 관점.** 하네스가 무엇을 막는지, 문서 간 관계. |
 

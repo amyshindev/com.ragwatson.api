@@ -27,11 +27,13 @@ def is_database_configured() -> bool:
 
 
 def get_database_url() -> str:
-    """Return SQLAlchemy async URL for psycopg (async)."""
+    """Return SQLAlchemy async URL for Neon PostgreSQL (psycopg async)."""
     _ensure_env_loaded()
     url = os.getenv("DATABASE_URL", "").strip()
     if not url:
         raise RuntimeError("DATABASE_URL is not set")
+    if url.startswith("postgresql+psycopg://"):
+        return url.replace("postgresql+psycopg://", "postgresql+psycopg_async://", 1)
     if url.startswith("postgresql://"):
         return "postgresql+psycopg_async://" + url.removeprefix("postgresql://")
     return url
