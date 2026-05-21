@@ -1,4 +1,4 @@
-"""POST /api/domain/* — 폼 연동 (PostgreSQL JSON 페이로드)."""
+"""POST /api/domain/* — 폼 연동 (도메인별 PostgreSQL 테이블)."""
 
 import logging
 from collections.abc import Awaitable, Callable
@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from domain_intake.controller import DomainIntakeController
-from domain_intake.repository import DomainIntakeRepository
+from domain_intake.repository import DomainIntakeRepositories
 from domain_intake.service import DomainIntakeService
 from domain_intake.schemas import (
     DomainAcceptedResponse,
@@ -25,8 +25,8 @@ log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/domain", tags=["domain-intake"])
 
-_repo = DomainIntakeRepository()
-_svc = DomainIntakeService(_repo)
+_repos = DomainIntakeRepositories()
+_svc = DomainIntakeService(_repos)
 _ctrl = DomainIntakeController(_svc)
 
 

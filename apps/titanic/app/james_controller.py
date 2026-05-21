@@ -1,21 +1,3 @@
-from fastapi import FastAPI
+from titanic.app.controllers.james_controller import JamesController, app
 
-from titanic.app.jack_service import JackService
-app = FastAPI(title="Titanic (James)")
-
-
-class JamesController:
-    def __init__(self):
-        self.service = JackService()
-
-    def get_data(self):
-        return self.service.get_data()
-
-    def get_count(self):
-        return self.service.get_count()
-
-    def has_decision_tree_model(self) -> bool:
-        return self.service.has_decision_tree_model()
-
-    def get_model_name_and_accuracy(self):
-        return self.service.get_model_name_and_accuracy()
+__all__ = ["JamesController", "app"]

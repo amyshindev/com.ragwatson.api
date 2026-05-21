@@ -2,5 +2,13 @@
 
 
 def import_all_models() -> None:
-    from domain_intake.models.domain_intake_record import DomainIntakeRecord  # noqa: F401
+    from domain_intake.models.faq_entry import FaqEntry  # noqa: F401
+    from domain_intake.models.gallery_item import GalleryItem  # noqa: F401
+    from domain_intake.models.library_item import LibraryItem  # noqa: F401
+    from domain_intake.models.magazine_article import MagazineArticle  # noqa: F401
+    from domain_intake.models.membership_inquiry import MembershipInquiry  # noqa: F401
+    from domain_intake.models.studio_analytics import StudioAnalytics  # noqa: F401
+    from domain_intake.models.studio_workspace import StudioWorkspace  # noqa: F401
     from secom.app.models.user import User  # noqa: F401
+    from titanic.app.models.passenger import Passenger  # noqa: F401
+

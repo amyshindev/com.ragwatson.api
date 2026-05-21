@@ -52,8 +52,10 @@ async def _startup_db() -> None:
         log.info("DB skipped (DATABASE_URL not set)")
         return
     from secom.app.db_init import init_secom_tables
+    from titanic.app.db_init import init_titanic_tables
 
     await init_secom_tables()
+    await init_titanic_tables()
     log.info("DB ready (tables)")
 
 

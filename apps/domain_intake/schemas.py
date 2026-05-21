@@ -1,4 +1,4 @@
-"""마케팅·도메인 폼 제출용 요청·응답 DTO (메모리 보관 단계)."""
+"""마케팅·도메인 폼 제출용 요청·응답 DTO."""
 
 from typing import Annotated, Any, Literal
 

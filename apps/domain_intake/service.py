@@ -4,7 +4,7 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from domain_intake.repository import DomainIntakeRepository
+from domain_intake.repository import DomainIntakeRepositories
 from domain_intake.schemas import (
     DomainAcceptedResponse,
     FaqCreate,
@@ -20,15 +20,15 @@ logger = logging.getLogger(__name__)
 
 
 class DomainIntakeService:
-    def __init__(self, repo: DomainIntakeRepository) -> None:
-        self._repo = repo
+    def __init__(self, repos: DomainIntakeRepositories) -> None:
+        self._repos = repos
 
     async def create_library(
         self,
         session: AsyncSession,
         body: LibraryCreate,
     ) -> DomainAcceptedResponse:
-        rid = await self._repo.append(session, "library.item", body.model_dump(mode="json"))
+        rid = await self._repos.library.create(session, body)
         logger.info("[DomainIntakeService] library 항목 id=%s", rid)
         return DomainAcceptedResponse(id=rid, kind="library.item")
 
@@ -37,7 +37,7 @@ class DomainIntakeService:
         session: AsyncSession,
         body: StudioWorkspaceCreate,
     ) -> DomainAcceptedResponse:
-        rid = await self._repo.append(session, "studio.workspace", body.model_dump(mode="json"))
+        rid = await self._repos.studio_workspace.create(session, body)
         logger.info("[DomainIntakeService] studio.workspace id=%s", rid)
         return DomainAcceptedResponse(id=rid, kind="studio.workspace")
 
@@ -46,7 +46,7 @@ class DomainIntakeService:
         session: AsyncSession,
         body: StudioAnalyticsCreate,
     ) -> DomainAcceptedResponse:
-        rid = await self._repo.append(session, "studio.analytics", body.model_dump(mode="json"))
+        rid = await self._repos.studio_analytics.create(session, body)
         logger.info("[DomainIntakeService] studio.analytics id=%s", rid)
         return DomainAcceptedResponse(id=rid, kind="studio.analytics")
 
@@ -55,11 +55,7 @@ class DomainIntakeService:
         session: AsyncSession,
         body: MembershipInquiryCreate,
     ) -> DomainAcceptedResponse:
-        rid = await self._repo.append(
-            session,
-            "membership.inquiry",
-            body.model_dump(mode="json"),
-        )
+        rid = await self._repos.membership.create(session, body)
         logger.info("[DomainIntakeService] membership.inquiry id=%s", rid)
         return DomainAcceptedResponse(id=rid, kind="membership.inquiry")
 
@@ -68,7 +64,7 @@ class DomainIntakeService:
         session: AsyncSession,
         body: GalleryCreate,
     ) -> DomainAcceptedResponse:
-        rid = await self._repo.append(session, "gallery.item", body.model_dump(mode="json"))
+        rid = await self._repos.gallery.create(session, body)
         logger.info("[DomainIntakeService] gallery.item id=%s", rid)
         return DomainAcceptedResponse(id=rid, kind="gallery.item")
 
@@ -77,7 +73,7 @@ class DomainIntakeService:
         session: AsyncSession,
         body: MagazineCreate,
     ) -> DomainAcceptedResponse:
-        rid = await self._repo.append(session, "magazine.article", body.model_dump(mode="json"))
+        rid = await self._repos.magazine.create(session, body)
         logger.info("[DomainIntakeService] magazine.article id=%s", rid)
         return DomainAcceptedResponse(id=rid, kind="magazine.article")
 
@@ -86,6 +82,6 @@ class DomainIntakeService:
         session: AsyncSession,
         body: FaqCreate,
     ) -> DomainAcceptedResponse:
-        rid = await self._repo.append(session, "faq.entry", body.model_dump(mode="json"))
+        rid = await self._repos.faq.create(session, body)
         logger.info("[DomainIntakeService] faq.entry id=%s", rid)
         return DomainAcceptedResponse(id=rid, kind="faq.entry")
