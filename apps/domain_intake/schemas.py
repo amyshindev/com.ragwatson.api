@@ -2,7 +2,7 @@
 
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, BeforeValidator, EmailStr, Field, field_validator
+from pydantic import BaseModel, BeforeValidator, Field, field_validator
 
 
 def _blank_to_none(v: Any) -> Any:
@@ -46,12 +46,6 @@ class StudioAnalyticsCreate(BaseModel):
         if v is None or v == "":
             return None
         return v
-
-
-class MembershipInquiryCreate(BaseModel):
-    email: EmailStr
-    plan: Literal["free", "pro", "team"]
-    message: OptionalStr = None
 
 
 class GalleryCreate(BaseModel):

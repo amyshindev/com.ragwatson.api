@@ -8,7 +8,6 @@ from domain_intake.models.faq_entry import FaqEntry
 from domain_intake.models.gallery_item import GalleryItem
 from domain_intake.models.library_item import LibraryItem
 from domain_intake.models.magazine_article import MagazineArticle
-from domain_intake.models.membership_inquiry import MembershipInquiry
 from domain_intake.models.studio_analytics import StudioAnalytics
 from domain_intake.models.studio_workspace import StudioWorkspace
 from domain_intake.schemas import (
@@ -16,7 +15,6 @@ from domain_intake.schemas import (
     GalleryCreate,
     LibraryCreate,
     MagazineCreate,
-    MembershipInquiryCreate,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
@@ -71,19 +69,6 @@ class StudioAnalyticsRepository:
         return rid
 
 
-class MembershipInquiryRepository:
-    async def create(self, session: AsyncSession, body: MembershipInquiryCreate) -> int:
-        row = MembershipInquiry(
-            email=str(body.email),
-            plan=body.plan,
-            message=body.message,
-        )
-        session.add(row)
-        rid = await _flush_id(session, row)
-        logger.info("[MembershipInquiryRepository] create id=%s", rid)
-        return rid
-
-
 class GalleryRepository:
     async def create(self, session: AsyncSession, body: GalleryCreate) -> int:
         row = GalleryItem(
@@ -130,7 +115,6 @@ class DomainIntakeRepositories:
         self.library = LibraryRepository()
         self.studio_workspace = StudioWorkspaceRepository()
         self.studio_analytics = StudioAnalyticsRepository()
-        self.membership = MembershipInquiryRepository()
         self.gallery = GalleryRepository()
         self.magazine = MagazineRepository()
         self.faq = FaqRepository()

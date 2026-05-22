@@ -10,7 +10,6 @@ from domain_intake.schemas import (
     GalleryCreate,
     LibraryCreate,
     MagazineCreate,
-    MembershipInquiryCreate,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
@@ -52,18 +51,6 @@ class DomainIntakeController:
         result = await self._svc.create_studio_analytics(session, body)
         logger.info(
             "[DomainIntakeController] create_studio_analytics 레이어 완료 — id=%s",
-            result.id,
-        )
-        return result
-
-    async def create_membership_inquiry(
-        self,
-        session: AsyncSession,
-        body: MembershipInquiryCreate,
-    ) -> DomainAcceptedResponse:
-        result = await self._svc.create_membership_inquiry(session, body)
-        logger.info(
-            "[DomainIntakeController] create_membership_inquiry 레이어 완료 — id=%s",
             result.id,
         )
         return result

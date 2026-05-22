@@ -11,7 +11,6 @@ from domain_intake.schemas import (
     GalleryCreate,
     LibraryCreate,
     MagazineCreate,
-    MembershipInquiryCreate,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
@@ -49,15 +48,6 @@ class DomainIntakeService:
         rid = await self._repos.studio_analytics.create(session, body)
         logger.info("[DomainIntakeService] studio.analytics id=%s", rid)
         return DomainAcceptedResponse(id=rid, kind="studio.analytics")
-
-    async def create_membership_inquiry(
-        self,
-        session: AsyncSession,
-        body: MembershipInquiryCreate,
-    ) -> DomainAcceptedResponse:
-        rid = await self._repos.membership.create(session, body)
-        logger.info("[DomainIntakeService] membership.inquiry id=%s", rid)
-        return DomainAcceptedResponse(id=rid, kind="membership.inquiry")
 
     async def create_gallery(
         self,

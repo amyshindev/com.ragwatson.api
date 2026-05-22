@@ -1,4 +1,4 @@
-"""매거진 (/artists): 기사·썸네일·발행 상태."""
+"""매거진 (/magazine): 기사·썸네일·발행 상태."""
 
 import logging
 

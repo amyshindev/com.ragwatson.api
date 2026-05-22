@@ -15,7 +15,6 @@ from domain_intake.schemas import (
     GalleryCreate,
     LibraryCreate,
     MagazineCreate,
-    MembershipInquiryCreate,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
@@ -75,14 +74,6 @@ async def post_studio_analytics(
 
 
 router.include_router(studio_router)
-
-
-@router.post("/membership/inquiry", response_model=DomainAcceptedResponse)
-async def post_membership_inquiry(
-    body: MembershipInquiryCreate,
-    session: DbSession,
-) -> DomainAcceptedResponse:
-    return await _with_commit(session, lambda: _ctrl.create_membership_inquiry(session, body))
 
 
 @router.post("/gallery", response_model=DomainAcceptedResponse)

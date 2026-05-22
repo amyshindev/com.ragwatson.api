@@ -6,9 +6,12 @@ def import_all_models() -> None:
     from domain_intake.models.gallery_item import GalleryItem  # noqa: F401
     from domain_intake.models.library_item import LibraryItem  # noqa: F401
     from domain_intake.models.magazine_article import MagazineArticle  # noqa: F401
-    from domain_intake.models.membership_inquiry import MembershipInquiry  # noqa: F401
     from domain_intake.models.studio_analytics import StudioAnalytics  # noqa: F401
     from domain_intake.models.studio_workspace import StudioWorkspace  # noqa: F401
     from secom.app.models.user import User  # noqa: F401
     from titanic.app.models.passenger import Passenger  # noqa: F401
+    from ml_data.models.audio_features import AudioFeature  # noqa: F401
+    from ml_data.models.generation_logs import GenerationLog  # noqa: F401
+    from ml_data.models.user_events import UserEvent  # noqa: F401
+    from ml_data.models.visual_ratings import VisualRating  # noqa: F401
 

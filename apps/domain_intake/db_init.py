@@ -42,17 +42,6 @@ _MIGRATION_STATEMENTS: tuple[str, ...] = (
       AND NOT EXISTS (SELECT 1 FROM studio_analytics LIMIT 1)
     """,
     """
-    INSERT INTO membership_inquiries (email, plan, message, created_at)
-    SELECT
-      COALESCE(r.payload->>'email', ''),
-      COALESCE(r.payload->>'plan', 'free'),
-      NULLIF(r.payload->>'message', ''),
-      r.created_at
-    FROM domain_intake_records r
-    WHERE r.kind = 'membership.inquiry'
-      AND NOT EXISTS (SELECT 1 FROM membership_inquiries LIMIT 1)
-    """,
-    """
     INSERT INTO gallery_items (work_title, artist, genre_tags, media_url, created_at)
     SELECT
       COALESCE(r.payload->>'workTitle', ''),
@@ -88,6 +77,11 @@ _MIGRATION_STATEMENTS: tuple[str, ...] = (
       AND NOT EXISTS (SELECT 1 FROM faq_entries LIMIT 1)
     """,
 )
+
+
+async def drop_membership_inquiries_table(conn) -> None:
+    await conn.execute(text("DROP TABLE IF EXISTS membership_inquiries CASCADE"))
+    log.info("membership_inquiries table dropped (if existed)")
 
 
 async def migrate_legacy_domain_intake_records(conn) -> None:

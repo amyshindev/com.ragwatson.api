@@ -51,7 +51,11 @@ async def init_secom_tables() -> None:
                 """
             )
         )
-        from domain_intake.db_init import migrate_legacy_domain_intake_records
+        from domain_intake.db_init import (
+            drop_membership_inquiries_table,
+            migrate_legacy_domain_intake_records,
+        )
 
+        await drop_membership_inquiries_table(conn)
         await migrate_legacy_domain_intake_records(conn)
     log.info("secom users table ready (create_all + column patches)")
