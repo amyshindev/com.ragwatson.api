@@ -7,9 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from domain_intake.schemas import (
     DomainAcceptedResponse,
     FaqCreate,
+    FaqEntryRead,
     GalleryCreate,
+    GalleryItemRead,
     LibraryCreate,
     MagazineCreate,
+    MagazineArticleRead,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
@@ -59,25 +62,37 @@ class DomainIntakeController:
         self,
         session: AsyncSession,
         body: GalleryCreate,
+        admin_user_id: int | None = None,
     ) -> DomainAcceptedResponse:
-        result = await self._svc.create_gallery(session, body)
+        result = await self._svc.create_gallery(session, body, admin_user_id)
         logger.info("[DomainIntakeController] create_gallery 레이어 완료 — id=%s", result.id)
         return result
+
+    async def list_gallery(self, session: AsyncSession) -> list[GalleryItemRead]:
+        return await self._svc.list_gallery(session)
 
     async def create_magazine(
         self,
         session: AsyncSession,
         body: MagazineCreate,
+        admin_user_id: int | None = None,
     ) -> DomainAcceptedResponse:
-        result = await self._svc.create_magazine(session, body)
+        result = await self._svc.create_magazine(session, body, admin_user_id)
         logger.info("[DomainIntakeController] create_magazine 레이어 완료 — id=%s", result.id)
         return result
+
+    async def list_magazine(self, session: AsyncSession) -> list[MagazineArticleRead]:
+        return await self._svc.list_magazine(session)
 
     async def create_faq(
         self,
         session: AsyncSession,
         body: FaqCreate,
+        admin_user_id: int | None = None,
     ) -> DomainAcceptedResponse:
-        result = await self._svc.create_faq(session, body)
+        result = await self._svc.create_faq(session, body, admin_user_id)
         logger.info("[DomainIntakeController] create_faq 레이어 완료 — id=%s", result.id)
         return result
+
+    async def list_faq(self, session: AsyncSession) -> list[FaqEntryRead]:
+        return await self._svc.list_faq(session)

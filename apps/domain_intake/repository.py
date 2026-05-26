@@ -2,6 +2,7 @@
 
 import logging
 
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from domain_intake.models.faq_entry import FaqEntry
@@ -82,6 +83,12 @@ class GalleryRepository:
         logger.info("[GalleryRepository] create id=%s", rid)
         return rid
 
+    async def list(self, session: AsyncSession) -> list[GalleryItem]:
+        result = await session.execute(
+            select(GalleryItem).order_by(GalleryItem.created_at.desc(), GalleryItem.id.desc())
+        )
+        return list(result.scalars().all())
+
 
 class MagazineRepository:
     async def create(self, session: AsyncSession, body: MagazineCreate) -> int:
@@ -96,6 +103,15 @@ class MagazineRepository:
         logger.info("[MagazineRepository] create id=%s", rid)
         return rid
 
+    async def list(self, session: AsyncSession) -> list[MagazineArticle]:
+        result = await session.execute(
+            select(MagazineArticle).order_by(
+                MagazineArticle.created_at.desc(),
+                MagazineArticle.id.desc(),
+            )
+        )
+        return list(result.scalars().all())
+
 
 class FaqRepository:
     async def create(self, session: AsyncSession, body: FaqCreate) -> int:
@@ -108,6 +124,12 @@ class FaqRepository:
         rid = await _flush_id(session, row)
         logger.info("[FaqRepository] create id=%s", rid)
         return rid
+
+    async def list(self, session: AsyncSession) -> list[FaqEntry]:
+        result = await session.execute(
+            select(FaqEntry).order_by(FaqEntry.created_at.desc(), FaqEntry.id.desc())
+        )
+        return list(result.scalars().all())
 
 
 class DomainIntakeRepositories:

@@ -1,9 +1,10 @@
 """POST /api/domain/* — 폼 연동 (도메인별 PostgreSQL 테이블)."""
 
 import logging
+from typing import Annotated
 from collections.abc import Awaitable, Callable
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Header, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from domain_intake.controller import DomainIntakeController
@@ -12,9 +13,12 @@ from domain_intake.service import DomainIntakeService
 from domain_intake.schemas import (
     DomainAcceptedResponse,
     FaqCreate,
+    FaqEntryRead,
     GalleryCreate,
+    GalleryItemRead,
     LibraryCreate,
     MagazineCreate,
+    MagazineArticleRead,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
@@ -27,6 +31,8 @@ router = APIRouter(prefix="/api/domain", tags=["domain-intake"])
 _repos = DomainIntakeRepositories()
 _svc = DomainIntakeService(_repos)
 _ctrl = DomainIntakeController(_svc)
+
+AdminUserIdHeader = Annotated[int | None, Header(alias="X-Maestro-User-Id")]
 
 
 async def _with_commit(
@@ -80,21 +86,48 @@ router.include_router(studio_router)
 async def post_gallery(
     body: GalleryCreate,
     session: DbSession,
+    admin_user_id: AdminUserIdHeader = None,
 ) -> DomainAcceptedResponse:
-    return await _with_commit(session, lambda: _ctrl.create_gallery(session, body))
+    return await _with_commit(
+        session,
+        lambda: _ctrl.create_gallery(session, body, admin_user_id),
+    )
+
+
+@router.get("/gallery", response_model=list[GalleryItemRead])
+async def get_gallery(session: DbSession) -> list[GalleryItemRead]:
+    return await _ctrl.list_gallery(session)
 
 
 @router.post("/magazine", response_model=DomainAcceptedResponse)
 async def post_magazine(
     body: MagazineCreate,
     session: DbSession,
+    admin_user_id: AdminUserIdHeader = None,
 ) -> DomainAcceptedResponse:
-    return await _with_commit(session, lambda: _ctrl.create_magazine(session, body))
+    return await _with_commit(
+        session,
+        lambda: _ctrl.create_magazine(session, body, admin_user_id),
+    )
+
+
+@router.get("/magazine", response_model=list[MagazineArticleRead])
+async def get_magazine(session: DbSession) -> list[MagazineArticleRead]:
+    return await _ctrl.list_magazine(session)
 
 
 @router.post("/faq", response_model=DomainAcceptedResponse)
 async def post_faq(
     body: FaqCreate,
     session: DbSession,
+    admin_user_id: AdminUserIdHeader = None,
 ) -> DomainAcceptedResponse:
-    return await _with_commit(session, lambda: _ctrl.create_faq(session, body))
+    return await _with_commit(
+        session,
+        lambda: _ctrl.create_faq(session, body, admin_user_id),
+    )
+
+
+@router.get("/faq", response_model=list[FaqEntryRead])
+async def get_faq(session: DbSession) -> list[FaqEntryRead]:
+    return await _ctrl.list_faq(session)

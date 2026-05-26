@@ -1,5 +1,6 @@
 """마케팅·도메인 폼 제출용 요청·응답 DTO."""
 
+from datetime import datetime
 from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, BeforeValidator, Field, field_validator
@@ -66,3 +67,29 @@ class FaqCreate(BaseModel):
     category: OptionalStr = None
     question: str = Field(..., min_length=1)
     answer: str = Field(..., min_length=1)
+
+
+class GalleryItemRead(BaseModel):
+    id: int
+    workTitle: str
+    artist: str
+    genreTags: str | None = None
+    mediaUrl: str | None = None
+    createdAt: datetime
+
+
+class MagazineArticleRead(BaseModel):
+    id: int
+    articleTitle: str
+    author: str
+    excerpt: str | None = None
+    body: str | None = None
+    createdAt: datetime
+
+
+class FaqEntryRead(BaseModel):
+    id: int
+    category: str | None = None
+    question: str
+    answer: str
+    createdAt: datetime
