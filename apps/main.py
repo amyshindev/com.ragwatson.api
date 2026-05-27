@@ -6,15 +6,19 @@ from typing import List
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 
 from adapters.db_check_adapter import db_check_adapter
 from domain_intake.router import router as domain_intake_router
 from ml_data.router import router as ml_data_router
+from titanic.adapter.inbound.api.v1.titanic_command_router import (
+    router as titanic_command_router,
+)
+from titanic.adapter.inbound.api.v1.titanic_query_router import (
+    router as titanic_query_router,
+)
 from core.config import is_database_configured
 from database import dispose_engine
 from db.session import DbSession
@@ -75,6 +79,8 @@ app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
 
 app.include_router(domain_intake_router)
 app.include_router(ml_data_router)
+app.include_router(titanic_command_router)
+app.include_router(titanic_query_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -159,53 +165,12 @@ async def check_db(session: DbSession):
     return await db_check_adapter.check_now(session)
 
 
-@app.get("/titanic/data")
-def read_titanic_data():
-    from titanic.app.james_controller import JamesController
-
-    james = JamesController()
-    df = james.get_data()
-
-    return df.to_dict(orient="records")
-
-
-@app.get("/titanic/count")
-def read_titanic_count():
-    from titanic.app.james_controller import JamesController
-
-    james = JamesController()
-    count = james.get_count()
-
-    return {"count": count}
-
-
-@app.get("/titanic/tree")
-def read_titanic_tree():
-    from titanic.app.james_controller import JamesController
-
-    james = JamesController()
-    tree = james.has_decision_tree_model()
-
-    return {"tree": tree}
-
-
-@app.get("/titanic/model")
-def read_titanic_model():
-    from titanic.app.james_controller import JamesController
-
-    controller = JamesController()
-    model_name = controller.get_model_name_and_accuracy()
-    return JSONResponse(content=jsonable_encoder(model_name))
-
-
 @app.get("/doro/data")
 def read_doro_data():
-    from doro.app.doro_director import DoroDirector
-
-    doro_director = DoroDirector()
-    df = doro_director.get_data()
-
-    return df.to_dict(orient="records")
+    raise HTTPException(
+        status_code=410,
+        detail="Doro internal file data source has been removed.",
+    )
 
 
 @app.post("/signup", response_model=SignupResponse)

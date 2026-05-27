@@ -1,3 +1,1 @@
-from titanic.app.services.jack_service import JackService
-
-__all__ = ["JackService"]
+__all__: list[str] = []
