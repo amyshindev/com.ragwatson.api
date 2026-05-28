@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.app.ports.input.titanic_query_port import TitanicQueryPort
-from titanic.app.use_cases.jack_service import JackService
+from titanic.app.use_cases.train_use_case import JackService
 
 log = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ from sqlalchemy import select
 
 import database
 from core.config import is_database_configured
-from titanic.app.models.passenger import Passenger
+from titanic.app.use_cases.passenger import Passenger
 
 log = logging.getLogger(__name__)
 

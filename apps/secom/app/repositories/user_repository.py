@@ -46,3 +46,4 @@ class UserRepository:
             select(User).where(User.username == username.strip())
         )
         return result.scalar_one_or_none()
+

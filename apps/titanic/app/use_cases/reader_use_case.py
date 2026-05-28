@@ -1,6 +1,10 @@
+import logging
+
 import pandas as pd
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+log = logging.getLogger(__name__)
 
 
 class WalterReader:
@@ -16,7 +20,7 @@ class WalterReader:
         """Asynchronously reads first passenger row from DB."""
         session = self._require_session()
 
-        from titanic.app.models.passenger import Passenger
+        from titanic.app.use_cases.passenger import Passenger
 
         result = await session.execute(
             select(Passenger).order_by(Passenger.passenger_id).limit(1)
@@ -46,20 +50,24 @@ class WalterReader:
         """Asynchronously gets passenger count from DB."""
         session = self._require_session()
 
-        from titanic.app.models.passenger import Passenger
+        from titanic.app.use_cases.passenger import Passenger
 
         result = await session.execute(select(func.count(Passenger.id)))
         return int(result.scalar() or 0)
 
     async def get_dataframe_db(self) -> pd.DataFrame:
         """Asynchronously gets full DataFrame from DB."""
+        log.info("[WalterReaderUseCase] DB 조회 시작 — get_dataframe_db")
         session = self._require_session()
 
-        from titanic.app.models.passenger import Passenger
+        from titanic.app.use_cases.passenger import Passenger
 
-        result = await session.execute(select(Passenger))
+        result = await session.execute(
+            select(Passenger).order_by(Passenger.passenger_id.asc())
+        )
         passengers = result.scalars().all()
         if not passengers:
+            log.info("[WalterReaderUseCase] DB 조회 결과 없음")
             return pd.DataFrame()
 
         data = {
@@ -77,4 +85,5 @@ class WalterReader:
             "Boat": [p.boat for p in passengers],
             "Embarked": [p.embarked for p in passengers],
         }
+        log.info("[WalterReaderUseCase] DB 조회 완료 — rows=%s", len(passengers))
         return pd.DataFrame(data)

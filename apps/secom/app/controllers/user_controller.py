@@ -24,3 +24,4 @@ class UserController:
         result = await self.user_service.login(login_request)
         logger.info("[UserController] login 레이어 완료 — id=%s", result.id)
         return result
+

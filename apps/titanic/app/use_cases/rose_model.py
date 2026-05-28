@@ -2,7 +2,6 @@ from pathlib import Path
 
 from sklearn.tree import DecisionTreeClassifier
 
-# Resolves to backend/apps/titanic/app
 _DATA_DIR = Path(__file__).resolve().parent.parent
 _JOBLIB_PATH = _DATA_DIR / "titanic_decision_tree.joblib"
 _MODEL_PATH = _JOBLIB_PATH

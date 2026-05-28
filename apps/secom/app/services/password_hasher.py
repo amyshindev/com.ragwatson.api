@@ -31,3 +31,4 @@ def verify_password(plain: str, hashed: str) -> bool:
         return secrets.compare_digest(digest, expected)
     except (ValueError, TypeError):
         return False
+

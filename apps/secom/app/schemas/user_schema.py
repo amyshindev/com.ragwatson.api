@@ -45,3 +45,4 @@ class LoginResponse(BaseModel):
     ok: bool = True
     message: str = "로그인되었습니다."
     user: UserResponse
+

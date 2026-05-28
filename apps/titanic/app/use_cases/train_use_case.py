@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.app.models.rose_model import RoseModel, model_file_exists
-from titanic.app.use_cases.walter_reader import WalterReader
+from titanic.app.use_cases.reader_use_case import WalterReader
+from titanic.app.use_cases.rose_model import RoseModel, model_file_exists
 
 
 class JackService:

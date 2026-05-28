@@ -3,7 +3,7 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.app.models.passenger import Passenger
+from titanic.app.use_cases.passenger import Passenger
 
 
 class PassengerQueryRepository:

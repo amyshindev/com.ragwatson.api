@@ -29,3 +29,4 @@ class User(Base):
         server_default=func.now(),
         nullable=False,
     )
+

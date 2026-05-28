@@ -13,12 +13,8 @@ from sqlalchemy import text
 from adapters.db_check_adapter import db_check_adapter
 from domain_intake.router import router as domain_intake_router
 from ml_data.router import router as ml_data_router
-from titanic.adapter.inbound.api.v1.titanic_command_router import (
-    router as titanic_command_router,
-)
-from titanic.adapter.inbound.api.v1.titanic_query_router import (
-    router as titanic_query_router,
-)
+from titanic.adapter.inbound.api.v1.james_router import james_router
+from titanic.adapter.inbound.api.v1.walter_reader import walter_router
 from core.config import is_database_configured
 from database import dispose_engine
 from db.session import DbSession
@@ -79,8 +75,8 @@ app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
 
 app.include_router(domain_intake_router)
 app.include_router(ml_data_router)
-app.include_router(titanic_command_router)
-app.include_router(titanic_query_router)
+app.include_router(james_router)
+app.include_router(walter_router)
 
 app.add_middleware(
     CORSMiddleware,

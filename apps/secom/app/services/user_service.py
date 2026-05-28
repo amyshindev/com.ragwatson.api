@@ -43,3 +43,4 @@ class UserService:
         result = UserResponse.model_validate(user)
         logger.info("[UserService] login 레이어 완료 — id=%s", result.id)
         return result
+

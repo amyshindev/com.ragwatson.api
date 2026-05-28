@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.app.models.passenger import Passenger
+from titanic.app.use_cases.passenger import Passenger
 from titanic.domain.entities.titanic import TitanicPassenger
 
 
