@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import logging
-from collections.abc import Sequence
+from typing import Any
 
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from titanic.app.ports.output.james_repository import JamesRepository
 from titanic.app.use_cases.passenger import Passenger
 
 log = logging.getLogger(__name__)
@@ -37,15 +40,17 @@ def _row_to_payload(row: dict[str, str]) -> dict:
     }
 
 
-class JamesPgRepository:
-    """James output port에서 전달된 업로드 데이터를 Neon DB(passengers)에 저장."""
+class JamesPgRepository(JamesRepository):
+    """James 출력 포트 구현 — Neon DB(passengers)에 저장."""
 
-    async def save_uploaded_rows(
-        self,
-        session: AsyncSession,
-        filename: str,
-        rows: Sequence[dict[str, str]],
-    ) -> dict:
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
+
+    async def save_all(self, records: list[dict[str, Any]]) -> int:
+        rows = [
+            {str(k): str(v) if v is not None else "" for k, v in record.items()}
+            for record in records
+        ]
         items = list(rows)
         payloads = [_row_to_payload(row) for row in items]
         if payloads:
@@ -67,15 +72,7 @@ class JamesPgRepository:
                     "embarked": stmt.excluded.embarked,
                 },
             )
-            await session.execute(upsert_stmt)
-        await session.flush()
-        log.info(
-            "[JamesPgRepository] save_uploaded_rows 완료 — filename=%s count=%s",
-            filename,
-            len(items),
-        )
-        return {
-            "filename": filename,
-            "count": len(items),
-            "items": items,
-        }
+            await self._session.execute(upsert_stmt)
+        await self._session.flush()
+        log.info("[JamesPgRepository] save_all 완료 — count=%s", len(items))
+        return len(items)

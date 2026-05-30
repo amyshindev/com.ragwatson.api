@@ -1,20 +1,39 @@
-import logging
+from __future__ import annotations
 
-import pandas as pd
+import logging
+from typing import Any
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from titanic.adapter.outbound.pg.walter_pg_repository import WalterPgRepository
+from titanic.app.ports.input.walter_use_case import WalterUseCase
 from titanic.app.ports.output.walter_repository import WalterRepository
 
 log = logging.getLogger(__name__)
 
 
-class WalterQueryUseCase:
-    """walter input port에서 전달된 preview 조회를 처리하는 유스케이스."""
+class WalterQueryUseCase(WalterUseCase):
+    """입력 포트 구현 — preview 조회를 출력 포트(WalterPgRepository)로 위임."""
 
-    def __init__(self, repository: WalterRepository | None = None) -> None:
-        self._repository = repository or WalterRepository()
+    def __init__(
+        self,
+        session: AsyncSession,
+        repository: WalterRepository | None = None,
+    ) -> None:
+        self._session = session
+        self._repository = repository
 
-    async def execute(self, session: AsyncSession) -> pd.DataFrame:
-        log.info("[WalterQueryUseCase] execute 시작 — preview 조회")
-        return await self._repository.get_dataframe_db(session)
+    async def get_preview_records(self, passenger_ids: list[int]) -> dict[str, Any]:
+        log.info(
+            "[WalterQueryUseCase] get_preview_records — passenger_ids=%s",
+            len(passenger_ids),
+        )
+        repository = self._repository or WalterPgRepository(self._session)
+        all_records = await repository.find_all()
+        if not passenger_ids:
+            return {"count": 0, "items": []}
 
+        id_set = set(passenger_ids)
+        items = [record for record in all_records if record.get("PassengerId") in id_set]
+        log.info("[WalterQueryUseCase] 완료 — rows=%s", len(items))
+        return {"count": len(items), "items": items}

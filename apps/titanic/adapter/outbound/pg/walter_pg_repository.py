@@ -1,42 +1,50 @@
-import logging
+from __future__ import annotations
 
-import pandas as pd
+import logging
+from typing import Any
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from titanic.app.ports.output.walter_repository import WalterRepository
+from titanic.app.use_cases.passenger import Passenger
 
 log = logging.getLogger(__name__)
 
 
-class WalterPgRepository:
-    """Walter output port에서 전달된 조회 요청을 Neon DB(passengers)에서 수행."""
+class WalterPgRepository(WalterRepository):
+    """Walter 출력 포트 구현 — Neon DB(passengers)에서 조회."""
 
-    async def get_dataframe_db(self, session: AsyncSession) -> pd.DataFrame:
-        from titanic.app.use_cases.passenger import Passenger
+    def __init__(self, session: AsyncSession) -> None:
+        self._session = session
 
-        log.info("[WalterPgRepository] DB 조회 시작 — passengers")
-        result = await session.execute(
+    async def find_all(self) -> list[dict[str, Any]]:
+        log.info("[WalterPgRepository] find_all 시작 — passengers")
+        result = await self._session.execute(
             select(Passenger).order_by(Passenger.passenger_id.asc())
         )
         passengers = result.scalars().all()
         if not passengers:
-            log.info("[WalterPgRepository] DB 조회 결과 없음")
-            return pd.DataFrame()
+            log.info("[WalterPgRepository] find_all 결과 없음")
+            return []
 
-        data = {
-            "PassengerId": [p.passenger_id for p in passengers],
-            "Survived": [p.survived for p in passengers],
-            "Pclass": [p.pclass for p in passengers],
-            "Name": [p.name for p in passengers],
-            "Sex": [p.sex for p in passengers],
-            "Age": [p.age for p in passengers],
-            "SibSp": [p.sibsp for p in passengers],
-            "Parch": [p.parch for p in passengers],
-            "Ticket": [p.ticket for p in passengers],
-            "Fare": [p.fare for p in passengers],
-            "Cabin": [p.cabin for p in passengers],
-            "Boat": [p.boat for p in passengers],
-            "Embarked": [p.embarked for p in passengers],
-        }
-        log.info("[WalterPgRepository] DB 조회 완료 — rows=%s", len(passengers))
-        return pd.DataFrame(data)
-
+        items = [
+            {
+                "PassengerId": p.passenger_id,
+                "Survived": p.survived,
+                "Pclass": p.pclass,
+                "Name": p.name,
+                "Sex": p.sex,
+                "Age": p.age,
+                "SibSp": p.sibsp,
+                "Parch": p.parch,
+                "Ticket": p.ticket,
+                "Fare": p.fare,
+                "Cabin": p.cabin,
+                "Boat": p.boat,
+                "Embarked": p.embarked,
+            }
+            for p in passengers
+        ]
+        log.info("[WalterPgRepository] find_all 완료 — rows=%s", len(items))
+        return items

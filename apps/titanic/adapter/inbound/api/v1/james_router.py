@@ -7,12 +7,11 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 import database
 from core.config import is_database_configured
 from db.session import DbSession
-from titanic.app.ports.input.james_use_case import JamesUseCase
+from titanic.app.use_cases.james_command import JamesCommandUseCase
 
 log = logging.getLogger(__name__)
 
 james_router = APIRouter(prefix="/api/james/v1", tags=["james"])
-_james_use_case = JamesUseCase()
 _LAST_UPLOADED_PASSENGER_IDS: list[int] = []
 
 _REQUIRED_COLUMNS = {
@@ -110,7 +109,8 @@ async def upload_james_csv(session: DbSession, file: UploadFile = File(...)) -> 
             continue
 
     try:
-        result = await _james_use_case.receive_uploaded_rows(session, file.filename, rows)
+        use_case = JamesCommandUseCase(session, file.filename or "")
+        result = await use_case.receive_uploaded_records(rows)
         await session.commit()
         global _LAST_UPLOADED_PASSENGER_IDS
         _LAST_UPLOADED_PASSENGER_IDS = last_uploaded_ids
