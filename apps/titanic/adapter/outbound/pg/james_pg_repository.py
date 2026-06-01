@@ -6,8 +6,9 @@ from typing import Any
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from titanic.app.db_init import ensure_titanic_schema
 from titanic.app.ports.output.james_repository import JamesRepository
-from titanic.app.use_cases.passenger import Passenger
+from titanic.adapter.outbound.orm.titanic_model import Passenger
 
 log = logging.getLogger(__name__)
 
@@ -47,6 +48,7 @@ class JamesPgRepository(JamesRepository):
         self._session = session
 
     async def save_all(self, records: list[dict[str, Any]]) -> int:
+        await ensure_titanic_schema()
         rows = [
             {str(k): str(v) if v is not None else "" for k, v in record.items()}
             for record in records

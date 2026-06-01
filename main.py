@@ -13,15 +13,18 @@ from sqlalchemy import text
 from adapters.db_check_adapter import db_check_adapter
 from domain_intake.router import router as domain_intake_router
 from ml_data.router import router as ml_data_router
-from titanic.adapter.inbound.api.v1.james_router import james_router
-from titanic.adapter.inbound.api.v1.walter_reader import walter_router
+from titanic.adapter.inbound.api import titanic_router
 from core.config import is_database_configured
 from database import dispose_engine
 from db.session import DbSession
 from matrix.app.keymaker import keymaker
-from secom.app.controllers.user_controller import UserController
-from secom.app.models.schemas import UserResponse
-from secom.app.schemas import LoginRequest, LoginResponse, SignupRequest, SignupResponse
+from friday13th.adapter.inbound.api.schemas import LoginRequest, LoginResponse, SignupRequest, SignupResponse
+from friday13th.adapter.inbound.api.v1.login_router import login_router
+from friday13th.adapter.inbound.api.v1.signup_router import signup_router
+from friday13th.adapter.outbound.pg.login_pg_repository import LoginPgRepository
+from friday13th.adapter.outbound.pg.signup_pg_repository import SignupPgRepository
+from friday13th.app.use_cases.login_interactor import LoginInteractor
+from friday13th.app.use_cases.signup_interactor import SignupInteractor
 def _configure_logging() -> None:
     logging.basicConfig(
         level=logging.INFO,
@@ -52,10 +55,10 @@ async def _startup_db() -> None:
     if not is_database_configured():
         log.info("DB skipped (DATABASE_URL not set)")
         return
-    from secom.app.db_init import init_secom_tables
+    from friday13th.app.db_init import init_friday13th_tables
     from titanic.app.db_init import init_titanic_tables
 
-    await init_secom_tables()
+    await init_friday13th_tables()
     await init_titanic_tables()
     log.info("DB ready (tables)")
 
@@ -75,8 +78,9 @@ app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
 
 app.include_router(domain_intake_router)
 app.include_router(ml_data_router)
-app.include_router(james_router)
-app.include_router(walter_router)
+app.include_router(titanic_router)
+app.include_router(signup_router)
+app.include_router(login_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -175,22 +179,11 @@ async def signup(req: SignupRequest, session: DbSession) -> SignupResponse:
     if not is_database_configured():
         raise HTTPException(status_code=503, detail="DATABASE_URL is not set.")
     try:
-        await UserController(session).save_user(req)
-        await session.commit()
-        return SignupResponse(
-            user=UserResponse(
-                id=req.userId,
-                email=str(req.email),
-                username=req.username,
-                nickname=req.nickname,
-                role=req.role,
-            )
-        )
+        use_case = SignupInteractor(session, SignupPgRepository(session))
+        return await use_case.signup(req)
     except HTTPException:
-        await session.rollback()
         raise
     except Exception as exc:
-        await session.rollback()
         log.exception("signup failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -201,14 +194,11 @@ async def login(req: LoginRequest, session: DbSession) -> LoginResponse:
     if not is_database_configured():
         raise HTTPException(status_code=503, detail="DATABASE_URL is not set.")
     try:
-        user = await UserController(session).login(req)
-        await session.commit()
-        return LoginResponse(user=user)
+        use_case = LoginInteractor(session, LoginPgRepository(session))
+        return await use_case.login(req)
     except HTTPException:
-        await session.rollback()
         raise
     except Exception as exc:
-        await session.rollback()
         log.exception("login failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 

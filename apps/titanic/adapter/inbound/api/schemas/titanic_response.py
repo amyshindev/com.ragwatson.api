@@ -1,41 +1,45 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from titanic.domain.entities.titanic import TitanicPassenger
 
 
 class TitanicPassengerCreateResponse(BaseModel):
-    """타이타닉 승객 생성 응답 (모든 필드 str, sex → gender)."""
+    """타이타닉 승객 조회/생성 응답."""
 
-    id: str = Field(..., description="DB primary key")
-    passenger_id: str = Field(..., alias="PassengerId", description="승객 ID")
-    survived: str = Field(..., alias="Survived", description="생존 여부")
-    pclass: str = Field(..., alias="Pclass", description="티켓 클래스")
-    name: str = Field(..., alias="Name", description="이름")
-    gender: str = Field(..., alias="Gender", description="성별")
-    age: str = Field(default="", alias="Age", description="나이")
-    sibsp: str = Field(..., alias="SibSp", description="형제/배우자 수")
-    parch: str = Field(..., alias="Parch", description="부모/자녀 수")
-    ticket: str = Field(..., alias="Ticket", description="티켓 번호")
-    fare: str = Field(..., alias="Fare", description="요금")
-    cabin: str = Field(default="", alias="Cabin", description="객실")
-    embarked: str = Field(default="", alias="Embarked", description="승선 항구")
+    passenger_id: int
+    survived: int
+    pclass: int
+    name: str
+    sex: str
+    age: float | None
+    sibsp: int
+    parch: int
+    ticket: str
+    fare: float
+    cabin: str | None
+    boat: str | None
+    embarked: str | None
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(from_attributes=True)
 
     @classmethod
-    def from_entity(cls, db_id: int, passenger: TitanicPassenger) -> "TitanicPassengerCreateResponse":
+    def from_entity(cls, passenger: TitanicPassenger) -> "TitanicPassengerCreateResponse":
+        age: float | None = None
+        if passenger.age:
+            age = float(passenger.age)
+
         return cls(
-            id=str(db_id),
-            passenger_id=passenger.passenger_id,
-            survived=passenger.survived,
-            pclass=passenger.pclass,
+            passenger_id=int(passenger.passenger_id),
+            survived=int(passenger.survived),
+            pclass=int(passenger.pclass),
             name=passenger.name,
-            gender=passenger.gender,
-            age=passenger.age,
-            sibsp=passenger.sibsp,
-            parch=passenger.parch,
+            sex=passenger.gender,
+            age=age,
+            sibsp=int(passenger.sibsp),
+            parch=int(passenger.parch),
             ticket=passenger.ticket,
-            fare=passenger.fare,
-            cabin=passenger.cabin,
-            embarked=passenger.embarked,
+            fare=float(passenger.fare),
+            cabin=passenger.cabin or None,
+            boat=None,
+            embarked=passenger.embarked or None,
         )

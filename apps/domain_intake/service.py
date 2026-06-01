@@ -19,8 +19,8 @@ from domain_intake.schemas import (
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
-from secom.app.models.role import UserRole
-from secom.app.models.user import User
+from friday13th.adapter.outbound.orm.friday13th_model import UserRecord
+from friday13th.domain.entities.user import UserRole
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class DomainIntakeService:
         if user_id is None:
             raise HTTPException(status_code=401, detail="관리자 로그인이 필요합니다.")
 
-        result = await session.execute(select(User).where(User.id == user_id))
+        result = await session.execute(select(UserRecord).where(UserRecord.id == user_id))
         user = result.scalar_one_or_none()
         if user is None:
             raise HTTPException(status_code=401, detail="관리자 계정을 찾을 수 없습니다.")

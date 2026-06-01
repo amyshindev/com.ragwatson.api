@@ -13,7 +13,7 @@ _USERS_COLUMN_PATCHES: tuple[str, ...] = (
 )
 
 
-async def init_secom_tables() -> None:
+async def init_friday13th_tables() -> None:
     if not is_database_configured():
         raise RuntimeError("DATABASE_URL is not set")
 
@@ -58,4 +58,9 @@ async def init_secom_tables() -> None:
 
         await drop_membership_inquiries_table(conn)
         await migrate_legacy_domain_intake_records(conn)
-    log.info("secom users table ready (create_all + column patches)")
+    log.info("friday13th users table ready (create_all + column patches)")
+
+
+async def init_secom_tables() -> None:
+    """Backward-compatible alias."""
+    await init_friday13th_tables()

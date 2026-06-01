@@ -1,6 +1,6 @@
 from typing import Any
 
-from titanic.app.schemas.passenger_schema import PassengerSchema
+from titanic.adapter.inbound.api.schemas.james_schema import JamesPassengerRow
 
 
 class CaledonValidation:
@@ -9,9 +9,9 @@ class CaledonValidation:
 
     @staticmethod
     def validate_passenger(data: dict[str, Any]) -> bool:
-        """Validate passenger data using PassengerSchema."""
+        """Validate passenger data using JamesPassengerRow."""
         try:
-            PassengerSchema(**data)
+            JamesPassengerRow.from_payload(data)
             return True
         except Exception:
             return False

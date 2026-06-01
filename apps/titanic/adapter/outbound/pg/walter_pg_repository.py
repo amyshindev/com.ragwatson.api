@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.app.ports.output.walter_repository import WalterRepository
-from titanic.app.use_cases.passenger import Passenger
+from titanic.adapter.outbound.orm.titanic_model import Passenger
 
 log = logging.getLogger(__name__)
 

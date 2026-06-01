@@ -4,9 +4,20 @@ from sqlalchemy import select
 
 import database
 from core.config import is_database_configured
-from titanic.app.use_cases.passenger import Passenger
+from titanic.adapter.outbound.orm.titanic_model import Passenger
 
 log = logging.getLogger(__name__)
+
+
+async def ensure_titanic_schema() -> None:
+    """passengers 테이블 등 ORM 스키마가 DB에 존재하도록 보장."""
+    if not is_database_configured():
+        return
+
+    from orm_registry import import_all_models
+
+    import_all_models()
+    await database.init_db()
 
 
 async def init_titanic_tables() -> None:
@@ -14,11 +25,7 @@ async def init_titanic_tables() -> None:
         log.info("Titanic DB initialization skipped (DATABASE_URL not set)")
         return
 
-    from orm_registry import import_all_models
-
-    import_all_models()
-
-    await database.init_db()
+    await ensure_titanic_schema()
     database._ensure_engine()
     assert database.engine is not None
 

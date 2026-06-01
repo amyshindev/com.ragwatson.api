@@ -1,2 +1,0 @@
-"""secom app package."""
-
