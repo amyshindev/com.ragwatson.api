@@ -31,7 +31,8 @@ class WalterInteractor(WalterUseCase):
         repository = self._repository or WalterPgRepository(self._session)
         all_records = await repository.find_all()
         if not passenger_ids:
-            return {"count": 0, "items": []}
+            log.info("[WalterInteractor] 전체 조회 반환 — rows=%s", len(all_records))
+            return {"count": len(all_records), "items": all_records}
 
         id_set = set(passenger_ids)
         items = [record for record in all_records if record.get("PassengerId") in id_set]

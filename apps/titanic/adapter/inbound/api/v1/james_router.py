@@ -1,80 +1,89 @@
+import csv
+from io import StringIO
 import logging
+from typing import Any
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
-from pydantic import ValidationError
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 
 from core.config import is_database_configured
 from db.session import DbSession
-from titanic.adapter.inbound.api.schemas.james_schema import (
-    JAMES_UPLOAD_COLUMNS,
-    JamesPassengerRow,
-    JamesUploadResponse,
-)
+
 from titanic.adapter.outbound.pg.james_pg_repository import JamesPgRepository
+from titanic.app.ports.output.james_repository import JamesRepository
+from titanic.adapter.inbound.api.schemas.james_schema import JamesPassengerRow
 from titanic.app.use_cases.james_interactor import JamesInteractor
+from titanic.app.ports.input.james_use_case import JamesUseCase
+
+
 
 log = logging.getLogger(__name__)
 
+
 james_router = APIRouter(prefix="/api/james/v1", tags=["james"])
 
-# CSV 파일 업로드
-@james_router.post("/upload", response_model=JamesUploadResponse)
-async def upload_james_csv(session: DbSession, file: UploadFile = File(...)) -> JamesUploadResponse:
+
+@james_router.post("/upload")
+async def upload_james_csv(session: DbSession, file: UploadFile = File(...)):
     log.info("[JamesRouter] upload 시작 — filename=%s", file.filename)
     if not is_database_configured():
         raise HTTPException(status_code=503, detail="DATABASE_URL is not set.")
 
-    content = await file.read()
-    try:
-        raw_rows = JamesInteractor.parse_upload_csv(file.filename, content)
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if file.content_type not in {"text/csv", "application/vnd.ms-excel", "text/plain"}:
+        raise HTTPException(status_code=400, detail="CSV 파일을 업로드해주세요.")
 
-    log.info("[JamesRouter] CSV 파싱 완료 — filename=%s rows=%s", file.filename, len(raw_rows))
+    text = (await file.read()).decode("utf-8", errors="replace")
+    if not text.strip():
+        raise HTTPException(status_code=400, detail="빈 CSV 파일입니다.")
+
+    reader = csv.DictReader(StringIO(text))
+    if reader.fieldnames is None:
+        raise HTTPException(status_code=400, detail="CSV 헤더를 읽을 수 없습니다.")
+
+    schema = [JamesPassengerRow(**_normalize_titanic_row(row)) for row in reader]
+
+    log.info("[JamesRouter] 업로드된 CSV 파일에서 스키마로 옮겨진 상위 5개 레코드:")
+    for record in schema[:5]:
+        print(record)
 
 
+    use_case: JamesUseCase = JamesInteractor()
+    await use_case.receive_uploaded_records(schema)
+    return {"filename": file.filename}
 
-    records: list[JamesPassengerRow] = []
-    try:
-        for raw_row in raw_rows:
-            records.append(JamesPassengerRow.from_csv_row(raw_row))
-    except ValidationError as exc:
-        raise HTTPException(status_code=400, detail=exc.errors()) from exc
 
-    # records에 상위 5줄 출력하는 로그
-    for index, record in enumerate(records[:5], start=1):
-        log.info(
-            "[JamesRouter] record sample %s/%s — %s",
-            index,
-            min(5, len(records)),
-            record.model_dump(by_alias=True),
-        )
+def _normalize_titanic_row(row: dict[str, Any]) -> dict[str, Any]:
+    normalized: dict[str, Any] = {}
+    for raw_key, value in row.items():
+        if raw_key is None:
+            continue
+        key = raw_key.strip()
+        lower_key = key.lower()
+        if lower_key == "sex":
+            normalized["gender"] = value
+        elif lower_key == "passengerid":
+            normalized["passenger_id"] = value
+        elif lower_key in {
+            "passenger_id",
+            "survived",
+            "pclass",
+            "name",
+            "age",
+            "sibsp",
+            "parch",
+            "ticket",
+            "fare",
+            "cabin",
+            "embarked",
+            "gender",
+        }:
+            normalized[lower_key] = value
+    return normalized
 
-    rows = [record.to_upload_row() for record in records]
-    log.info(
-        "[JamesRouter] 스키마 검증 완료 — filename=%s records=%s",
-        file.filename,
-        len(records),
-    )
 
-    use_case = JamesInteractor(
-        session,
-        file.filename or "",
-        JamesPgRepository(session),
-    )
-    try:
-        result = await use_case.receive_uploaded_records(rows)
-    except HTTPException:
-        raise
-    except Exception as exc:
-        log.exception("james csv upload failed")
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
-
-    items = [record.to_upload_row() for record in records]
-    log.info("[JamesRouter] upload 완료 — filename=%s rows=%s", file.filename, len(items))
-    return JamesUploadResponse(
-        filename=result["filename"],
-        count=result["count"],
-        columns=JAMES_UPLOAD_COLUMNS,
-        items=items,
-    )
+@james_router.get("/passengers")
+async def list_passengers(
+    session: DbSession,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=50, ge=1, le=200),
+):
+    raise HTTPException(status_code=501, detail="승객 조회 기능은 아직 구현되지 않았습니다.")
