@@ -11,7 +11,7 @@ if str(_APPS) not in sys.path:
     sys.path.insert(0, str(_APPS))
 
 from core.config import get_database_url  # noqa: E402
-from database import Base  # noqa: E402
+from core.matrix.oracle_database import Base  # noqa: E402
 from orm_registry import import_all_models  # noqa: E402
 
 config = context.config

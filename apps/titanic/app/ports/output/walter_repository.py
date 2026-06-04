@@ -1,10 +1,10 @@
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Any
 
+from titanic.app.dtos.walter_dto import WalterQuery
 
 class WalterRepository(ABC):
+    # 월터의 승객 명단 관리 저장소
+
     @abstractmethod
-    async def find_all(self) -> list[dict[str, Any]]:
-        ...
+    def introduce_myself(self, query: WalterQuery):
+        pass

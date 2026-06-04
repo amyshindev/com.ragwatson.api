@@ -17,7 +17,7 @@ from titanic.adapter.inbound.api import titanic_router
 from core.config import is_database_configured
 from database import dispose_engine
 from db.session import DbSession
-from matrix.app.keymaker import keymaker
+from core.matrix.keymaker_api import keymaker
 from friday13th.adapter.inbound.api.schemas import LoginRequest, LoginResponse, SignupRequest, SignupResponse
 from friday13th.adapter.inbound.api.v1.login_router import login_router
 from friday13th.adapter.inbound.api.v1.signup_router import signup_router
@@ -63,7 +63,7 @@ async def _startup_db() -> None:
     log.info("DB ready (tables)")
 
 
-@asynccontextmanager
+@asynccontextmanager    # context란 core를 말함
 async def lifespan(app: FastAPI):
     _configure_logging()
     await _startup_db()
@@ -84,7 +84,7 @@ app.include_router(login_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

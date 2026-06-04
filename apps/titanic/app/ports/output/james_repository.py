@@ -1,7 +1,5 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Any
-from titanic.adapter.inbound.api.schemas.james_schema import JamesPassengerRow
 from titanic.app.dtos.james_dto import PersonCommand, BookingCommand
 
 

@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
-class JamesPassengerRow(BaseModel):
+class JamesSchema(BaseModel):
     """타이타닉 승객 생성/검증 요청 (James CSV 업로드)."""
 
     passenger_id: Optional[str] = Field(None, description="승객 번호")

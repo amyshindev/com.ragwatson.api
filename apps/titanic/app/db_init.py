@@ -4,13 +4,13 @@ from sqlalchemy import select
 
 import database
 from core.config import is_database_configured
-from titanic.adapter.outbound.orm.titanic_model import Passenger
+from titanic.adapter.outbound.orm.person_orm import PersonOrm
 
 log = logging.getLogger(__name__)
 
 
 async def ensure_titanic_schema() -> None:
-    """passengers 테이블 등 ORM 스키마가 DB에 존재하도록 보장."""
+    """titanic_persons / titanic_bookings 테이블이 DB에 존재하도록 보장."""
     if not is_database_configured():
         return
 
@@ -31,10 +31,9 @@ async def init_titanic_tables() -> None:
 
     async with database.AsyncSessionLocal() as session:
         async with session.begin():
-            # Check if Passenger table already has data
-            result = await session.execute(select(Passenger).limit(1))
-            passenger = result.scalar_one_or_none()
-            if passenger is None:
-                log.info("Titanic passengers table is empty. Internal file seeding skipped.")
+            result = await session.execute(select(PersonOrm).limit(1))
+            person = result.scalar_one_or_none()
+            if person is None:
+                log.info("Titanic persons table is empty.")
             else:
-                log.info("Titanic passengers table already contains data. Seeding skipped.")
+                log.info("Titanic persons table already contains data.")

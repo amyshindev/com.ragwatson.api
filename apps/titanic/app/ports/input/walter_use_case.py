@@ -1,10 +1,10 @@
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Any
+
+from titanic.adapter.inbound.api.schemas.walter_schema import WalterSchema
 
 
 class WalterUseCase(ABC):
+
     @abstractmethod
-    async def get_preview_records(self, passenger_ids: list[int]) -> dict[str, Any]:
+    def introduce_myself(self, schema: WalterSchema):
         ...

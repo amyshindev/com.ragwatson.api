@@ -8,12 +8,10 @@ from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 from core.config import is_database_configured
 from db.session import DbSession
 
+from titanic.adapter.inbound.api.schemas.james_schema import JamesSchema
 from titanic.adapter.outbound.pg.james_pg_repository import JamesPgRepository
-from titanic.app.ports.output.james_repository import JamesRepository
-from titanic.adapter.inbound.api.schemas.james_schema import JamesPassengerRow
 from titanic.app.use_cases.james_interactor import JamesInteractor
 from titanic.app.ports.input.james_use_case import JamesUseCase
-
 
 
 log = logging.getLogger(__name__)
@@ -39,16 +37,21 @@ async def upload_james_csv(session: DbSession, file: UploadFile = File(...)):
     if reader.fieldnames is None:
         raise HTTPException(status_code=400, detail="CSV 헤더를 읽을 수 없습니다.")
 
-    schema = [JamesPassengerRow(**_normalize_titanic_row(row)) for row in reader]
-
-    log.info("[JamesRouter] 업로드된 CSV 파일에서 스키마로 옮겨진 상위 5개 레코드:")
+    schema = [JamesSchema(**_normalize_titanic_row(row)) for row in reader]
+    log.info("1️⃣  [JamesRouter] 업로드된 CSV 파일에서 스키마로 옮겨진 상위 5개 레코드 (전체 %s건):", len(schema))
     for record in schema[:5]:
-        print(record)
+        log.info("%s", record)
 
+    try:
+        use_case: JamesUseCase = JamesInteractor(session, JamesPgRepository(session))
+        saved = await use_case.receive_uploaded_records(schema)
+    except HTTPException:
+        raise
+    except Exception as exc:
+        log.exception("james upload failed")
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
-    use_case: JamesUseCase = JamesInteractor()
-    await use_case.receive_uploaded_records(schema)
-    return {"filename": file.filename}
+    return {"filename": file.filename, "saved": saved}
 
 
 def _normalize_titanic_row(row: dict[str, Any]) -> dict[str, Any]:

@@ -1,88 +1,30 @@
-"""Neon PostgreSQL 비동기 연결 (SQLAlchemy 2.0)."""
+"""Neon PostgreSQL — ``core.matrix.oracle_database`` 단일 소스 (가변 export는 __getattr__)."""
 
-from collections.abc import AsyncGenerator
-from typing import Annotated
+from core.matrix import oracle_database as _oracle
 
-from fastapi import Depends, HTTPException
-from sqlalchemy.ext.asyncio import (
-    AsyncEngine,
-    AsyncSession,
-    async_sessionmaker,
-    create_async_engine,
-)
-from sqlalchemy.orm import DeclarativeBase
-
-from core.config import get_database_url, is_database_configured
-
-_engine: AsyncEngine | None = None
-_session_factory: async_sessionmaker[AsyncSession] | None = None
-
-engine: AsyncEngine | None = None
-AsyncSessionLocal: async_sessionmaker[AsyncSession] | None = None
-
-
-class Base(DeclarativeBase):
-    pass
-
-
-def _ensure_engine() -> None:
-    global _engine, _session_factory, engine, AsyncSessionLocal
-    if _engine is not None:
-        return
-    _engine = create_async_engine(
-        get_database_url(),
-        echo=False,
-        pool_pre_ping=True,
-    )
-    _session_factory = async_sessionmaker(
-        _engine,
-        class_=AsyncSession,
-        expire_on_commit=False,
-    )
-    engine = _engine
-    AsyncSessionLocal = _session_factory
-
-
-async def init_db() -> None:
-    """ORM 메타데이터로 테이블 생성 (Neon PostgreSQL)."""
-    if not is_database_configured():
-        return
-    _ensure_engine()
-    assert engine is not None
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-async def dispose_engine() -> None:
-    global _engine, _session_factory, engine, AsyncSessionLocal
-    if _engine is not None:
-        await _engine.dispose()
-    _engine = None
-    _session_factory = None
-    engine = None
-    AsyncSessionLocal = None
-
-
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    if not is_database_configured():
-        raise HTTPException(
-            status_code=503,
-            detail="DATABASE_URL is not set.",
-        )
-    _ensure_engine()
-    assert _session_factory is not None
-    async with _session_factory() as session:
-        yield session
-
-
-DbSession = Annotated[AsyncSession, Depends(get_db)]
+Base = _oracle.Base
+DbSession = _oracle.DbSession
+_ensure_engine = _oracle._ensure_engine
+dispose_engine = _oracle.dispose_engine
+get_db = _oracle.get_db
+init_db = _oracle.init_db
 
 __all__ = [
     "AsyncSessionLocal",
     "Base",
     "DbSession",
+    "_ensure_engine",
     "dispose_engine",
     "engine",
     "get_db",
     "init_db",
 ]
+
+# engine / AsyncSessionLocal 은 _ensure_engine() 이후에만 설정되므로
+# import 시점 복사(from ... import engine)를 쓰면 항상 None 이 남는다.
+
+
+def __getattr__(name: str):
+    if name in ("engine", "AsyncSessionLocal"):
+        return getattr(_oracle, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
