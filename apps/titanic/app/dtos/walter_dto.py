@@ -20,3 +20,9 @@ class WalterQuery:
             name=schema.name,
             memo=schema.memo,
         )
+
+@dataclass
+class WalterResponse:
+    id: int
+    name: str
+    memo: str

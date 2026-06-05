@@ -4,7 +4,6 @@ from titanic.adapter.inbound.api.schemas.walter_schema import WalterSchema
 
 
 class WalterUseCase(ABC):
-
     @abstractmethod
-    def introduce_myself(self, schema: WalterSchema):
+    async def introduce_myself(self, schema: WalterSchema) -> None:
         ...

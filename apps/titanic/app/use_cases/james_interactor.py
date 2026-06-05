@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import logging
 
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.config import is_database_configured
 from titanic.adapter.inbound.api.schemas.james_schema import JamesSchema
-from titanic.adapter.outbound.pg.james_pg_repository import JamesPgRepository
 from titanic.app.dtos.james_dto import BookingCommand, PersonCommand
 from titanic.app.ports.input.james_use_case import JamesUseCase
 from titanic.app.ports.output.james_repository import JamesRepository
@@ -25,8 +26,11 @@ class JamesInteractor(JamesUseCase):
         self._session = session
         self._repository = repository
 
-    async def receive_uploaded_records(self, schema: list[JamesSchema]) -> int:
-        log.info("[JamesInteractor] receive_uploaded_records 시작 — count=%s", len(schema))
+    async def upload_titanic_file(self, schema: list[JamesSchema]) -> dict[str, int]:
+        if not is_database_configured():
+            raise HTTPException(status_code=503, detail="DATABASE_URL is not set.")
+
+        log.info("[JamesInteractor] upload_titanic_file 시작 — count=%s", len(schema))
         log.info("2️⃣  [JamesUseCase] 라우터에서 유스케이스로 옮겨진 스키마 상위 5개 레코드:")
         for record in schema[:5]:
             log.info("%s", record)
@@ -64,9 +68,12 @@ class JamesInteractor(JamesUseCase):
                 booking_commands,
             )
             await self._session.commit()
+        except HTTPException:
+            await self._session.rollback()
+            raise
         except Exception:
             await self._session.rollback()
             raise
 
-        log.info("[JamesInteractor] receive_uploaded_records 완료 — saved=%s", saved)
-        return saved
+        log.info("[JamesInteractor] upload_titanic_file 완료 — saved=%s", saved)
+        return {"saved": saved}

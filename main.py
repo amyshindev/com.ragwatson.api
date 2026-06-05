@@ -12,7 +12,7 @@ from sqlalchemy import text
 
 from adapters.db_check_adapter import db_check_adapter
 from domain_intake.router import router as domain_intake_router
-from ml_data.router import router as ml_data_router
+from ml_data.adapter.inbound.api import ml_data_router
 from titanic.adapter.inbound.api import titanic_router
 from core.config import is_database_configured
 from database import dispose_engine
