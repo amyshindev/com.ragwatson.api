@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from ml_data.adapter.inbound.api.schemas.training_export import (
+from audio.adapter.inbound.api.schemas.training_export import (
     DatasetStatsRead,
     TrainingRecord,
 )
-from ml_data.app.ports.input.training_export_use_case import TrainingExportUseCase
-from ml_data.dependencies.training_export import get_training_export_use_case
+from audio.app.ports.input.training_export_use_case import TrainingExportUseCase
+from audio.dependencies.training_export import get_training_export_use_case
 
 training_export_router = APIRouter(prefix="/api/ml", tags=["ml-data-export"])
 

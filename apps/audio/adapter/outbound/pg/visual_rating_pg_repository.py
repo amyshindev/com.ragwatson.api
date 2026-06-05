@@ -4,9 +4,9 @@ from uuid import UUID
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.visual_ratings import VisualRatingCreate
-from ml_data.adapter.outbound.orm.visual_rating_orm import VisualRating
-from ml_data.app.ports.output.visual_rating_repository import VisualRatingRepository
+from audio.adapter.inbound.api.schemas.visual_ratings import VisualRatingCreate
+from audio.adapter.outbound.orm.visual_rating_orm import VisualRating
+from audio.app.ports.output.visual_rating_repository import VisualRatingRepository
 
 logger = logging.getLogger(__name__)
 

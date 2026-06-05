@@ -11,8 +11,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from core.matrix.oracle_database import Base
 
 if TYPE_CHECKING:
-    from ml_data.adapter.outbound.orm.audio_feature_orm import AudioFeature
-    from ml_data.adapter.outbound.orm.visual_rating_orm import VisualRating
+    from audio.adapter.outbound.orm.audio_feature_orm import AudioFeature
+    from audio.adapter.outbound.orm.visual_rating_orm import VisualRating
 
 
 class GenerationLog(Base):

@@ -3,7 +3,7 @@
 v4: USERS.role 체크 → ADMINS 테이블 존재 여부 체크로 변경.
 
 사용법:
-    from friday13th.adapter.inbound.api.dependencies import admin_required
+    from user.adapter.inbound.api.dependencies import admin_required
 
     @router.get("/admin/something")
     async def admin_endpoint(admin: AdminRecord = Depends(admin_required)):
@@ -19,8 +19,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.session import DbSession
-from friday13th.adapter.outbound.orm.admin_model import AdminRecord
-from friday13th.domain.entities.admin import Admin
+from user.adapter.outbound.orm.admin_model import AdminRecord
+from user.domain.entities.admin import Admin
 
 log = logging.getLogger(__name__)
 

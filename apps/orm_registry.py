@@ -11,11 +11,11 @@ def import_all_models() -> None:
     from domain_intake.models.studio_analytics import StudioAnalytics  # noqa: F401
     from domain_intake.models.studio_workspace import StudioWorkspace  # noqa: F401
     from domain_intake.models.style_tag import StyleTag, WorkspaceStyleTag  # noqa: F401
-    from friday13th.adapter.outbound.orm.admin_model import AdminRecord  # noqa: F401
-    from friday13th.adapter.outbound.orm.friday13th_model import UserRecord  # noqa: F401
+    from user.adapter.outbound.orm.admin_model import AdminRecord  # noqa: F401
+    from user.adapter.outbound.orm.user_model import UserRecord  # noqa: F401
     from titanic.adapter.outbound.orm.booking_orm import BookingOrm  # noqa: F401
     from titanic.adapter.outbound.orm.person_orm import PersonOrm  # noqa: F401
-    from ml_data.adapter.outbound.orm.audio_feature_orm import AudioFeature  # noqa: F401
-    from ml_data.adapter.outbound.orm.generation_log_orm import GenerationLog  # noqa: F401
-    from ml_data.adapter.outbound.orm.user_event_orm import UserEvent  # noqa: F401
-    from ml_data.adapter.outbound.orm.visual_rating_orm import VisualRating  # noqa: F401
+    from audio.adapter.outbound.orm.audio_feature_orm import AudioFeature  # noqa: F401
+    from audio.adapter.outbound.orm.generation_log_orm import GenerationLog  # noqa: F401
+    from audio.adapter.outbound.orm.user_event_orm import UserEvent  # noqa: F401
+    from audio.adapter.outbound.orm.visual_rating_orm import VisualRating  # noqa: F401

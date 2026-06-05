@@ -6,16 +6,16 @@ from uuid import UUID
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.visual_ratings import (
+from audio.adapter.inbound.api.schemas.visual_ratings import (
     AbTestResultRead,
     VisualRatingAvgRead,
     VisualRatingCreate,
     VisualRatingPlatformAvgRead,
     VisualRatingRead,
 )
-from ml_data.app._transaction import run_committed
-from ml_data.app.ports.input.visual_rating_use_case import VisualRatingUseCase
-from ml_data.app.ports.output.visual_rating_repository import VisualRatingRepository
+from audio.app._transaction import run_committed
+from audio.app.ports.input.visual_rating_use_case import VisualRatingUseCase
+from audio.app.ports.output.visual_rating_repository import VisualRatingRepository
 
 log = logging.getLogger(__name__)
 

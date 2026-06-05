@@ -6,14 +6,14 @@ from uuid import UUID
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.audio_features import (
+from audio.adapter.inbound.api.schemas.audio_features import (
     AudioFeatureCreate,
     AudioFeatureRead,
     AudioFeatureStatusRead,
 )
-from ml_data.app._transaction import run_committed
-from ml_data.app.ports.input.audio_feature_use_case import AudioFeatureUseCase
-from ml_data.app.ports.output.audio_feature_repository import AudioFeatureRepository
+from audio.app._transaction import run_committed
+from audio.app.ports.input.audio_feature_use_case import AudioFeatureUseCase
+from audio.app.ports.output.audio_feature_repository import AudioFeatureRepository
 
 log = logging.getLogger(__name__)
 

@@ -5,9 +5,9 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.generation_logs import GenerationLogCreate
-from ml_data.adapter.outbound.orm.generation_log_orm import GenerationLog
-from ml_data.app.ports.output.generation_log_repository import GenerationLogRepository
+from audio.adapter.inbound.api.schemas.generation_logs import GenerationLogCreate
+from audio.adapter.outbound.orm.generation_log_orm import GenerationLog
+from audio.app.ports.output.generation_log_repository import GenerationLogRepository
 
 logger = logging.getLogger(__name__)
 

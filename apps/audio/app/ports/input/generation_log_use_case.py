@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from ml_data.adapter.inbound.api.schemas.generation_logs import (
+from audio.adapter.inbound.api.schemas.generation_logs import (
     GenerationLogCreate,
     GenerationLogRead,
     GenerationLogStatusRead,

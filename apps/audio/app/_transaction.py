@@ -33,5 +33,5 @@ async def run_committed(session: AsyncSession, work: Callable[[], Awaitable[T]])
         raise
     except Exception as exc:
         await session.rollback()
-        log.exception("ml_data transaction failed")
+        log.exception("audio transaction failed")
         raise HTTPException(status_code=500, detail=str(exc)) from exc

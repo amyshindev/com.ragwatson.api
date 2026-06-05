@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from ml_data.adapter.inbound.api.schemas.generation_logs import GenerationLogCreate
-from ml_data.adapter.outbound.orm.generation_log_orm import GenerationLog
+from audio.adapter.inbound.api.schemas.generation_logs import GenerationLogCreate
+from audio.adapter.outbound.orm.generation_log_orm import GenerationLog
 
 
 class GenerationLogRepository(ABC):

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from ml_data.adapter.inbound.api.schemas.training_export import (
+from audio.adapter.inbound.api.schemas.training_export import (
     DatasetStatsRead,
     TrainingRecord,
 )

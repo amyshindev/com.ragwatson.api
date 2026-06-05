@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from ml_data.adapter.inbound.api.schemas.visual_ratings import VisualRatingCreate
-from ml_data.adapter.outbound.orm.visual_rating_orm import VisualRating
+from audio.adapter.inbound.api.schemas.visual_ratings import VisualRatingCreate
+from audio.adapter.outbound.orm.visual_rating_orm import VisualRating
 
 
 class VisualRatingRepository(ABC):

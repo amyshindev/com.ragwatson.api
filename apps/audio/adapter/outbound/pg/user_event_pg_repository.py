@@ -3,9 +3,9 @@ import logging
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.user_events import UserEventCreate
-from ml_data.adapter.outbound.orm.user_event_orm import UserEvent
-from ml_data.app.ports.output.user_event_repository import UserEventRepository
+from audio.adapter.inbound.api.schemas.user_events import UserEventCreate
+from audio.adapter.outbound.orm.user_event_orm import UserEvent
+from audio.app.ports.output.user_event_repository import UserEventRepository
 
 logger = logging.getLogger(__name__)
 

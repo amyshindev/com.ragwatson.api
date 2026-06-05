@@ -4,10 +4,10 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.user_events import UserEventCreate, UserEventRead
-from ml_data.app._transaction import run_committed
-from ml_data.app.ports.input.user_event_use_case import UserEventUseCase
-from ml_data.app.ports.output.user_event_repository import UserEventRepository
+from audio.adapter.inbound.api.schemas.user_events import UserEventCreate, UserEventRead
+from audio.app._transaction import run_committed
+from audio.app.ports.input.user_event_use_case import UserEventUseCase
+from audio.app.ports.output.user_event_repository import UserEventRepository
 
 log = logging.getLogger(__name__)
 

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from ml_data.adapter.inbound.api.schemas.user_events import UserEventCreate, UserEventRead
+from audio.adapter.inbound.api.schemas.user_events import UserEventCreate, UserEventRead
 
 
 class UserEventUseCase(ABC):

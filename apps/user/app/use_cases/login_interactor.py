@@ -4,9 +4,9 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from friday13th.adapter.inbound.api.schemas import LoginRequest, LoginResponse, UserResponse
-from friday13th.app.ports.input.login_use_case import LoginUseCase
-from friday13th.app.ports.output.login_repository import LoginRepository
+from user.adapter.inbound.api.schemas import LoginRequest, LoginResponse, UserResponse
+from user.app.ports.input.login_use_case import LoginUseCase
+from user.app.ports.output.login_repository import LoginRepository
 
 log = logging.getLogger(__name__)
 

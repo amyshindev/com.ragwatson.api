@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from ml_data.adapter.inbound.api.schemas.user_events import UserEventCreate
-from ml_data.adapter.outbound.orm.user_event_orm import UserEvent
+from audio.adapter.inbound.api.schemas.user_events import UserEventCreate
+from audio.adapter.outbound.orm.user_event_orm import UserEvent
 
 
 class UserEventRepository(ABC):

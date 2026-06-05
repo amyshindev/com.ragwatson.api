@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from ml_data.adapter.inbound.api.schemas.audio_features import AudioFeatureCreate
-from ml_data.adapter.outbound.orm.audio_feature_orm import AudioFeature
+from audio.adapter.inbound.api.schemas.audio_features import AudioFeatureCreate
+from audio.adapter.outbound.orm.audio_feature_orm import AudioFeature
 
 
 class AudioFeatureRepository(ABC):

@@ -1,4 +1,4 @@
-from friday13th.adapter.inbound.api.schemas.user_schema import (
+from user.adapter.inbound.api.schemas.user_schema import (
     LoginRequest,
     LoginResponse,
     SignupRequest,

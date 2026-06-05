@@ -6,14 +6,14 @@ from uuid import UUID
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.generation_logs import (
+from audio.adapter.inbound.api.schemas.generation_logs import (
     GenerationLogCreate,
     GenerationLogRead,
     GenerationLogStatusRead,
 )
-from ml_data.app._transaction import run_committed
-from ml_data.app.ports.input.generation_log_use_case import GenerationLogUseCase
-from ml_data.app.ports.output.generation_log_repository import GenerationLogRepository
+from audio.app._transaction import run_committed
+from audio.app.ports.input.generation_log_use_case import GenerationLogUseCase
+from audio.app.ports.output.generation_log_repository import GenerationLogRepository
 
 log = logging.getLogger(__name__)
 

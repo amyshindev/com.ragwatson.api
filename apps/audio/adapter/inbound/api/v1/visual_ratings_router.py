@@ -2,15 +2,15 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 
-from ml_data.adapter.inbound.api.schemas.visual_ratings import (
+from audio.adapter.inbound.api.schemas.visual_ratings import (
     AbTestResultRead,
     VisualRatingAvgRead,
     VisualRatingCreate,
     VisualRatingPlatformAvgRead,
     VisualRatingRead,
 )
-from ml_data.app.ports.input.visual_rating_use_case import VisualRatingUseCase
-from ml_data.dependencies.visual_rating import get_visual_rating_use_case
+from audio.app.ports.input.visual_rating_use_case import VisualRatingUseCase
+from audio.dependencies.visual_rating import get_visual_rating_use_case
 
 visual_ratings_router = APIRouter(prefix="/api/ml", tags=["ml-data"])
 

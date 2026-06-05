@@ -2,13 +2,13 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 
-from ml_data.adapter.inbound.api.schemas.generation_logs import (
+from audio.adapter.inbound.api.schemas.generation_logs import (
     GenerationLogCreate,
     GenerationLogRead,
     GenerationLogStatusRead,
 )
-from ml_data.app.ports.input.generation_log_use_case import GenerationLogUseCase
-from ml_data.dependencies.generation_log import get_generation_log_use_case
+from audio.app.ports.input.generation_log_use_case import GenerationLogUseCase
+from audio.dependencies.generation_log import get_generation_log_use_case
 
 generation_logs_router = APIRouter(prefix="/api/ml", tags=["ml-data"])
 

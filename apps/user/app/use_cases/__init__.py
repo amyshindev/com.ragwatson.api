@@ -1,1 +1,1 @@
-"""Friday13th use_cases package."""
+"""user use_cases package."""

@@ -19,8 +19,8 @@ from domain_intake.schemas import (
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
-from friday13th.adapter.outbound.orm.friday13th_model import UserRecord
-from friday13th.domain.entities.user import UserRole
+from user.adapter.outbound.orm.user_model import UserRecord
+from user.domain.entities.user import UserRole
 
 logger = logging.getLogger(__name__)
 

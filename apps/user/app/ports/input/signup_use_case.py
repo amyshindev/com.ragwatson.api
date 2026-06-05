@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from friday13th.adapter.inbound.api.schemas import SignupRequest, SignupResponse
+from user.adapter.inbound.api.schemas import SignupRequest, SignupResponse
 
 
 class SignupUseCase(ABC):

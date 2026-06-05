@@ -6,10 +6,10 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from friday13th.adapter.outbound.orm.friday13th_model import UserRecord
-from friday13th.adapter.outbound.pg.password_hasher import verify_password
-from friday13th.app.ports.output.login_repository import LoginRepository
-from friday13th.domain.entities.user import User
+from user.adapter.outbound.orm.user_model import UserRecord
+from user.adapter.outbound.pg.password_hasher import verify_password
+from user.app.ports.output.login_repository import LoginRepository
+from user.domain.entities.user import User
 
 log = logging.getLogger(__name__)
 

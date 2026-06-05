@@ -2,13 +2,13 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
 
-from ml_data.adapter.inbound.api.schemas.audio_features import (
+from audio.adapter.inbound.api.schemas.audio_features import (
     AudioFeatureCreate,
     AudioFeatureRead,
     AudioFeatureStatusRead,
 )
-from ml_data.app.ports.input.audio_feature_use_case import AudioFeatureUseCase
-from ml_data.dependencies.audio_feature import get_audio_feature_use_case
+from audio.app.ports.input.audio_feature_use_case import AudioFeatureUseCase
+from audio.dependencies.audio_feature import get_audio_feature_use_case
 
 audio_features_router = APIRouter(prefix="/api/ml", tags=["ml-data"])
 

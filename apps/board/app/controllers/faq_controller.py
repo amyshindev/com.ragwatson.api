@@ -4,7 +4,7 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from faq.app.services.faq_service import FaqService
+from board.app.services.faq_service import FaqService
 
 logger = logging.getLogger(__name__)
 

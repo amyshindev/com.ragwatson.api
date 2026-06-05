@@ -3,14 +3,14 @@ import logging
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.training_export import (
+from audio.adapter.inbound.api.schemas.training_export import (
     DatasetStatsRead,
     TrainingRecord,
 )
-from ml_data.adapter.outbound.orm.audio_feature_orm import AudioFeature
-from ml_data.adapter.outbound.orm.generation_log_orm import GenerationLog
-from ml_data.adapter.outbound.orm.visual_rating_orm import VisualRating
-from ml_data.app.ports.output.training_export_repository import TrainingExportRepository
+from audio.adapter.outbound.orm.audio_feature_orm import AudioFeature
+from audio.adapter.outbound.orm.generation_log_orm import GenerationLog
+from audio.adapter.outbound.orm.visual_rating_orm import VisualRating
+from audio.app.ports.output.training_export_repository import TrainingExportRepository
 
 logger = logging.getLogger(__name__)
 

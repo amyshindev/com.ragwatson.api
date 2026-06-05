@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Query
 
-from ml_data.adapter.inbound.api.schemas.user_events import UserEventCreate, UserEventRead
-from ml_data.app.ports.input.user_event_use_case import UserEventUseCase
-from ml_data.dependencies.user_event import get_user_event_use_case
+from audio.adapter.inbound.api.schemas.user_events import UserEventCreate, UserEventRead
+from audio.app.ports.input.user_event_use_case import UserEventUseCase
+from audio.dependencies.user_event import get_user_event_use_case
 
 user_events_router = APIRouter(prefix="/api/ml", tags=["ml-data"])
 

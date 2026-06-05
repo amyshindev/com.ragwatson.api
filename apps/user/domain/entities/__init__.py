@@ -1,3 +1,3 @@
-from friday13th.domain.entities.user import User, UserRole
+from user.domain.entities.user import User, UserRole
 
 __all__ = ["User", "UserRole"]

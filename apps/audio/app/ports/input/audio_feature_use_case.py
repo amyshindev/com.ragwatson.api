@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from ml_data.adapter.inbound.api.schemas.audio_features import (
+from audio.adapter.inbound.api.schemas.audio_features import (
     AudioFeatureCreate,
     AudioFeatureRead,
     AudioFeatureStatusRead,

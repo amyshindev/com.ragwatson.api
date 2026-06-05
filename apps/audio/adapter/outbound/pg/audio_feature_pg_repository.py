@@ -5,9 +5,9 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.audio_features import AudioFeatureCreate
-from ml_data.adapter.outbound.orm.audio_feature_orm import AudioFeature
-from ml_data.app.ports.output.audio_feature_repository import AudioFeatureRepository
+from audio.adapter.inbound.api.schemas.audio_features import AudioFeatureCreate
+from audio.adapter.outbound.orm.audio_feature_orm import AudioFeature
+from audio.app.ports.output.audio_feature_repository import AudioFeatureRepository
 
 logger = logging.getLogger(__name__)
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from friday13th.domain.entities.user import User
+from user.domain.entities.user import User
 
 
 class SignupRepository(ABC):

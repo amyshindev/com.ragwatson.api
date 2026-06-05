@@ -12,19 +12,19 @@ from sqlalchemy import text
 
 from adapters.db_check_adapter import db_check_adapter
 from domain_intake.router import router as domain_intake_router
-from ml_data.adapter.inbound.api import ml_data_router
+from audio.adapter.inbound.api import audio_router
 from titanic.adapter.inbound.api import titanic_router
 from core.config import is_database_configured
 from database import dispose_engine
 from db.session import DbSession
 from core.matrix.keymaker_api import keymaker
-from friday13th.adapter.inbound.api.schemas import LoginRequest, LoginResponse, SignupRequest, SignupResponse
-from friday13th.adapter.inbound.api.v1.login_router import login_router
-from friday13th.adapter.inbound.api.v1.signup_router import signup_router
-from friday13th.adapter.outbound.pg.login_pg_repository import LoginPgRepository
-from friday13th.adapter.outbound.pg.signup_pg_repository import SignupPgRepository
-from friday13th.app.use_cases.login_interactor import LoginInteractor
-from friday13th.app.use_cases.signup_interactor import SignupInteractor
+from user.adapter.inbound.api.schemas import LoginRequest, LoginResponse, SignupRequest, SignupResponse
+from user.adapter.inbound.api.v1.login_router import login_router
+from user.adapter.inbound.api.v1.signup_router import signup_router
+from user.adapter.outbound.pg.login_pg_repository import LoginPgRepository
+from user.adapter.outbound.pg.signup_pg_repository import SignupPgRepository
+from user.app.use_cases.login_interactor import LoginInteractor
+from user.app.use_cases.signup_interactor import SignupInteractor
 def _configure_logging() -> None:
     logging.basicConfig(
         level=logging.INFO,
@@ -55,10 +55,10 @@ async def _startup_db() -> None:
     if not is_database_configured():
         log.info("DB skipped (DATABASE_URL not set)")
         return
-    from friday13th.app.db_init import init_friday13th_tables
+    from user.app.db_init import init_user_tables
     from titanic.app.db_init import init_titanic_tables
 
-    await init_friday13th_tables()
+    await init_user_tables()
     await init_titanic_tables()
     log.info("DB ready (tables)")
 
@@ -77,7 +77,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
 
 app.include_router(domain_intake_router)
-app.include_router(ml_data_router)
+app.include_router(audio_router)
 app.include_router(titanic_router)
 app.include_router(signup_router)
 app.include_router(login_router)

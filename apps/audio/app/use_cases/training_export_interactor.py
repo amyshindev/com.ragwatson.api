@@ -4,12 +4,12 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ml_data.adapter.inbound.api.schemas.training_export import (
+from audio.adapter.inbound.api.schemas.training_export import (
     DatasetStatsRead,
     TrainingRecord,
 )
-from ml_data.app.ports.input.training_export_use_case import TrainingExportUseCase
-from ml_data.app.ports.output.training_export_repository import TrainingExportRepository
+from audio.app.ports.input.training_export_use_case import TrainingExportUseCase
+from audio.app.ports.output.training_export_repository import TrainingExportRepository
 
 log = logging.getLogger(__name__)
 

@@ -4,9 +4,9 @@ from fastapi import APIRouter, HTTPException
 
 from core.config import is_database_configured
 from db.session import DbSession
-from friday13th.adapter.inbound.api.schemas import SignupRequest, SignupResponse
-from friday13th.adapter.outbound.pg.signup_pg_repository import SignupPgRepository
-from friday13th.app.use_cases.signup_interactor import SignupInteractor
+from user.adapter.inbound.api.schemas import SignupRequest, SignupResponse
+from user.adapter.outbound.pg.signup_pg_repository import SignupPgRepository
+from user.app.use_cases.signup_interactor import SignupInteractor
 
 log = logging.getLogger(__name__)
 
