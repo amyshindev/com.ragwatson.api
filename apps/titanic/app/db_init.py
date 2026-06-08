@@ -4,7 +4,7 @@ from sqlalchemy import select
 
 import database
 from core.config import is_database_configured
-from titanic.adapter.outbound.orm.person_orm import PersonOrm
+from titanic.adapter.outbound.orm.titanic_person_orm import TitanicPersonOrm
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ async def init_titanic_tables() -> None:
 
     async with database.AsyncSessionLocal() as session:
         async with session.begin():
-            result = await session.execute(select(PersonOrm).limit(1))
+            result = await session.execute(select(TitanicPersonOrm).limit(1))
             person = result.scalar_one_or_none()
             if person is None:
                 log.info("Titanic persons table is empty.")
