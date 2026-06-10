@@ -28,4 +28,4 @@ $env:PYTHONIOENCODING = "utf-8"
 chcp 65001 | Out-Null
 Write-Host "Starting backend: http://127.0.0.1:$port (logs appear in this terminal)"
 Write-Host "Stop: Ctrl+C"
-python -m uvicorn main:app --reload --host 127.0.0.1 --port $port
+python main.py

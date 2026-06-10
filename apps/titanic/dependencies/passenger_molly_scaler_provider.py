@@ -1,15 +1,13 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from titanic.adapter.outbound.pg.passenger_molly_scaler_pg_repository import MollyScalerPgRepository
+from titanic.app.ports.output.passenger_molly_scaler_repository import MollyScalerRepository
+from core.matrix.grid_oracle_database_manager import get_db
+from titanic.app.ports.input.passenger_molly_scaler_use_case import MollyScalerUseCase
+from titanic.app.use_cases.passenger_molly_scaler_interactor import MollyScalerInteractor
 
-from db.session import get_db
-from titanic.adapter.outbound.pg.passenger_molly_scaler_pg_repository import PassengerMollyScalerPgRepository
-from titanic.app.ports.input.passenger_molly_scaler_use_case import PassengerMollyScalerUseCase
-from titanic.app.ports.output.passenger_molly_scaler_repository import PassengerMollyScalerRepository
-from titanic.app.use_cases.passenger_molly_scaler_interactor import PassengerMollyScalerInteractor
-
-
-def get_passenger_molly_scaler_use_case(
-    db: AsyncSession = Depends(get_db),
-) -> PassengerMollyScalerUseCase:
-    repository: PassengerMollyScalerRepository = PassengerMollyScalerPgRepository(session=db)
-    return PassengerMollyScalerInteractor(repository=repository)
+def get_molly_scaler_use_case(
+                db : AsyncSession = Depends(get_db)
+) -> MollyScalerUseCase:
+        repository : MollyScalerRepository = MollyScalerPgRepository(session=db)
+        return MollyScalerInteractor(repository=repository)

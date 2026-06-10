@@ -1,31 +1,24 @@
-import logging
-
 from fastapi import APIRouter, Depends
 
-from titanic.adapter.inbound.api.myself_log import log_myself_intro
-from titanic.adapter.inbound.api.schemas.passenger_jack_trainer_schema import PassengerJackTrainerSchema
-from titanic.app.dtos.passenger_jack_trainer_dto import PassengerJackTrainerResponse
-from titanic.app.ports.input.passenger_jack_trainer_use_case import PassengerJackTrainerUseCase
-from titanic.dependencies.passenger_jack_trainer_provider import get_passenger_jack_trainer_use_case
+from titanic.adapter.inbound.api.schemas.passenger_jack_trainer_schema import JackTrainerSchema
+from titanic.app.dtos.passenger_jack_trainer_dto import JackTrainerResponse
+from titanic.app.ports.input.passenger_jack_trainer_use_case import JackTrainerUseCase
+from titanic.dependencies.passenger_jack_trainer_provider import get_jack_trainer_use_case
+'''
+잭 도슨 (Jack Dawson)
+3등석 승객으로 생존 예측 모델 학습을 담당합니다. ML 학습·파이프라인 오케스트레이션 역할에 적합합니다.
 
-log = logging.getLogger(__name__)
+추천 파일명: jack_trainer_router.py (Trainer: 생존 예측 모델 학습)
+'''
+jack_trainer_router = APIRouter(prefix="/titanic/jack", tags=["jack"])
 
-passenger_jack_trainer_router = APIRouter(prefix="/api/jack/v1", tags=["jack"])
-
-
-@passenger_jack_trainer_router.get("/myself")
+@jack_trainer_router.get("/myself")
 async def introduce_myself(
-    use_case: PassengerJackTrainerUseCase = Depends(get_passenger_jack_trainer_use_case),
-) -> PassengerJackTrainerResponse:
-    schema = PassengerJackTrainerSchema(
-        id=8,
-        name="Jack Dawson",
-    )
-
-    log_myself_intro(log, "PassengerJackTrainerRouter", schema.id, schema.name)
-    await use_case.introduce_myself(schema)
-
-    return PassengerJackTrainerResponse(
-        id=schema.id,
-        name=schema.name,
+    jack: JackTrainerUseCase = Depends(get_jack_trainer_use_case)
+) -> JackTrainerResponse:
+    return await jack.introduce_myself(
+        JackTrainerSchema(
+            id=8,
+            name="잭 도슨 (Jack Dawson)"
+        )
     )

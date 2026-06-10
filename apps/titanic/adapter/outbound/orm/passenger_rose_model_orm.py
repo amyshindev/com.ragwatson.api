@@ -2,22 +2,22 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.matrix.oracle_database import Base
+from core.database.grid_neo_theone_base import Base
 from titanic.app.dtos.crew_james_director_dto import BookingCommand
 
 if TYPE_CHECKING:
-    from titanic.adapter.outbound.orm.titanic_person_orm import TitanicPersonOrm
+    from titanic.adapter.outbound.orm.passenger_jack_trainer_orm import PassengerJackTrainerOrm
 
 
-class TitanicBookingOrm(Base):
-    __tablename__ = "titanic_bookings"
+class PassengerRoseModelOrm(Base):
+    __tablename__ = "bookings"
 
-    passenger_id: Mapped[int] = mapped_column(
-        Integer,
-        ForeignKey("titanic_persons.passenger_id", ondelete="CASCADE"),
+    passenger_id: Mapped[str] = mapped_column(
+        String(32),
+        ForeignKey("passengers.passenger_id", ondelete="CASCADE"),
         primary_key=True,
     )
     pclass: Mapped[str] = mapped_column(String(8), nullable=False, default="")
@@ -26,10 +26,10 @@ class TitanicBookingOrm(Base):
     cabin: Mapped[str] = mapped_column(String(32), nullable=False, default="")
     embarked: Mapped[str] = mapped_column(String(8), nullable=False, default="")
 
-    person: Mapped[TitanicPersonOrm] = relationship(back_populates="bookings")
+    passengers: Mapped[PassengerJackTrainerOrm] = relationship(back_populates="bookings")
 
     @classmethod
-    def from_command(cls, command: BookingCommand, *, passenger_id: int) -> TitanicBookingOrm:
+    def from_command(cls, command: BookingCommand, *, passenger_id: str) -> PassengerRoseModelOrm:
         return cls(
             passenger_id=passenger_id,
             pclass=command.pclass,

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class PersonCommand:
-    passenger_id: int
+    passenger_id: str
     name: str
     gender: str
     age: str

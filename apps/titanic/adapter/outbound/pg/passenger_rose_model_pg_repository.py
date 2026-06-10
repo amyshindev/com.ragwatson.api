@@ -1,17 +1,27 @@
+from __future__ import annotations
+
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.app.dtos.passenger_rose_model_dto import PassengerRoseModelQuery, PassengerRoseModelResponse
-from titanic.app.ports.output.passenger_rose_model_repository import PassengerRoseModelRepository
+from titanic.app.dtos.passenger_rose_model_dto import RoseModelQuery, RoseModelResponse
+from titanic.app.ports.output.passenger_rose_model_repository import RoseModelRepository
 
 log = logging.getLogger(__name__)
 
 
-class PassengerRoseModelPgRepository(PassengerRoseModelRepository):
-    def __init__(self, session: AsyncSession) -> None:
-        self._session = session
+class RoseModelPgRepository(RoseModelRepository):
 
-    async def introduce_myself(self, query: PassengerRoseModelQuery) -> PassengerRoseModelResponse:
-        log.info("[%sPgRepository] introduce_myself id=%s", "PassengerRoseModel", query.id)
-        return PassengerRoseModelResponse(id=query.id, name=query.name)
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def introduce_myself(self, query: RoseModelQuery) -> RoseModelResponse:
+        '''로즈 모델의 자기 소개 레포지토리 구현 메소드'''
+        log.info("[RoseModelPgRepository] introduce_myself id=%s", query.id)
+        return RoseModelResponse(
+            id=query.id * 10000,
+            name=query.name + "가 레포지토리에 다녀옴",
+        )
+
+
+PassengerRoseModelPgRepository = RoseModelPgRepository

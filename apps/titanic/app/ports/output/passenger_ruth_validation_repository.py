@@ -1,9 +1,16 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
-from titanic.app.dtos.passenger_ruth_validation_dto import PassengerRuthValidationQuery, PassengerRuthValidationResponse
+from titanic.app.dtos.passenger_ruth_validation_dto import RuthValidationQuery, RuthValidationResponse
 
 
-class PassengerRuthValidationRepository(ABC):
+class RuthValidationRepository(ABC):
+    
     @abstractmethod
-    async def introduce_myself(self, query: PassengerRuthValidationQuery) -> PassengerRuthValidationResponse:
-        ...
+    async def introduce_myself(self, query: RuthValidationQuery) -> RuthValidationResponse:
+        '''루스 검증의 자기 소개 레포지토리 추상 메소드'''
+        pass
+
+
+PassengerRuthValidationRepository = RuthValidationRepository

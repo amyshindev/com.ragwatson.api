@@ -13,8 +13,8 @@ def import_all_models() -> None:
     from domain_intake.models.style_tag import StyleTag, WorkspaceStyleTag  # noqa: F401
     from user.adapter.outbound.orm.admin_model import AdminRecord  # noqa: F401
     from user.adapter.outbound.orm.user_model import UserRecord  # noqa: F401
-    from titanic.adapter.outbound.orm.titanic_booking_orm import TitanicBookingOrm  # noqa: F401
-    from titanic.adapter.outbound.orm.titanic_person_orm import TitanicPersonOrm  # noqa: F401
+    from titanic.adapter.outbound.orm.passenger_jack_trainer_orm import PassengerJackTrainerOrm  # noqa: F401
+    from titanic.adapter.outbound.orm.passenger_rose_model_orm import PassengerRoseModelOrm  # noqa: F401
     from audio.adapter.outbound.orm.audio_feature_orm import AudioFeature  # noqa: F401
     from audio.adapter.outbound.orm.generation_log_orm import GenerationLog  # noqa: F401
     from audio.adapter.outbound.orm.user_event_orm import UserEvent  # noqa: F401

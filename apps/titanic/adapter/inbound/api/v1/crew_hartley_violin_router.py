@@ -1,31 +1,24 @@
-import logging
-
 from fastapi import APIRouter, Depends
 
-from titanic.adapter.inbound.api.myself_log import log_myself_intro
-from titanic.adapter.inbound.api.schemas.crew_hartley_violin_schema import CrewHartleyViolinSchema
-from titanic.app.dtos.crew_hartley_violin_dto import CrewHartleyViolinResponse
-from titanic.app.ports.input.crew_hartley_violin_use_case import CrewHartleyViolinUseCase
-from titanic.dependencies.crew_hartley_violin_provider import get_crew_hartley_violin_use_case
+from titanic.adapter.inbound.api.schemas.crew_hartley_violin_schema import HartleyViolinSchema
+from titanic.app.dtos.crew_hartley_violin_dto import HartleyViolinResponse
+from titanic.app.ports.input.crew_hartley_violin_use_case import HartleyViolinUseCase
+from titanic.dependencies.crew_hartley_violin_provider import get_hartley_violin_use_case
+'''
+월리스 하틀리 (Wallace Hartley)
+타이타닉 밴드의 리더로, 침몰 직전까지 바이올린을 연주하며 승객들을 위로했습니다. 관측·로그·이벤트 흐름을 기록하는 역할에 적합합니다.
 
-log = logging.getLogger(__name__)
+추천 파일명: hartley_violin_router.py (Violin: 타이타닉 밴드 리더)
+'''
+hartley_violin_router = APIRouter(prefix="/titanic/hartley", tags=["hartley"])
 
-crew_hartley_violin_router = APIRouter(prefix="/api/hartley/v1", tags=["hartley"])
-
-
-@crew_hartley_violin_router.get("/myself")
+@hartley_violin_router.get("/myself")
 async def introduce_myself(
-    use_case: CrewHartleyViolinUseCase = Depends(get_crew_hartley_violin_use_case),
-) -> CrewHartleyViolinResponse:
-    schema = CrewHartleyViolinSchema(
-        id=3,
-        name="Wallace Hartley",
-    )
-
-    log_myself_intro(log, "CrewHartleyViolinRouter", schema.id, schema.name)
-    await use_case.introduce_myself(schema)
-
-    return CrewHartleyViolinResponse(
-        id=schema.id,
-        name=schema.name,
+    hartley: HartleyViolinUseCase = Depends(get_hartley_violin_use_case)
+) -> HartleyViolinResponse:
+    return await hartley.introduce_myself(
+        HartleyViolinSchema(
+            id=3,
+            name="월리스 하틀리 (Wallace Hartley)"
+        )
     )

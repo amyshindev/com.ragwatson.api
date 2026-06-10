@@ -1,9 +1,16 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
-from titanic.app.dtos.passenger_rose_model_dto import PassengerRoseModelQuery, PassengerRoseModelResponse
+from titanic.app.dtos.passenger_rose_model_dto import RoseModelQuery, RoseModelResponse
 
 
-class PassengerRoseModelRepository(ABC):
+class RoseModelRepository(ABC):
+    
     @abstractmethod
-    async def introduce_myself(self, query: PassengerRoseModelQuery) -> PassengerRoseModelResponse:
-        ...
+    async def introduce_myself(self, query: RoseModelQuery) -> RoseModelResponse:
+        '''로즈 모델의 자기 소개 레포지토리 추상 메소드'''
+        pass
+
+
+PassengerRoseModelRepository = RoseModelRepository

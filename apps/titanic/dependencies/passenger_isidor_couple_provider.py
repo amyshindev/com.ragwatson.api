@@ -1,15 +1,13 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from titanic.adapter.outbound.pg.passenger_isidor_couple_pg_repository import IsidorCouplePgRepository
+from titanic.app.ports.output.passenger_isidor_couple_repository import IsidorCoupleRepository
+from core.matrix.grid_oracle_database_manager import get_db
+from titanic.app.ports.input.passenger_isidor_couple_use_case import IsidorCoupleUseCase
+from titanic.app.use_cases.passenger_isidor_couple_interactor import IsidorCoupleInteractor
 
-from db.session import get_db
-from titanic.adapter.outbound.pg.passenger_isidor_couple_pg_repository import PassengerIsidorCouplePgRepository
-from titanic.app.ports.input.passenger_isidor_couple_use_case import PassengerIsidorCoupleUseCase
-from titanic.app.ports.output.passenger_isidor_couple_repository import PassengerIsidorCoupleRepository
-from titanic.app.use_cases.passenger_isidor_couple_interactor import PassengerIsidorCoupleInteractor
-
-
-def get_passenger_isidor_couple_use_case(
-    db: AsyncSession = Depends(get_db),
-) -> PassengerIsidorCoupleUseCase:
-    repository: PassengerIsidorCoupleRepository = PassengerIsidorCouplePgRepository(session=db)
-    return PassengerIsidorCoupleInteractor(repository=repository)
+def get_isidor_couple_use_case(
+                db : AsyncSession = Depends(get_db)
+) -> IsidorCoupleUseCase:
+        repository : IsidorCoupleRepository = IsidorCouplePgRepository(session=db)
+        return IsidorCoupleInteractor(repository=repository)

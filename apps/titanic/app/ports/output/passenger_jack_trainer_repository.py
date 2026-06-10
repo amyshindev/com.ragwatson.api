@@ -1,9 +1,16 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 
-from titanic.app.dtos.passenger_jack_trainer_dto import PassengerJackTrainerQuery, PassengerJackTrainerResponse
+from titanic.app.dtos.passenger_jack_trainer_dto import JackTrainerQuery, JackTrainerResponse
 
 
-class PassengerJackTrainerRepository(ABC):
+class JackTrainerRepository(ABC):
+    
     @abstractmethod
-    async def introduce_myself(self, query: PassengerJackTrainerQuery) -> PassengerJackTrainerResponse:
-        ...
+    async def introduce_myself(self, query: JackTrainerQuery) -> JackTrainerResponse:
+        '''잭 트레이너의 자기 소개 레포지토리 추상 메소드'''
+        pass
+
+
+PassengerJackTrainerRepository = JackTrainerRepository

@@ -1,20 +1,23 @@
 from __future__ import annotations
 
-from titanic.adapter.inbound.api.schemas.passenger_rose_model_schema import PassengerRoseModelSchema
-from titanic.app.dtos.passenger_rose_model_dto import PassengerRoseModelQuery, PassengerRoseModelResponse
-from titanic.app.ports.input.passenger_rose_model_use_case import PassengerRoseModelUseCase
-from titanic.app.ports.output.passenger_rose_model_repository import PassengerRoseModelRepository
+from titanic.adapter.inbound.api.schemas.passenger_rose_model_schema import RoseModelSchema
+from titanic.app.dtos.passenger_rose_model_dto import RoseModelQuery, RoseModelResponse
+from titanic.app.ports.input.passenger_rose_model_use_case import RoseModelUseCase
+from titanic.app.ports.output.passenger_rose_model_repository import RoseModelRepository
 
 
-class PassengerRoseModelInteractor(PassengerRoseModelUseCase):
-
-    def __init__(self, repository: PassengerRoseModelRepository):
+class RoseModelInteractor(RoseModelUseCase):
+    
+    def __init__(self, repository: RoseModelRepository):
         self.repository = repository
 
-    async def introduce_myself(self, schema: PassengerRoseModelSchema) -> PassengerRoseModelResponse:
-        '''로즈 모델의 자기소개 인터렉트'''
-        query = PassengerRoseModelQuery(
+    async def introduce_myself(self, schema: RoseModelSchema) -> RoseModelResponse:
+        '''?? ??? ???? ????'''
+
+        return await self.repository.introduce_myself(RoseModelQuery(
             id = schema.id,
             name = schema.name
-        )
-        return await self.repository.introduce_myself(query)
+        ))
+
+
+PassengerRoseModelInteractor = RoseModelInteractor

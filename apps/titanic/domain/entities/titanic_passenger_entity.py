@@ -1,17 +1,19 @@
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass
 class TitanicPassenger:
-    passenger_id: str
-    survived: str
-    pclass: str
+    """CSV/API용 타이타닉 승객 플랫 엔티티."""
+
+    passenger_id: int
+    survived: int | str
+    pclass: int | str
     name: str
     gender: str
-    age: str
-    sibsp: str
-    parch: str
+    age: float | str | None
+    sibsp: int | str
+    parch: int | str
     ticket: str
-    fare: str
+    fare: float | str
     cabin: str
     embarked: str

@@ -2,20 +2,20 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Integer, String
+from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from core.matrix.oracle_database import Base
+from core.database.grid_neo_theone_base import Base
 from titanic.app.dtos.crew_james_director_dto import PersonCommand
 
 if TYPE_CHECKING:
-    from titanic.adapter.outbound.orm.titanic_booking_orm import TitanicBookingOrm
+    from titanic.adapter.outbound.orm.passenger_rose_model_orm import PassengerRoseModelOrm
 
 
-class TitanicPersonOrm(Base):
-    __tablename__ = "titanic_persons"
+class PassengerJackTrainerOrm(Base):
+    __tablename__ = "passengers"
 
-    passenger_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    passenger_id: Mapped[str] = mapped_column(String(32), primary_key=True)
     name: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     gender: Mapped[str] = mapped_column(String(16), nullable=False, default="")
     age: Mapped[str] = mapped_column(String(16), nullable=False, default="")
@@ -23,13 +23,13 @@ class TitanicPersonOrm(Base):
     parch: Mapped[str] = mapped_column(String(16), nullable=False, default="")
     survived: Mapped[str] = mapped_column(String(8), nullable=False, default="")
 
-    bookings: Mapped[list[TitanicBookingOrm]] = relationship(
-        back_populates="person",
+    bookings: Mapped[list[PassengerRoseModelOrm]] = relationship(
+        back_populates="passengers",
         cascade="all, delete-orphan",
     )
 
     @classmethod
-    def from_command(cls, command: PersonCommand) -> TitanicPersonOrm:
+    def from_command(cls, command: PersonCommand) -> PassengerJackTrainerOrm:
         return cls(
             passenger_id=command.passenger_id,
             name=command.name,

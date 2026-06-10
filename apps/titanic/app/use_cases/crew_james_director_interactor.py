@@ -1,20 +1,23 @@
 from __future__ import annotations
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from titanic.adapter.inbound.api.schemas.crew_james_director_schema import CrewJamesDirectorSchema
 from titanic.app.ports.input.crew_james_director_use_case import JamesDirectorUseCase
 from titanic.app.ports.output.crew_james_director_repository import JamesDirectorRepository
 from titanic.app.dtos.crew_james_director_dto import BookingCommand, PersonCommand
 
 
-def _parse_passenger_id(raw: str | None) -> int | None:
+def _parse_passenger_id(raw: str | None) -> str | None:
     text = (raw or "").strip()
     if not text:
         return None
-    return int(text)
+    return text
 
 
 class JamesDirectorInteractor(JamesDirectorUseCase):
-    def __init__(self, repository: JamesDirectorRepository) -> None:
+    def __init__(self, session: AsyncSession, repository: JamesDirectorRepository) -> None:
+        self._session = session
         self.repository = repository
 
     async def upload_titanic_file(self, schema: list[CrewJamesDirectorSchema]) -> dict[str, int]:
@@ -45,5 +48,10 @@ class JamesDirectorInteractor(JamesDirectorUseCase):
                 )
             )
 
-        saved = await self.repository.receive_uploaded_records(person_commands, booking_commands)
+        try:
+            saved = await self.repository.receive_uploaded_records(person_commands, booking_commands)
+            await self._session.commit()
+        except Exception:
+            await self._session.rollback()
+            raise
         return {"saved": saved}

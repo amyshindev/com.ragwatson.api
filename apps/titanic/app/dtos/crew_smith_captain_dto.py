@@ -1,13 +1,18 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
-@dataclass
-class CrewSmithCaptainQuery:
-    id: int
+@dataclass(frozen=True) # 생성 후 수정 불가하도록 설정
+class SmithCaptainQuery:
+    
+    id: int   # 직관적인 타입 변경
+    name: str
+
+@dataclass(frozen=True) # 생성 후 수정 불가하도록 설정
+class SmithCaptainResponse:
+    
+    id: int   # 직관적인 타입 변경
     name: str
 
 
-@dataclass
-class CrewSmithCaptainResponse:
-    id: int
-    name: str
+CrewSmithCaptainQuery = SmithCaptainQuery
+CrewSmithCaptainResponse = SmithCaptainResponse

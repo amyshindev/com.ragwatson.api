@@ -10,19 +10,15 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.orm import DeclarativeBase
 
 from core.config import get_database_url, is_database_configured
+from core.database.grid_neo_theone_base import Base
 
 _engine: AsyncEngine | None = None
 _session_factory: async_sessionmaker[AsyncSession] | None = None
 
 engine: AsyncEngine | None = None
 AsyncSessionLocal: async_sessionmaker[AsyncSession] | None = None
-
-
-class Base(DeclarativeBase):
-    pass
 
 
 def _ensure_engine() -> None:
@@ -81,6 +77,7 @@ __all__ = [
     "AsyncSessionLocal",
     "Base",
     "DbSession",
+    "_ensure_engine",
     "dispose_engine",
     "engine",
     "get_db",

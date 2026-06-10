@@ -1,31 +1,24 @@
-import logging
-
 from fastapi import APIRouter, Depends
 
-from titanic.adapter.inbound.api.myself_log import log_myself_intro
-from titanic.adapter.inbound.api.schemas.passenger_isidor_couple_schema import PassengerIsidorCoupleSchema
-from titanic.app.dtos.passenger_isidor_couple_dto import PassengerIsidorCoupleResponse
-from titanic.app.ports.input.passenger_isidor_couple_use_case import PassengerIsidorCoupleUseCase
-from titanic.dependencies.passenger_isidor_couple_provider import get_passenger_isidor_couple_use_case
+from titanic.adapter.inbound.api.schemas.passenger_isidor_couple_schema import IsidorCoupleSchema
+from titanic.app.dtos.passenger_isidor_couple_dto import IsidorCoupleResponse
+from titanic.app.ports.input.passenger_isidor_couple_use_case import IsidorCoupleUseCase
+from titanic.dependencies.passenger_isidor_couple_provider import get_isidor_couple_use_case
+'''
+이시도르 스트라우스 (Isidor Straus)
+1등석 승객으로 부인과 함께 탑승한 부부입니다. 페어 데이터·관계형 레코드 처리 역할에 적합합니다.
 
-log = logging.getLogger(__name__)
+추천 파일명: isidor_couple_router.py (Couple: 부부 동반 승객)
+'''
+isidor_couple_router = APIRouter(prefix="/titanic/isidor", tags=["isidor"])
 
-passenger_isidor_couple_router = APIRouter(prefix="/api/isidor/v1", tags=["isidor"])
-
-
-@passenger_isidor_couple_router.get("/myself")
+@isidor_couple_router.get("/myself")
 async def introduce_myself(
-    use_case: PassengerIsidorCoupleUseCase = Depends(get_passenger_isidor_couple_use_case),
-) -> PassengerIsidorCoupleResponse:
-    schema = PassengerIsidorCoupleSchema(
-        id=7,
-        name="Isidor Straus",
-    )
-
-    log_myself_intro(log, "PassengerIsidorCoupleRouter", schema.id, schema.name)
-    await use_case.introduce_myself(schema)
-
-    return PassengerIsidorCoupleResponse(
-        id=schema.id,
-        name=schema.name,
+    isidor: IsidorCoupleUseCase = Depends(get_isidor_couple_use_case)
+) -> IsidorCoupleResponse:
+    return await isidor.introduce_myself(
+        IsidorCoupleSchema(
+            id=7,
+            name="이시도르 스트라우스 (Isidor Straus)"
+        )
     )

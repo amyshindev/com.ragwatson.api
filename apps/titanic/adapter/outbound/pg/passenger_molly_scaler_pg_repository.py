@@ -1,17 +1,27 @@
+from __future__ import annotations
+
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.app.dtos.passenger_molly_scaler_dto import PassengerMollyScalerQuery, PassengerMollyScalerResponse
-from titanic.app.ports.output.passenger_molly_scaler_repository import PassengerMollyScalerRepository
+from titanic.app.dtos.passenger_molly_scaler_dto import MollyScalerQuery, MollyScalerResponse
+from titanic.app.ports.output.passenger_molly_scaler_repository import MollyScalerRepository
 
 log = logging.getLogger(__name__)
 
 
-class PassengerMollyScalerPgRepository(PassengerMollyScalerRepository):
-    def __init__(self, session: AsyncSession) -> None:
-        self._session = session
+class MollyScalerPgRepository(MollyScalerRepository):
 
-    async def introduce_myself(self, query: PassengerMollyScalerQuery) -> PassengerMollyScalerResponse:
-        log.info("[%sPgRepository] introduce_myself id=%s", "PassengerMollyScaler", query.id)
-        return PassengerMollyScalerResponse(id=query.id, name=query.name)
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def introduce_myself(self, query: MollyScalerQuery) -> MollyScalerResponse:
+        '''몰리 스케일러의 자기 소개 레포지토리 구현 메소드'''
+        log.info("[MollyScalerPgRepository] introduce_myself id=%s", query.id)
+        return MollyScalerResponse(
+            id=query.id * 10000,
+            name=query.name + "가 레포지토리에 다녀옴",
+        )
+
+
+PassengerMollyScalerPgRepository = MollyScalerPgRepository

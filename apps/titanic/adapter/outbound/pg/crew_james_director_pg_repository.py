@@ -6,8 +6,8 @@ from sqlalchemy import delete
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.adapter.outbound.orm.titanic_booking_orm import TitanicBookingOrm
-from titanic.adapter.outbound.orm.titanic_person_orm import TitanicPersonOrm
+from titanic.adapter.outbound.orm.passenger_jack_trainer_orm import PassengerJackTrainerOrm
+from titanic.adapter.outbound.orm.passenger_rose_model_orm import PassengerRoseModelOrm
 from titanic.app.dtos.crew_james_director_dto import BookingCommand, PersonCommand
 from titanic.app.ports.output.crew_james_director_repository import JamesDirectorRepository
 
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 _BATCH_SIZE = 500
 
 
-def _person_row(command: PersonCommand) -> dict[str, str | int]:
+def _person_row(command: PersonCommand) -> dict[str, str]:
     return {
         "passenger_id": command.passenger_id,
         "name": command.name,
@@ -28,7 +28,7 @@ def _person_row(command: PersonCommand) -> dict[str, str | int]:
     }
 
 
-def _booking_row(passenger_id: int, command: BookingCommand) -> dict[str, str | int]:
+def _booking_row(passenger_id: str, command: BookingCommand) -> dict[str, str]:
     return {
         "passenger_id": passenger_id,
         "pclass": command.pclass,
@@ -64,9 +64,9 @@ class CrewJamesDirectorPgRepository(JamesDirectorRepository):
 
         for start in range(0, len(person_commands), _BATCH_SIZE):
             chunk = person_commands[start : start + _BATCH_SIZE]
-            insert_stmt = pg_insert(TitanicPersonOrm).values([_person_row(cmd) for cmd in chunk])
+            insert_stmt = pg_insert(PassengerJackTrainerOrm).values([_person_row(cmd) for cmd in chunk])
             upsert_stmt = insert_stmt.on_conflict_do_update(
-                index_elements=[TitanicPersonOrm.passenger_id],
+                index_elements=[PassengerJackTrainerOrm.passenger_id],
                 set_={
                     "name": insert_stmt.excluded.name,
                     "gender": insert_stmt.excluded.gender,
@@ -80,7 +80,7 @@ class CrewJamesDirectorPgRepository(JamesDirectorRepository):
 
         if passenger_ids:
             await self._session.execute(
-                delete(TitanicBookingOrm).where(TitanicBookingOrm.passenger_id.in_(passenger_ids))
+                delete(PassengerRoseModelOrm).where(PassengerRoseModelOrm.passenger_id.in_(passenger_ids))
             )
 
         booking_rows = [
@@ -90,7 +90,7 @@ class CrewJamesDirectorPgRepository(JamesDirectorRepository):
 
         for start in range(0, len(booking_rows), _BATCH_SIZE):
             chunk = booking_rows[start : start + _BATCH_SIZE]
-            await self._session.execute(pg_insert(TitanicBookingOrm).values(chunk))
+            await self._session.execute(pg_insert(PassengerRoseModelOrm).values(chunk))
 
         count = len(person_commands)
         log.info("[CrewJamesDirectorPgRepository] receive_uploaded_records 완료 — rows=%s", count)

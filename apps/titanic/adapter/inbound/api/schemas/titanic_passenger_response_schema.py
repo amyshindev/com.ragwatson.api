@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 
-from titanic.domain.entities.titanic_passenger_entity_passenger_entity import TitanicPassenger
+from titanic.domain.entities.titanic_passenger_entity import TitanicPassenger
 
 
 class TitanicPassengerCreateResponse(BaseModel):

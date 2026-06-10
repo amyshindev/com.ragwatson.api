@@ -1,17 +1,27 @@
+from __future__ import annotations
+
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.app.dtos.crew_andrews_architect_dto import CrewAndrewsArchitectQuery, CrewAndrewsArchitectResponse
-from titanic.app.ports.output.crew_andrews_architect_repository import CrewAndrewsArchitectRepository
+from titanic.app.dtos.crew_andrews_architect_dto import AndrewsArchitectQuery, AndrewsArchitectResponse
+from titanic.app.ports.output.crew_andrews_architect_repository import AndrewsArchitectRepository
 
 log = logging.getLogger(__name__)
 
 
-class CrewAndrewsArchitectPgRepository(CrewAndrewsArchitectRepository):
-    def __init__(self, session: AsyncSession) -> None:
-        self._session = session
+class AndrewsArchitectPgRepository(AndrewsArchitectRepository):
 
-    async def introduce_myself(self, query: CrewAndrewsArchitectQuery) -> CrewAndrewsArchitectResponse:
-        log.info("[%sPgRepository] introduce_myself id=%s", "CrewAndrewsArchitect", query.id)
-        return CrewAndrewsArchitectResponse(id=query.id, name=query.name)
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def introduce_myself(self, query: AndrewsArchitectQuery) -> AndrewsArchitectResponse:
+        '''앤드류 설계자의 자기 소개 레포지토리 구현 메소드'''
+        log.info("[AndrewsArchitectPgRepository] introduce_myself id=%s", query.id)
+        return AndrewsArchitectResponse(
+            id=query.id * 10000,
+            name=query.name + "가 레포지토리에 다녀옴",
+        )
+
+
+CrewAndrewsArchitectPgRepository = AndrewsArchitectPgRepository

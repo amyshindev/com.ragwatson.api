@@ -1,17 +1,27 @@
+from __future__ import annotations
+
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.app.dtos.passenger_cal_tester_dto import PassengerCalTesterQuery, PassengerCalTesterResponse
-from titanic.app.ports.output.passenger_cal_tester_repository import PassengerCalTesterRepository
+from titanic.app.dtos.passenger_cal_tester_dto import CalTesterQuery, CalTesterResponse
+from titanic.app.ports.output.passenger_cal_tester_repository import CalTesterRepository
 
 log = logging.getLogger(__name__)
 
 
-class PassengerCalTesterPgRepository(PassengerCalTesterRepository):
-    def __init__(self, session: AsyncSession) -> None:
-        self._session = session
+class CalTesterPgRepository(CalTesterRepository):
 
-    async def introduce_myself(self, query: PassengerCalTesterQuery) -> PassengerCalTesterResponse:
-        log.info("[%sPgRepository] introduce_myself id=%s", "PassengerCalTester", query.id)
-        return PassengerCalTesterResponse(id=query.id, name=query.name)
+    def __init__(self, session: AsyncSession) -> None:
+        self.session = session
+
+    async def introduce_myself(self, query: CalTesterQuery) -> CalTesterResponse:
+        '''칼 테스터의 자기 소개 레포지토리 구현 메소드'''
+        log.info("[CalTesterPgRepository] introduce_myself id=%s", query.id)
+        return CalTesterResponse(
+            id=query.id * 10000,
+            name=query.name + "가 레포지토리에 다녀옴",
+        )
+
+
+PassengerCalTesterPgRepository = CalTesterPgRepository
