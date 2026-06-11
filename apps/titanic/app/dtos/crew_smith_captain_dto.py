@@ -14,5 +14,11 @@ class SmithCaptainResponse:
     name: str
 
 
+@dataclass(frozen=True)
+class SmithCaptainChatQuery:
+    message: str
+
+
 CrewSmithCaptainQuery = SmithCaptainQuery
 CrewSmithCaptainResponse = SmithCaptainResponse
+CrewSmithCaptainChatQuery = SmithCaptainChatQuery

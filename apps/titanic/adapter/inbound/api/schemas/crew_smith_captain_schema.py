@@ -15,9 +15,30 @@ class SmithCaptainSchema(BaseModel):
         }
     }
 
-class SmithCaptainChatRequest(BaseModel):
-    message: str = Field(..., min_length=1, description="사용자 메시지")
 
-    
-class SmithCaptainChatResponse(BaseModel):
+class ChatSchema(BaseModel):
+
+    message: str = Field(..., min_length=1, description="사용자가 채팅창에 입력한 자연어 메시지")
+    # POST /titanic/smith/chat 요청 본문
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "message": "선장님, 오늘 항해 날씨는 어떻습니까?",
+            }
+        }
+    }
+
+
+class ChatResponseSchema(BaseModel):
+
     reply: str = Field(..., description="선장의 답변")
+    # POST /titanic/smith/chat 응답 본문
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "reply": "오늘 항해는 맑은 날씨가 예상됩니다. 걱정 마십시오.",
+            }
+        }
+    }

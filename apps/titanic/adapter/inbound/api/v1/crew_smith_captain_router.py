@@ -1,17 +1,15 @@
-from fastapi import APIRouter, Depends
+from typing import Annotated
 
-from titanic.adapter.inbound.api.schemas.crew_smith_captain_schema import SmithCaptainSchema
+from fastapi import APIRouter, Body, Depends, HTTPException
+
+from titanic.adapter.inbound.api.schemas.crew_smith_captain_schema import (
+    ChatResponseSchema,
+    ChatSchema,
+    SmithCaptainSchema,
+)
 from titanic.app.dtos.crew_smith_captain_dto import SmithCaptainResponse
 from titanic.app.ports.input.crew_smith_captain_use_case import SmithCaptainUseCase
 from titanic.dependencies.crew_smith_captain_provider import get_smith_captain_use_case
-
-from fastapi import APIRouter, Depends, HTTPException
-
-from titanic.adapter.inbound.api.schemas.crew_smith_captain_schema import (
-    SmithCaptainChatRequest,
-    SmithCaptainChatResponse,
-    SmithCaptainSchema,
-)
 
 '''
 에드워드 스미스 (Edward Smith)
@@ -22,19 +20,20 @@ from titanic.adapter.inbound.api.schemas.crew_smith_captain_schema import (
 smith_captain_router = APIRouter(prefix="/titanic/smith", tags=["smith"])
 
 
-@smith_captain_router.post("/chat", response_model=SmithCaptainChatResponse)
-async def chat_with_smith_captain(
-    body: SmithCaptainChatRequest,
+@smith_captain_router.post("/chat", response_model=ChatResponseSchema)
+async def chat(
+    schema: Annotated[ChatSchema, Body()],
     smith: SmithCaptainUseCase = Depends(get_smith_captain_use_case),
-) -> SmithCaptainChatResponse:
+) -> ChatResponseSchema:
     try:
-        reply = await smith.chat_with_smith_captain(body.message)
+        reply = await smith.chat(schema)
+
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
-    return SmithCaptainChatResponse(reply=reply)
+    return ChatResponseSchema(reply=reply)
 
 
 @smith_captain_router.get("/myself")

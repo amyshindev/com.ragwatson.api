@@ -4,6 +4,7 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from titanic.adapter.inbound.api.schemas.crew_smith_captain_schema import ChatSchema
 from titanic.app.dtos.crew_smith_captain_dto import SmithCaptainQuery, SmithCaptainResponse
 from titanic.app.ports.output.crew_smith_captain_repository import SmithCaptainRepository
 import asyncio
@@ -26,7 +27,7 @@ class SmithCaptainPgRepository(SmithCaptainRepository):
         )
 
 
-    async def chat_with_smith_captain(self, message: str) -> str:
+    async def chat(self, schema: ChatSchema) -> str:
         if not keymaker.has_gemini():
             raise RuntimeError("GEMINI_API_KEY is not set")
 
@@ -39,7 +40,7 @@ class SmithCaptainPgRepository(SmithCaptainRepository):
             "1912년 항해와 선박 운영에 대한 질문에 답하되, 항상 선장 캐릭터를 유지하세요. "
             "답변은 한국어로 간결하고 정중하게 작성하세요."
         )
-        prompt = f"{persona}\n\n사용자: {message}"
+        prompt = f"{persona}\n\n사용자: {schema.message}"
 
         def _generate():
             return model.generate_content(prompt)
