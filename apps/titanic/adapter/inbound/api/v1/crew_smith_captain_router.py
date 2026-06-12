@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException
@@ -17,23 +18,23 @@ from titanic.dependencies.crew_smith_captain_provider import get_smith_captain_u
 
 추천 파일명: smith_captain_router.py (Captain: 타이타닉호 선장)
 '''
+logger = logging.getLogger(__name__)
+
 smith_captain_router = APIRouter(prefix="/titanic/smith", tags=["smith"])
 
 
-@smith_captain_router.post("/chat", response_model=ChatResponseSchema)
+
+@smith_captain_router.post("/chat")
 async def chat(
     schema: Annotated[ChatSchema, Body()],
     smith: SmithCaptainUseCase = Depends(get_smith_captain_use_case),
 ) -> ChatResponseSchema:
-    try:
-        reply = await smith.chat(schema)
+    logger.info(
+        "POST /titanic/smith/chat request body: message=%r",
+        schema.message,
+    )
+    return ChatResponseSchema(reply=await smith.chat(schema))
 
-    except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
-    except Exception as exc:
-        raise HTTPException(status_code=502, detail=str(exc)) from exc
-
-    return ChatResponseSchema(reply=reply)
 
 
 @smith_captain_router.get("/myself")
