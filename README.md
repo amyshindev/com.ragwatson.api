@@ -1,3 +1,9 @@
+---
+tags:
+  - harness/readme
+graph-group: readme
+---
+
 # com.ragwatson
 
 여러 하위 프로젝트(예: `agora/`)를 두는 워크스페이스 저장소다. 이 README는 **코드베이스 소개**와 함께, Cursor에서 에이전트 행동을 묶는 **하네스 엔지니어링** 문서로의 진입점이다.

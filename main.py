@@ -17,7 +17,7 @@ from sqlalchemy import text
 from adapters.db_check_adapter import db_check_adapter
 from domain_intake.router import router as domain_intake_router
 from audio.adapter.inbound.api import audio_router
-from titanic.adapter.inbound.api import titanic_router
+from titanic.adapter.inbound.api.router_registry import titanic_router
 from core.config import is_database_configured
 from database import dispose_engine
 from db.session import DbSession

@@ -1,0 +1,48 @@
+# Cursor Execution Harness (Backend)
+
+**Canonical:** [`../CLAUDE.md`](../CLAUDE.md) · **Backend scope:** [`CLAUDE.md`](CLAUDE.md).
+
+> Inherits root blueprint. **`docs/DevOps/Backend/BACKEND_RULES.md`** wins on implementation detail.
+
+---
+
+## Before `backend/` changes
+
+1. [`../CLAUDE.md`](../CLAUDE.md) — blueprint + agent behavior
+2. [`CLAUDE.md`](CLAUDE.md) — module pathing, `apps/` siblings, hexagonal layers
+3. [`docs/DevOps/Backend/BACKEND_RULES.md`](../docs/DevOps/Backend/BACKEND_RULES.md) — layers, DB, API
+4. **`backend/apps/{app}/.docs/CLAUDE.md`** when editing that app (e.g. [`apps/titanic/_docs/CLAUDE.md`](apps/titanic/_docs/CLAUDE.md))
+
+---
+
+## Quick rules
+
+| Item | Rule |
+|------|------|
+| `PYTHONPATH` | `apps` — import `titanic.*`, `core.*` (not `backend.apps.*`) |
+| Entry | `main.py` — routers + middleware only |
+| Run | `start-backend.ps1` → port **8000** |
+| Layers | router → `dependencies/*_provider` → interactor → repository |
+| `Depends` | Only in providers and routers — **not** inside interactors |
+| Secrets | Never commit `backend/.env` |
+
+---
+
+## Sibling apps
+
+Each peer under `apps/` (`titanic`, `audio`, `user`, …) owns hexagonal tree + optional `.docs/CLAUDE.md` + `.docs/.cursorrules`.
+
+---
+
+## Agent behavior (summary)
+
+→ [`../CLAUDE.md`](../CLAUDE.md) § Agent Behavioral Guidelines: think · simplify · surgical · goal-driven.
+
+---
+
+## Self-check
+
+- [ ] Correct app `.docs/` doc read?
+- [ ] Logic in the right layer?
+- [ ] DB writes have commit/rollback?
+- [ ] No secrets in diff?

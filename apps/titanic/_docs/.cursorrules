@@ -1,0 +1,47 @@
+# Cursor Execution Harness (Titanic App)
+
+**Canonical:** [`../../../../CLAUDE.md`](../../../../CLAUDE.md) · **Backend:** [`../../../CLAUDE.md`](../../../CLAUDE.md) · **Domain:** [`CLAUDE.md`](CLAUDE.md).
+
+---
+
+## Before `apps/titanic/` changes
+
+1. [`CLAUDE.md`](CLAUDE.md) — personas, APIs, Smith/Rose/Jack flow
+2. [`../../../CLAUDE.md`](../../../CLAUDE.md) — hexagonal layers, `Depends`, module pathing
+3. [`docs/DevOps/Backend/BACKEND_RULES.md`](../../../../docs/DevOps/Backend/BACKEND_RULES.md)
+
+Frontend work on Titanic pages: also [`../../../../frontend/CLAUDE.md`](../../../../frontend/CLAUDE.md).
+
+---
+
+## Quick rules
+
+| Item | Rule |
+|------|------|
+| Naming | `crew_*` (officers) · `passenger_*` (passengers / ML roles) |
+| API prefix | `/titanic/{character}` — registered in `adapter/inbound/api/__init__.py` |
+| Schemas | Pydantic + `model_config.json_schema_extra.example` |
+| Rose | Single `RoseModelInteractor` (ML + character) — `get_rose_model` provider |
+| Smith chat | `POST /titanic/smith/chat` `{ message }` → `{ reply }` (Gemini via keymaker) |
+| Wire-up | `jack.train_rose_model(rose)` in `SmithCaptainInteractor.__init__` |
+
+---
+
+## New characters / new apps
+
+- New **character** within Titanic: copy router + interactor + provider triple; register in `__init__.py`.
+- New **sibling app**: `backend/apps/{name}/` + `.docs/CLAUDE.md` — do not nest under `titanic/`.
+
+---
+
+## Agent behavior (summary)
+
+→ [`../../../../CLAUDE.md`](../../../../CLAUDE.md) § Agent Behavioral Guidelines.
+
+---
+
+## Self-check
+
+- [ ] `crew_*` / `passenger_*` naming consistent?
+- [ ] `Depends` only in `dependencies/`?
+- [ ] Frontend `lib/titanic-api.ts` paths aligned?
