@@ -29,7 +29,7 @@ class TrainingRecord(BaseModel):
     visual_embedding: list[float] | None = None
     prompt_params: dict[str, Any] | None = None
     model_version: str | None = None
-    target_platform: str | None = None
+    platform_id: int | None = None
     loop_duration_sec: float | None = None
     loop_beat_aligned: bool | None = None
     frame_rate: int | None = None
@@ -38,7 +38,7 @@ class TrainingRecord(BaseModel):
     mood_match_score: int | None = None
     loop_smoothness_score: int | None = None
     beat_sync_score: int | None = None
-    platform_rated: str | None = None
+    rating_platform_id: int | None = None
     ab_winner: bool | None = None
 
 

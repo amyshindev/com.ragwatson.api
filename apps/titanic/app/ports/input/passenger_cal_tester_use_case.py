@@ -10,6 +10,11 @@ from titanic.app.dtos.passenger_cal_tester_dto import CalTesterResponse
 class CalTesterUseCase(ABC):
 
     @abstractmethod
+    async def get_model_test(self, test_set) -> CalTesterResponse:
+        '''로즈가 제안한 모델을 테스트하는 메소드'''
+        
+
+    @abstractmethod
     async def introduce_myself(self, schema: CalTesterSchema) -> CalTesterResponse:
         '''칼 테스터의 자기소개 메소드'''
         pass

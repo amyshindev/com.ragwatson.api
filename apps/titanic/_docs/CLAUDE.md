@@ -146,3 +146,14 @@ Do **not** nest under `titanic/`. Add `backend/apps/{new_app}/` with the same he
 - Backend: [`../../../CLAUDE.md`](../../../CLAUDE.md)
 - Backend rules: [`../../../../docs/DevOps/Backend/BACKEND_RULES.md`](../../../../docs/DevOps/Backend/BACKEND_RULES.md)
 - Project notes (wiki): `docs/타이타닉개발/` when present in the `docs` submodule
+
+
+## 타이타닉 도메인 문서 연결
+
+* 타이타닉 도메인 문서 연결
+* 타이타닉 피처 정리: [[titanic-features]]
+* 타이타닉 머신러닝: [[titanic-machine_learning]]
+* 타이타닉 ERD: [[TITANIC-ERD]]
+* 타이타닉 NF: [[titanic-nf]]
+* 타이타닉 알고리즘: [[titanic-algorithms]]
+* 

@@ -4,6 +4,19 @@ from audio.adapter.inbound.api.schemas.audio_features import (
     AudioFeatureStatusRead,
     AudioFeatureVisualRead,
 )
+from audio.adapter.inbound.api.schemas.audio_uploads import (
+    AudioUploadCreate,
+    AudioUploadRead,
+    AudioUploadStatusRead,
+)
+from audio.adapter.inbound.api.schemas.download_logs import (
+    DownloadLogCreate,
+    DownloadLogRead,
+)
+from audio.adapter.inbound.api.schemas.generation_assets import (
+    GenerationAssetCreate,
+    GenerationAssetRead,
+)
 from audio.adapter.inbound.api.schemas.generation_logs import (
     GenerationLogCreate,
     GenerationLogPlatformRead,
@@ -29,7 +42,14 @@ __all__ = [
     "AudioFeatureRead",
     "AudioFeatureStatusRead",
     "AudioFeatureVisualRead",
+    "AudioUploadCreate",
+    "AudioUploadRead",
+    "AudioUploadStatusRead",
     "DatasetStatsRead",
+    "DownloadLogCreate",
+    "DownloadLogRead",
+    "GenerationAssetCreate",
+    "GenerationAssetRead",
     "GenerationLogCreate",
     "GenerationLogPlatformRead",
     "GenerationLogRead",

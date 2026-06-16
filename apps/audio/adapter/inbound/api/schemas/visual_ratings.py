@@ -12,7 +12,7 @@ class VisualRatingCreate(BaseModel):
     mood_match_score: int | None = Field(None, ge=1, le=5)
     ab_test_id: str | None = None
     ab_winner: bool | None = None
-    platform: str | None = None
+    platform_id: int | None = Field(None, ge=1)
     loop_smoothness_score: int | None = Field(None, ge=1, le=5)
     beat_sync_score: int | None = Field(None, ge=1, le=5)
     flag: str = "ok"
@@ -31,7 +31,7 @@ class VisualRatingRead(BaseModel):
     mood_match_score: int | None
     ab_test_id: str | None
     ab_winner: bool | None
-    platform: str | None
+    platform_id: int | None
     loop_smoothness_score: int | None
     beat_sync_score: int | None
     flag: str
@@ -57,7 +57,7 @@ class AbTestResultRead(BaseModel):
 
 class VisualRatingPlatformAvgRead(BaseModel):
     generation_id: UUID
-    platform: str | None
+    platform_id: int | None
     avg_loop_smoothness: float | None
     avg_beat_sync: float | None
     total_count: int

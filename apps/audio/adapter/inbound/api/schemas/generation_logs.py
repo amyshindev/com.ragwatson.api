@@ -16,7 +16,7 @@ class GenerationLogCreate(BaseModel):
     render_ms: int | None = Field(None, ge=0)
     quality_score: float | None = None
     style_vector: list[float] | None = None
-    target_platform: str | None = None
+    platform_id: int | None = Field(None, ge=1)
     aspect_ratio: str | None = None
     target_duration_sec: float | None = None
     loop_duration_sec: float | None = None
@@ -41,7 +41,7 @@ class GenerationLogRead(BaseModel):
     render_ms: int | None
     quality_score: float | None
     style_vector: list[float] | None
-    target_platform: str | None
+    platform_id: int | None
     aspect_ratio: str | None
     target_duration_sec: float | None
     loop_duration_sec: float | None
@@ -68,7 +68,7 @@ class GenerationLogPlatformRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
-    target_platform: str | None
+    platform_id: int | None
     aspect_ratio: str | None
     target_duration_sec: float | None
     loop_duration_sec: float | None

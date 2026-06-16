@@ -24,7 +24,7 @@ class ChatSchema(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
-                "message": "선장님, 오늘 항해 날씨는 어떻습니까?",
+                "message": "탑승객이 몇 명이야?",
             }
         }
     }

@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 
+from pydantic import BaseModel
+
 
 @dataclass(frozen=True) # 생성 후 수정 불가하도록 설정
 class SmithCaptainQuery:
@@ -17,6 +19,10 @@ class SmithCaptainResponse:
 @dataclass(frozen=True)
 class SmithCaptainChatQuery:
     message: str
+
+
+class ChatResponse(BaseModel):
+    text: str
 
 
 CrewSmithCaptainQuery = SmithCaptainQuery

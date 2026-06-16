@@ -11,6 +11,16 @@ class WalterRoasterInteractor(WalterRoasterUseCase):
     def __init__(self, repository: WalterRoasterRepository):
         self.repository = repository
 
+
+    async def get_train_set(self) -> WalterRoasterResponse:
+        '''월터가 DB에서 train set만 가져오는 메소드'''
+
+
+    async def get_test_set(self) -> WalterRoasterResponse:
+        '''월터가 DB에서 test set만 가져오는 메소드'''
+
+
+
     async def introduce_myself(self, schema: WalterRoasterSchema) -> WalterRoasterResponse:
         '''?? ???? ???? ????'''
 

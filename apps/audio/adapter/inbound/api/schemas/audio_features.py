@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class AudioFeatureCreate(BaseModel):
     user_id: int = Field(..., ge=1)
     workspace_id: int | None = None
+    audio_upload_id: UUID | None = None
     bpm: float | None = Field(None, ge=20, le=300)
     energy: float | None = Field(None, ge=0.0, le=1.0)
     valence: float | None = Field(None, ge=0.0, le=1.0)
@@ -30,6 +31,7 @@ class AudioFeatureRead(BaseModel):
     id: UUID
     user_id: int
     workspace_id: int | None
+    audio_upload_id: UUID | None
     bpm: float | None
     energy: float | None
     valence: float | None

@@ -9,7 +9,7 @@ from titanic.app.use_cases.crew_smith_captain_interactor import SmithCaptainInte
 from titanic.app.use_cases.passenger_jack_trainer_interactor import JackTrainerInteractor
 from titanic.app.use_cases.passenger_rose_model_interactor import RoseModelInteractor
 from titanic.dependencies.passenger_jack_trainer_provider import get_jack_trainer_use_case
-from titanic.dependencies.passenger_rose_model_provider import get_rose_model
+from titanic.dependencies.passenger_rose_model_provider import get_rose_model_use_case
 
 
 def get_smith_captain_repository(
@@ -21,7 +21,7 @@ def get_smith_captain_repository(
 def get_smith_captain_use_case(
     repository: SmithCaptainRepository = Depends(get_smith_captain_repository),
     jack: JackTrainerInteractor = Depends(get_jack_trainer_use_case),
-    rose: RoseModelInteractor = Depends(get_rose_model),
+    rose: RoseModelInteractor = Depends(get_rose_model_use_case),
 ) -> SmithCaptainUseCase:
     return SmithCaptainInteractor(
         repository=repository,
