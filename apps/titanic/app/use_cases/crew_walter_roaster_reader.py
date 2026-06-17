@@ -45,6 +45,9 @@ class WalterReader:
     def get_count(self) -> int:
         return len(self._df)
 
+    def get_dataset(self) -> pd.DataFrame:
+        return self._df.copy()
+
     def get_features_and_labels(self) -> tuple[pd.DataFrame, pd.Series]:
         if self._df.empty or "Survived" not in self._df.columns:
             return pd.DataFrame(), pd.Series(dtype=int)

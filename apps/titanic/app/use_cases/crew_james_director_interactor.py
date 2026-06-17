@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.adapter.inbound.api.schemas.crew_james_director_schema import CrewJamesDirectorSchema
 from titanic.app.ports.input.crew_james_director_use_case import JamesDirectorUseCase
-from titanic.app.ports.output.crew_james_director_repository import JamesDirectorRepository
+from titanic.app.ports.output.crew_james_director_port import JamesDirectorPort
 from titanic.app.dtos.crew_james_director_dto import BookingCommand, PersonCommand
 
 
@@ -16,7 +16,7 @@ def _parse_passenger_id(raw: str | None) -> str | None:
 
 
 class JamesDirectorInteractor(JamesDirectorUseCase):
-    def __init__(self, session: AsyncSession, repository: JamesDirectorRepository) -> None:
+    def __init__(self, session: AsyncSession, repository: JamesDirectorPort) -> None:
         self._session = session
         self.repository = repository
 

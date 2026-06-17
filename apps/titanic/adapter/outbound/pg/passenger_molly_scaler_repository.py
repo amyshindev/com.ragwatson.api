@@ -5,12 +5,12 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.app.dtos.passenger_molly_scaler_dto import MollyScalerQuery, MollyScalerResponse
-from titanic.app.ports.output.passenger_molly_scaler_repository import MollyScalerRepository
+from titanic.app.ports.output.passenger_molly_scaler_port import MollyScalerPort
 
 log = logging.getLogger(__name__)
 
 
-class MollyScalerPgRepository(MollyScalerRepository):
+class MollyScalerPgRepository(MollyScalerPort):
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session

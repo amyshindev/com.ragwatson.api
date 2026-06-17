@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from titanic.adapter.outbound.orm.passenger_jack_trainer_orm import PassengerJackTrainerOrm
 from titanic.adapter.outbound.orm.passenger_rose_model_orm import PassengerRoseModelOrm
 from titanic.app.dtos.crew_james_director_dto import BookingCommand, PersonCommand
-from titanic.app.ports.output.crew_james_director_repository import JamesDirectorRepository
+from titanic.app.ports.output.crew_james_director_port import JamesDirectorPort
 
 log = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ def _booking_row(passenger_id: str, command: BookingCommand) -> dict[str, str]:
     }
 
 
-class CrewJamesDirectorPgRepository(JamesDirectorRepository):
+class CrewJamesDirectorPgRepository(JamesDirectorPort):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
@@ -53,10 +53,10 @@ class CrewJamesDirectorPgRepository(JamesDirectorRepository):
         if not person_commands:
             return 0
 
-        log.info("3️⃣  [JamesDirectorRepository] PersonCommand 상위 5개 레코드:")
+        log.info("3️⃣  [JamesDirectorPort] PersonCommand 상위 5개 레코드:")
         for person in person_commands[:5]:
             log.info("%s", person)
-        log.info("3️⃣  [JamesDirectorRepository] BookingCommand 상위 5개 레코드:")
+        log.info("3️⃣  [JamesDirectorPort] BookingCommand 상위 5개 레코드:")
         for booking in booking_commands[:5]:
             log.info("%s", booking)
 

@@ -22,7 +22,8 @@ class SmithCaptainChatQuery:
 
 
 class ChatResponse(BaseModel):
-    text: str
+    reply: str
+    accuracy: float | None = None
 
 
 CrewSmithCaptainQuery = SmithCaptainQuery

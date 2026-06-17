@@ -6,7 +6,7 @@ from typing import Any
 from titanic.app.dtos.crew_james_director_dto import BookingCommand, PersonCommand
 
 
-class JamesDirectorRepository(ABC):
+class JamesDirectorPort(ABC):
     @abstractmethod
     async def receive_uploaded_records(
         self,
@@ -16,4 +16,4 @@ class JamesDirectorRepository(ABC):
         ...
 
 
-CrewJamesDirectorRepository = JamesDirectorRepository
+CrewJamesDirectorPort = JamesDirectorPort

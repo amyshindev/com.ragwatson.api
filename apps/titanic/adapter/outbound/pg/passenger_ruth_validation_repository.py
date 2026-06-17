@@ -5,12 +5,12 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.app.dtos.passenger_ruth_validation_dto import RuthValidationQuery, RuthValidationResponse
-from titanic.app.ports.output.passenger_ruth_validation_repository import RuthValidationRepository
+from titanic.app.ports.output.passenger_ruth_validation_port import RuthValidationPort
 
 log = logging.getLogger(__name__)
 
 
-class RuthValidationPgRepository(RuthValidationRepository):
+class RuthValidationPgRepository(RuthValidationPort):
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session

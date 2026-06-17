@@ -5,12 +5,12 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.app.dtos.crew_lowe_boat_dto import LoweBoatQuery, LoweBoatResponse
-from titanic.app.ports.output.crew_lowe_boat_repository import LoweBoatRepository
+from titanic.app.ports.output.crew_lowe_boat_port import LoweBoatPort
 
 log = logging.getLogger(__name__)
 
 
-class LoweBoatPgRepository(LoweBoatRepository):
+class LoweBoatPgRepository(LoweBoatPort):
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session

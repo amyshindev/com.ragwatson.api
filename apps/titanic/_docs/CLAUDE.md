@@ -156,4 +156,5 @@ Do **not** nest under `titanic/`. Add `backend/apps/{new_app}/` with the same he
 * 타이타닉 ERD: [[TITANIC-ERD]]
 * 타이타닉 NF: [[titanic-nf]]
 * 타이타닉 알고리즘: [[titanic-algorithms]]
-* 
+
+

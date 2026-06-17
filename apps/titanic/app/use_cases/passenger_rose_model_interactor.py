@@ -28,7 +28,7 @@ from titanic.app.ports.input.passenger_rose_model_use_case import (
     ScalingMode,
     TitanicAlgorithm,
 )
-from titanic.app.ports.output.passenger_rose_model_repository import RoseModelRepository
+from titanic.app.ports.output.passenger_rose_model_port import RoseModelPort
 from titanic.app.use_cases.crew_walter_roaster_reader import WalterReader
 
 
@@ -153,7 +153,7 @@ class RoseModelInteractor(RoseModelUseCase):
 
     def __init__(
         self,
-        repository: RoseModelRepository | None = None,
+        repository: RoseModelPort | None = None,
         algorithm: TitanicAlgorithm | str = TitanicAlgorithm.DECISION_TREE,
     ) -> None:
         self.repository = repository

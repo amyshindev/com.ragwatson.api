@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from titanic.adapter.inbound.api.schemas.passenger_jack_trainer_schema import JackTrainerSchema
 from titanic.app.dtos.passenger_jack_trainer_dto import JackTrainerQuery, JackTrainerResponse
 from titanic.app.ports.input.passenger_jack_trainer_use_case import JackTrainerUseCase
-from titanic.app.ports.output.passenger_jack_trainer_repository import JackTrainerRepository
+from titanic.app.ports.output.passenger_jack_trainer_port import JackTrainerPort
 from titanic.app.use_cases.crew_walter_roaster_reader import WalterReader
 from titanic.app.use_cases.passenger_rose_model_interactor import (
     ROSE_SUGGESTED_ALGORITHMS,
@@ -36,33 +36,28 @@ TRAINING_BUNDLE = JackTrainingBundle()
 
 class JackTrainerInteractor(JackTrainerUseCase):
 
-    def __init__(self, repository: JackTrainerRepository):
+    def __init__(self, repository: JackTrainerPort):
         self.repository = repository
         self.kiwi = Kiwi()
 
-    def _resolve_training_data(self) -> tuple[pd.DataFrame, pd.Series]:
+    def _resolve_training_data(self, train_set: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
+        if not train_set.empty and "Survived" in train_set.columns:
+            reader = WalterReader()
+            features = reader._build_features(train_set)
+            labels = pd.to_numeric(train_set["Survived"], errors="coerce").fillna(0).astype(int)
+            return features, labels
+
         reader = WalterReader()
-        features, labels = reader.get_features_and_labels()
+        return reader.get_features_and_labels()
 
-        if features.empty or labels.empty:
-            features = pd.DataFrame(
-                {
-                    "Pclass": [1, 3, 3, 1, 1, 3, 3, 1],
-                    "Sex": [1, 0, 0, 1, 1, 0, 0, 1],
-                    "Age": [28, 20, 22, 35, 30, 19, 24, 40],
-                    "SibSp": [0, 0, 1, 1, 0, 1, 0, 1],
-                    "Parch": [0, 0, 0, 1, 0, 0, 1, 0],
-                    "Fare": [80.0, 7.0, 9.0, 55.0, 60.0, 8.0, 10.0, 50.0],
-                }
-            )
-            labels = pd.Series([1, 0, 0, 1, 1, 0, 0, 1])
-
-        return features, labels
-
-    async def get_model_train(self) -> dict[str, Any]:
+    async def get_model_train(self, train_set: pd.DataFrame) -> dict[str, Any]:
         '''로즈가 제안한 모델들을 훈련시키는 메소드'''
+        logger.info("[JackTrainerInteractor] 학습 파이프라인 시작")
 
-        features, labels = self._resolve_training_data()
+        features, labels = self._resolve_training_data(train_set)
+        if features.empty or labels.empty:
+            raise RuntimeError("훈련 데이터가 비어 있습니다.")
+
         x_train, x_test, y_train, y_test = train_test_split(
             features,
             labels,
@@ -79,7 +74,6 @@ class JackTrainerInteractor(JackTrainerUseCase):
         bundle.models.clear()
 
         train_results: list[dict[str, Any]] = []
-
         for algorithm in ROSE_SUGGESTED_ALGORITHMS:
             rose = RoseModelInteractor(algorithm=algorithm)
             rose.train(x_train, y_train)
@@ -107,55 +101,13 @@ class JackTrainerInteractor(JackTrainerUseCase):
             "train_results": train_results,
         }
 
-    async def analyze_message_intent(self, user_message: str) -> dict:
-        '''사용자의 질문(message)을 형태소 분석하여 키워드와 의도를 파악한다'''
-
-        logger.info("[JackTrainerInteractor] 전처리 및 분석 시작 | message: %s", user_message)
-
-        tokens = self.kiwi.tokenize(user_message)
-
-        keywords: list[str] = []
-        has_quantity_modifier = False
-        has_count_unit = False
-
-        for t in tokens:
-            if t.tag in ("NNG", "NNP"):
-                keywords.append(t.form)
-
-            if t.tag == "MM" and t.form == "몇":
-                has_quantity_modifier = True
-
-            if t.tag == "NNB" and t.form in ("명", "개", "사람", "분"):
-                has_count_unit = True
-
-        is_count_query = has_quantity_modifier or has_count_unit or ("몇" in user_message)
-
-        analysis_result = {
-            "keywords": keywords,
-            "is_count_query": is_count_query,
-        }
-
-        logger.info("[JackTrainerInteractor] 분석 완료 | 결과: %s", analysis_result)
-        return analysis_result
-
     async def introduce_myself(self, schema: JackTrainerSchema) -> JackTrainerResponse:
-        '''잭 트레이너의 자기소개 인터랙트'''
+        '''잭 트레이너의 자기소개 인터렉트'''
 
         return await self.repository.introduce_myself(JackTrainerQuery(
             id=schema.id,
             name=schema.name,
         ))
-
-    def train_rose_model(self, rose_model: RoseModelInteractor) -> tuple[str, float | None]:
-        '''로즈(모델)를 학습시키는 잭의 역할'''
-
-        features, labels = self._resolve_training_data()
-
-        rose_model.train(features, labels)
-        return (
-            rose_model.get_model_name(),
-            rose_model.get_accuracy(features, labels),
-        )
 
 
 PassengerJackTrainerInteractor = JackTrainerInteractor

@@ -5,12 +5,12 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.app.dtos.crew_hartley_violin_dto import HartleyViolinQuery, HartleyViolinResponse
-from titanic.app.ports.output.crew_hartley_violin_repository import HartleyViolinRepository
+from titanic.app.ports.output.crew_hartley_violin_port import HartleyViolinPort
 
 log = logging.getLogger(__name__)
 
 
-class HartleyViolinPgRepository(HartleyViolinRepository):
+class HartleyViolinPgRepository(HartleyViolinPort):
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session

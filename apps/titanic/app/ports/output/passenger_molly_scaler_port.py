@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from titanic.app.dtos.passenger_molly_scaler_dto import MollyScalerQuery, MollyScalerResponse
 
 
-class MollyScalerRepository(ABC):
+class MollyScalerPort(ABC):
     
     @abstractmethod
     async def introduce_myself(self, query: MollyScalerQuery) -> MollyScalerResponse:
@@ -13,4 +13,4 @@ class MollyScalerRepository(ABC):
         pass
 
 
-PassengerMollyScalerRepository = MollyScalerRepository
+PassengerMollyScalerPort = MollyScalerPort

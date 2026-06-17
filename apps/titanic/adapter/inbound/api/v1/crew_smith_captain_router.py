@@ -24,9 +24,9 @@ smith_captain_router = APIRouter(prefix="/titanic/smith", tags=["smith"])
 async def chat(
     schema: Annotated[ChatSchema, Body()],
     smith: SmithCaptainUseCase = Depends(get_smith_captain_use_case),
-    
+
 ) -> ChatResponse:
-    for msg in schema.messages:
+    for msg in schema.message:
         logger.info(f"[smith/chat] message | message={msg}")
     return await smith.chat(schema)
 

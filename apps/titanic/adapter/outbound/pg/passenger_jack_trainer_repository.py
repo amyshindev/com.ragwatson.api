@@ -5,12 +5,12 @@ import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.app.dtos.passenger_jack_trainer_dto import JackTrainerQuery, JackTrainerResponse
-from titanic.app.ports.output.passenger_jack_trainer_repository import JackTrainerRepository
+from titanic.app.ports.output.passenger_jack_trainer_port import JackTrainerPort
 
 log = logging.getLogger(__name__)
 
 
-class JackTrainerPgRepository(JackTrainerRepository):
+class JackTrainerPgRepository(JackTrainerPort):
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session

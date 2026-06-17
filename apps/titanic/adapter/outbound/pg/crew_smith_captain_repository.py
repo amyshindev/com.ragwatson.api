@@ -6,14 +6,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from titanic.adapter.inbound.api.schemas.crew_smith_captain_schema import ChatSchema
 from titanic.app.dtos.crew_smith_captain_dto import SmithCaptainQuery, SmithCaptainResponse
-from titanic.app.ports.output.crew_smith_captain_repository import SmithCaptainRepository
+from titanic.app.ports.output.crew_smith_captain_port import SmithCaptainPort
 import asyncio
 from core.matrix.keymaker_api import keymaker
 
 log = logging.getLogger(__name__)
 
 
-class SmithCaptainPgRepository(SmithCaptainRepository):
+class SmithCaptainPgRepository(SmithCaptainPort):
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session

@@ -14,7 +14,7 @@ from titanic.app.dtos.crew_smith_captain_dto import SmithCaptainQuery, SmithCapt
 
 
 
-class SmithCaptainRepository(ABC):
+class SmithCaptainPort(ABC):
 
     
 
@@ -38,5 +38,5 @@ class SmithCaptainRepository(ABC):
 
 
 
-CrewSmithCaptainRepository = SmithCaptainRepository
+CrewSmithCaptainPort = SmithCaptainPort
 
