@@ -26,8 +26,7 @@ async def chat(
     smith: SmithCaptainUseCase = Depends(get_smith_captain_use_case),
 
 ) -> ChatResponse:
-    for msg in schema.message:
-        logger.info(f"[smith/chat] message | message={msg}")
+    logger.info("[smith/chat] message | message=%s", schema.message)
     return await smith.chat(schema)
 
 

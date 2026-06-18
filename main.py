@@ -59,12 +59,21 @@ async def _startup_db() -> None:
     if not is_database_configured():
         log.info("DB skipped (DATABASE_URL not set)")
         return
+    from sqlalchemy.exc import OperationalError
+
     from user.app.db_init import init_user_tables
     from titanic.app.db_init import init_titanic_tables
 
-    await init_user_tables()
-    await init_titanic_tables()
-    log.info("DB ready (tables)")
+    try:
+        await init_user_tables()
+        await init_titanic_tables()
+        log.info("DB ready (tables)")
+    except OperationalError as exc:
+        log.warning(
+            "DB startup skipped (connection failed). "
+            "CSV/ML routes still work; fix DATABASE_URL in backend/.env for DB routes. | %s",
+            exc,
+        )
 
 
 @asynccontextmanager    # context란 core를 말함

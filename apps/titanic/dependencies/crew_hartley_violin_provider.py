@@ -18,3 +18,14 @@ def get_hartley_violin_use_case(
     repository: HartleyViolinPort = Depends(get_hartley_violin_repository),
 ) -> HartleyViolinUseCase:
     return HartleyViolinInteractor(repository=repository)
+
+
+def get_hartley_violin_correlation_use_case() -> HartleyViolinUseCase:
+    '''상관 히트맵 전용 — WalterReader(CSV)만 사용, Neon DB 연결 불필요'''
+    return HartleyViolinInteractor(repository=None)
+
+# --- 기존 correlation DI (DB Depends 체인 — Neon 비밀번호 오류 시 /correlation 실패) ---
+# def get_hartley_violin_correlation_use_case(
+#     repository: HartleyViolinPort = Depends(get_hartley_violin_repository),
+# ) -> HartleyViolinUseCase:
+#     return HartleyViolinInteractor(repository=repository)

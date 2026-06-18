@@ -1,6 +1,8 @@
 fastapi
 uvicorn[standard]
 pandas
+matplotlib
+seaborn
 scikit-learn
 sqlalchemy[asyncio]>=2.0
 alembic==1.18.4

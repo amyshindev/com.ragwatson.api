@@ -2,16 +2,13 @@ import pytest
 from types import SimpleNamespace
 
 from titanic.adapter.outbound.mappers.passenger_jack_trainer_mapper import JackTrainerMapper
-from titanic.domain.value_objects.passenger_jack_trainer_vo import (
-    Age,
-    FamilyRelation,
-    Gender,
-    GenderType,
-    PassengerId,
-    PassengerName,
-    SurvivalStatus,
-)
 from titanic.domain.entities.passenger_jack_trainer_entity import PassengerEntity
+from titanic.domain.value_objects.age_vo import Age
+from titanic.domain.value_objects.gender_vo import Gender, GenderType
+from titanic.domain.value_objects.name_vo import Name
+from titanic.domain.value_objects.parch_vo import Parch
+from titanic.domain.value_objects.sib_sp_vo import SibSp
+from titanic.domain.value_objects.survived_vo import Survived, SurvivedType
 
 
 def _make_orm(**overrides):
@@ -39,14 +36,20 @@ def _make_entity(
     parch: int = 0,
     survived: bool | None = False,
 ) -> PassengerEntity:
+    survival = (
+        Survived(value=None)
+        if survived is None
+        else Survived(value=SurvivedType.YES if survived else SurvivedType.NO)
+    )
     return PassengerEntity(
         id=id,
-        passenger_id=PassengerId(passenger_id),
-        name=PassengerName(name),
+        passenger_id=passenger_id,
+        name=Name(name),
         gender=Gender.from_raw(gender_raw),
         age=Age(age_value),
-        family_relation=FamilyRelation(sib_sp=sib_sp, parch=parch),
-        survival_status=SurvivalStatus(survived=survived),
+        sib_sp=SibSp(value=sib_sp),
+        parch=Parch(value=parch),
+        survival_status=survival,
     )
 
 
@@ -57,12 +60,12 @@ class TestToEntity:
 
     def test_maps_passenger_id(self):
         entity = JackTrainerMapper.to_entity(_make_orm(passenger_id="P099"))
-        assert str(entity.passenger_id) == "P099"
+        assert entity.passenger_id == "P099"
 
     def test_maps_name(self):
         entity = JackTrainerMapper.to_entity(_make_orm(name="Smith, Mr. John"))
         assert entity.name is not None
-        assert entity.name.full_name == "Smith, Mr. John"
+        assert entity.name.value == "Smith, Mr. John"
 
     def test_maps_gender_male(self):
         entity = JackTrainerMapper.to_entity(_make_orm(gender="male"))
@@ -76,10 +79,10 @@ class TestToEntity:
         entity = JackTrainerMapper.to_entity(_make_orm(age="25.0"))
         assert entity.age.value == 25.0
 
-    def test_maps_family_relation(self):
+    def test_maps_family_fields(self):
         entity = JackTrainerMapper.to_entity(_make_orm(sib_sp="2", parch="3"))
-        assert entity.family_relation.sib_sp == 2
-        assert entity.family_relation.parch == 3
+        assert entity.sib_sp.value == 2
+        assert entity.parch.value == 3
 
     def test_survived_1_maps_to_true(self):
         entity = JackTrainerMapper.to_entity(_make_orm(survived="1"))
@@ -103,10 +106,6 @@ class TestToEntity:
 
 
 class TestToOrm:
-    # JackTrainerOrm의 PK는 passenger_id이며 id 컬럼이 없음.
-    # 현재 mapper가 JackTrainerOrm(id=entity.id, ...) 로 생성하므로 TypeError 발생.
-    # 아래 테스트는 이 버그를 문서화한다 (Red → 수정 대상).
-
     def test_survival_true_serializes_to_string_1(self):
         entity = _make_entity(survived=True)
         with pytest.raises(TypeError):

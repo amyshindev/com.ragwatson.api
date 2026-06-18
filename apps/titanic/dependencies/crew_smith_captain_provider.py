@@ -16,6 +16,8 @@ from titanic.dependencies.passenger_cal_tester_provider import get_cal_tester_us
 from titanic.app.use_cases.passenger_cal_tester_interactor import CalTesterInteractor
 from titanic.dependencies.crew_walter_roaster_provider import get_walter_roaster_use_case
 from titanic.app.use_cases.crew_walter_roaster_interactor import WalterRoasterInteractor
+from titanic.app.use_cases.crew_hartley_violin_interactor import HartleyViolinInteractor
+from titanic.dependencies.crew_hartley_violin_provider import get_hartley_violin_correlation_use_case
 
 def get_smith_captain_repository(
     db: AsyncSession = Depends(get_db),
@@ -30,6 +32,7 @@ def get_smith_captain_use_case(
     rose: RoseModelInteractor = Depends(get_rose_model_use_case),
     cal: CalTesterInteractor = Depends(get_cal_tester_use_case),
     walter: WalterRoasterInteractor = Depends(get_walter_roaster_use_case),
+    hartley: HartleyViolinInteractor = Depends(get_hartley_violin_correlation_use_case),
 ) -> SmithCaptainUseCase:
 
 
@@ -40,4 +43,5 @@ def get_smith_captain_use_case(
         rose=rose,
         cal=cal,
         walter=walter,
+        hartley=hartley,
     )

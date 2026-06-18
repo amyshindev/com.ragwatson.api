@@ -2,14 +2,12 @@ import pytest
 from types import SimpleNamespace
 
 from titanic.domain.entities.passenger_jack_trainer_entity import PassengerEntity
-from titanic.domain.value_objects.passenger_jack_trainer_vo import (
-    Age,
-    FamilyRelation,
-    Gender,
-    PassengerId,
-    PassengerName,
-    SurvivalStatus,
-)
+from titanic.domain.value_objects.age_vo import Age
+from titanic.domain.value_objects.gender_vo import Gender
+from titanic.domain.value_objects.name_vo import Name
+from titanic.domain.value_objects.parch_vo import Parch
+from titanic.domain.value_objects.sib_sp_vo import SibSp
+from titanic.domain.value_objects.survived_vo import Survived, SurvivedType
 
 
 def _make_entity(
@@ -20,14 +18,20 @@ def _make_entity(
     parch: int = 0,
     survived: bool | None = None,
 ) -> PassengerEntity:
+    survival = (
+        Survived(value=None)
+        if survived is None
+        else Survived(value=SurvivedType.YES if survived else SurvivedType.NO)
+    )
     return PassengerEntity(
         id=id,
-        passenger_id=PassengerId("P001"),
-        name=PassengerName("Dawson, Mr. Jack"),
+        passenger_id="P001",
+        name=Name("Dawson, Mr. Jack"),
         gender=Gender.from_raw(gender_raw),
         age=Age(age_value),
-        family_relation=FamilyRelation(sib_sp=sib_sp, parch=parch),
-        survival_status=SurvivalStatus(survived=survived),
+        sib_sp=SibSp(value=sib_sp),
+        parch=Parch(value=parch),
+        survival_status=survival,
     )
 
 
@@ -45,7 +49,6 @@ class TestIsHighRisk:
         assert _make_entity(gender_raw="male", age_value=30.0, sib_sp=1, parch=0).is_high_risk() is False
 
     def test_unknown_gender_adult_alone_is_high_risk(self):
-        # 성별 미상은 여성이 아닌 것으로 처리 → 고위험군 해당
         assert _make_entity(gender_raw=None, age_value=30.0, sib_sp=0, parch=0).is_high_risk() is True
 
 
@@ -105,8 +108,8 @@ class TestFromOrm:
         assert str(entity.passenger_id) == "P005"
         assert entity.gender.is_female() is True
         assert entity.age.value == 42.0
-        assert entity.family_relation.sib_sp == 1
-        assert entity.family_relation.parch == 2
+        assert entity.sib_sp.value == 1
+        assert entity.parch.value == 2
         assert entity.survival_status.survived is True
 
     def test_none_optional_fields_map_to_none(self):

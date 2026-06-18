@@ -45,11 +45,11 @@ class JackTrainerMapper:
         return _orm_ctor(
             id=entity.id,
             passenger_id=str(entity.passenger_id) if entity.passenger_id else "",
-            name=entity.name.full_name if entity.name else "",
+            name=entity.name.value if entity.name else "",
             gender=entity.gender.value.value,
             age="" if entity.age.is_unknown else str(entity.age.value),
-            sib_sp=str(entity.family_relation.sib_sp),
-            parch=str(entity.family_relation.parch),
+            sib_sp=str(entity.sib_sp.value),
+            parch=str(entity.parch.value),
             survived=survived,
         )
 

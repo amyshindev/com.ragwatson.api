@@ -3,25 +3,24 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from titanic.domain.value_objects.passenger_jack_trainer_vo import (
-    Age,
-    FamilyRelation,
-    Gender,
-    PassengerId,
-    PassengerName,
-    SurvivalStatus,
-)
+from titanic.domain.value_objects.age_vo import Age
+from titanic.domain.value_objects.gender_vo import Gender
+from titanic.domain.value_objects.name_vo import Name
+from titanic.domain.value_objects.parch_vo import Parch
+from titanic.domain.value_objects.sib_sp_vo import SibSp
+from titanic.domain.value_objects.survived_vo import Survived
 
 
 @dataclass
 class PassengerEntity:
     id: int
-    passenger_id: PassengerId | None
-    name: PassengerName | None
+    passenger_id: str | None
+    name: Name | None
     gender: Gender
     age: Age
-    family_relation: FamilyRelation
-    survival_status: SurvivalStatus
+    sib_sp: SibSp
+    parch: Parch
+    survival_status: Survived
 
     def is_high_risk(self) -> bool:
         if self.gender.is_female():
@@ -33,34 +32,35 @@ class PassengerEntity:
         return True
 
     def has_family(self) -> bool:
-        return not self.family_relation.is_alone
+        return self.sib_sp.has_sibling_or_spouse or self.parch.has_parent_or_child
+
+    @property
+    def family_size(self) -> int:
+        return self.sib_sp.value + self.parch.value + 1
 
     def record_survival(self, survived: bool) -> None:
-        self.survival_status = SurvivalStatus(survived=survived)
+        from titanic.domain.value_objects.survived_vo import SurvivedType
+
+        self.survival_status = Survived(
+            value=SurvivedType.YES if survived else SurvivedType.NO,
+        )
 
     @classmethod
     def from_orm(cls, orm: Any) -> PassengerEntity:
-        passenger_id = (
-            PassengerId(str(orm.passenger_id))
-            if getattr(orm, "passenger_id", None) is not None
-            else None
-        )
         name = (
-            PassengerName(str(orm.name))
+            Name(str(orm.name))
             if getattr(orm, "name", None) is not None
             else None
         )
         return cls(
             id=int(getattr(orm, "id", 0) or 0),
-            passenger_id=passenger_id,
+            passenger_id=(str(orm.passenger_id) if getattr(orm, "passenger_id", None) is not None else None),
             name=name,
             gender=Gender.from_raw(getattr(orm, "gender", None)),
             age=Age.from_raw(getattr(orm, "age", None)),
-            family_relation=FamilyRelation.from_raw(
-                getattr(orm, "sib_sp", None),
-                getattr(orm, "parch", None),
-            ),
-            survival_status=SurvivalStatus.from_raw(getattr(orm, "survived", None)),
+            sib_sp=SibSp.from_raw(getattr(orm, "sib_sp", None)),
+            parch=Parch.from_raw(getattr(orm, "parch", None)),
+            survival_status=Survived.from_raw(getattr(orm, "survived", None)),
         )
 
     def __eq__(self, other: object) -> bool:

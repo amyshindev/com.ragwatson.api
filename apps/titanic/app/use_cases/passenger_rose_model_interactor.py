@@ -21,6 +21,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 from titanic.adapter.inbound.api.schemas.passenger_rose_model_schema import RoseModelSchema
+from titanic.adapter.outbound.orm.passenger_rose_model_strategies import RoseModelStrategy
 from titanic.app.dtos.passenger_rose_model_dto import RoseModelQuery, RoseModelResponse
 from titanic.app.ports.input.passenger_rose_model_use_case import (
     RoseModelAlgorithmStrategy,
@@ -160,6 +161,15 @@ class RoseModelInteractor(RoseModelUseCase):
         self._strategy = self._resolve_strategy(algorithm)
         self._scaler: StandardScaler | MinMaxScaler | None = None
         self.model: Any = self._strategy.create_estimator()
+        self._active_strategy: RoseModelStrategy | None = None
+
+    def set_strategy(self, strategy: RoseModelStrategy) -> None:
+        self._active_strategy = strategy
+
+    def predict_strategy_rows(self, rows: list[list[float]]) -> list[int]:
+        if self._active_strategy is None:
+            raise RuntimeError("장착된 RoseModelStrategy가 없습니다.")
+        return self._active_strategy.predict(rows)
 
     def _resolve_strategy(self, algorithm: TitanicAlgorithm | str) -> RoseModelAlgorithmStrategy:
         key = TitanicAlgorithm(algorithm) if isinstance(algorithm, str) else algorithm

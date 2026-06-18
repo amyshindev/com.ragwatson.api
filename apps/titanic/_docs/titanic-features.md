@@ -1,131 +1,56 @@
-# 타이타닉 데이터셋 - 피처 엔지니어링 레퍼런스
+# 타이타닉 데이터셋 명세서 (Titanic Dataset Description)
 
-## 데이터 구성
-
-| 파일명 | 설명 |
-|--------|------|
-| `train.csv` | 학습용 데이터 (정답 레이블 포함) |
-| `test.csv` | 예측용 데이터 (정답 레이블 없음) |
-| `gender_submission.csv` | 제출 파일 예시 (여성 전원 생존 가정) |
+이 문서는 타이타닉 생존자 예측 인공지능 모델 빌딩 및 피처 엔지니어링(Feature Engineering)을 돕기 위해 기존 영문 데이터셋 정보를 분석하고 한글로 정리한 가이드라인입니다.
 
 ---
 
-## 변수 설명 (Data Dictionary)
+## 1. 데이터셋 개요 (Overview)
 
-| 변수명 | 설명 | 값 / 비고 |
-|--------|------|-----------|
-| `Survived` | 생존 여부 **(타깃 변수)** | `0` = 사망, `1` = 생존 |
-| `Pclass` | 티켓 등급 (사회경제적 지위 proxy) | `1` = 1등석(상류층), `2` = 2등석(중산층), `3` = 3등석(하류층) |
-| `Sex` | 성별 | `male`, `female` |
-| `Age` | 나이 (세) | 1세 미만은 소수점 표기. 추정 나이는 `xx.5` 형식 |
-| `SibSp` | 함께 탑승한 형제/자매 또는 배우자 수 | 형제·자매·이복형제 포함 / 배우자(남편·아내) 포함. 내연·약혼자 제외 |
-| `Parch` | 함께 탑승한 부모 또는 자녀 수 | 부모(母·父), 자녀(딸·아들·의붓자녀) 포함. 유모와 함께 탑승한 아이는 `Parch=0` |
-| `Ticket` | 티켓 번호 | 문자열 혼합, 그룹 탑승 시 번호 공유 가능 |
-| `Fare` | 지불 운임 | 연속형, 그룹 탑승 시 총액 공유 가능성 있음 |
-| `Cabin` | 객실 번호 | 결측 다수. 알파벳 접두사 = 갑판 위치 |
-| `Embarked` | 승선 항구 | `C` = Cherbourg(프랑스), `Q` = Queenstown(아일랜드), `S` = Southampton(영국) |
+데이터는 크게 두 가지 그룹으로 나누어져 있습니다:
+* **학습용 데이터셋 (`train.csv`)**: 머신러닝 모델을 구축하는 데 사용됩니다. 각 승객에 대한 실제 생존 여부(Ground Truth, 정답 라벨)가 포함되어 있습니다. 승객의 성별, 탑승 클래스 등의 '특성(Features)'을 바탕으로 모델을 학습시키며, 새로운 피처를 생성하는 피처 엔지니어링을 적용할 수 있습니다.
+* **테스트용 데이터셋 (`test.csv`)**: 학습된 모델이 보지 못한 새로운 데이터에 대해 얼마나 잘 예측하는지 성능을 검증하는 데 사용됩니다. 이 데이터셋에는 생존 여부(정답)가 포함되어 있지 않습니다. 모델을 사용하여 각 승객의 생존 여부를 예측해야 합니다.
+* **제출 샘플 파일 (`gender_submission.csv`)**: 여성 승객은 모두 생존하고, 남성 승객은 모두 사망했다고 가정하는 일종의 기준점(Baseline) 예시 파일입니다. 최종 제출 파일의 형태를 참고하는 용도로 사용됩니다. 
 
 ---
 
-## 피처 엔지니어링 아이디어
+## 2. 데이터 사전 (Data Dictionary)
 
-### 1. 가족 관련
-```python
-# 전체 가족 수
-df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
-
-# 혼자 탑승 여부
-df['IsAlone'] = (df['FamilySize'] == 1).astype(int)
-
-# 가족 규모 카테고리 (소가족이 생존에 유리한 경향)
-df['FamilyGroup'] = pd.cut(df['FamilySize'], bins=[0,1,4,20], labels=['alone','small','large'])
-```
-
-### 2. 나이(Age) 관련
-```python
-# 결측값 처리: Pclass + Sex 그룹별 중앙값으로 대체
-df['Age'] = df.groupby(['Pclass','Sex'])['Age'].transform(lambda x: x.fillna(x.median()))
-
-# 나이 구간화
-df['AgeBin'] = pd.cut(df['Age'], bins=[0,12,18,35,60,100], labels=['child','teen','young','middle','senior'])
-
-# 어린이 여부 (생존율 높음)
-df['IsChild'] = (df['Age'] < 12).astype(int)
-```
-
-### 3. 호칭(Title) 추출
-```python
-# Name 컬럼에서 호칭 추출 → 사회적 지위·성별·나이 간접 반영
-df['Title'] = df['Name'].str.extract(r' ([A-Za-z]+)\.', expand=False)
-
-# 희귀 호칭 통합
-rare = ['Lady','Countess','Capt','Col','Don','Dr','Major','Rev','Sir','Jonkheer','Dona']
-df['Title'] = df['Title'].replace(rare, 'Rare')
-df['Title'] = df['Title'].replace({'Mlle':'Miss', 'Ms':'Miss', 'Mme':'Mrs'})
-```
-
-### 4. 운임(Fare) 관련
-```python
-# 결측값: 중앙값 대체
-df['Fare'] = df['Fare'].fillna(df['Fare'].median())
-
-# 로그 변환 (우편향 분포 완화)
-df['FareLog'] = np.log1p(df['Fare'])
-
-# 구간화
-df['FareBin'] = pd.qcut(df['Fare'], q=4, labels=['low','mid','high','very_high'])
-
-# 1인당 운임 (그룹 공유 운임 보정)
-df['FarePerPerson'] = df['Fare'] / df['FamilySize']
-```
-
-### 5. 객실(Cabin) 관련
-```python
-# 객실 보유 여부 (결측 = 없음으로 해석)
-df['HasCabin'] = df['Cabin'].notna().astype(int)
-
-# 갑판(Deck) 추출: 알파벳 첫 글자
-df['Deck'] = df['Cabin'].str[0].fillna('Unknown')
-```
-
-### 6. 티켓(Ticket) 관련
-```python
-# 동일 티켓 번호 공유 인원 수 (그룹 탑승 여부)
-df['TicketFreq'] = df.groupby('Ticket')['Ticket'].transform('count')
-```
-
-### 7. 승선 항구(Embarked) 관련
-```python
-# 결측값: 최빈값(S)으로 대체
-df['Embarked'] = df['Embarked'].fillna('S')
-
-# 인코딩
-df = pd.get_dummies(df, columns=['Embarked'], prefix='Emb')
-```
-
-### 8. 성별 × 등급 교호작용
-```python
-# 성별과 Pclass 결합 피처
-df['SexPclass'] = df['Sex'].astype(str) + '_' + df['Pclass'].astype(str)
-```
+| 변수명 (Variable) | 정의 (Definition)            | 값 설명 / 키 (Key)                                                       |
+| :------------- | :------------------------- | :------------------------------------------------------------------- |
+| **survived**   | 생존 여부                      | 0 = 사망 (No), 1 = 생존 (Yes)                                            |
+| **pclass**     | 티켓 등급 (사회·경제적 지위 선별 대리 지표) | 1 = 1등석 (상류층), 2 = 2등석 (중산층), 3 = 3등석 (하류층)                          |
+| **gender**     | 성별                         | male = 남성, female = 여성                                               |
+| **age**        | 나이                         | 연령 (세)                                                               |
+| **sib_sp**     | 함께 탑승한 형제자매 / 배우자의 수       | 동반한 형제, 자매, 의붓형제, 의붓자매, 남편, 아내의 총합                                   |
+| **parch**      | 함께 탑승한 부모 / 자녀의 수          | 동반한 어머니, 아버지, 아들, 딸, 의붓아들, 의붓딸의 총합                                   |
+| **ticket**     | 티켓 번호                      | 문자열 또는 숫자로 된 티켓 식별자                                                  |
+| **fare**       | 여객 운임                      | 승객이 지불한 탑승 요금                                                        |
+| **cabin**      | 객실 번호                      | 선실 구역 및 방 번호                                                         |
+| **embarked**   | 탑승 항구 (승선지)                | C = 셰르부르 (Cherbourg), Q = 퀸즈타운 (Queenstown), S = 사우샘프턴 (Southampton) |
 
 ---
 
-## 주요 도메인 인사이트 (모델링 시 참고)
+## 3. 변수별 상세 노트 및 피처 엔지니어링 힌트 (Variable Notes & Feature Engineering Hints)
 
-- **여성·어린이 우선 원칙** → `Sex`, `Age`, `IsChild` 피처 중요도 높음
-- **1등석 승객** 생존율이 월등히 높음 → `Pclass` 핵심 피처
-- **혼자 탑승(IsAlone=1)**보다 소가족(2~4명)이 생존율 높음; 대가족은 오히려 낮음
-- **Cabin 결측** 자체가 하위 등급 proxy로 작용 가능
-- **운임**은 Pclass와 상관관계 높음 → 다중공선성 주의
+### 💡 pclass (티켓 등급)
+* **의미**: 승객의 사회·경제적 지위(Socio-economic Status, SES)를 나타내는 강력한 지표입니다.
+* **피처 엔지니어링 포인트**: 1등석 승객일수록 구조 우선순위가 높았을 가능성이 큽니다. `fare`(운임)나 `cabin`(객실 위치) 변수와 결합하여 승객의 세부적인 계층이나 선박 내 위치(상층부 vs 하층부)를 추정할 수 있습니다.
 
----
+### 💡 age (나이)
+* **의미**: 1세 미만의 영유아는 소수점 형태(예: 0.5세)로 표현됩니다. 나이가 추정치인 경우 `xx.5` 형태로 기록되어 있습니다.
+* **피처 엔지니어링 포인트**: 
+  * "여성과 아이 먼저"라는 재난 구조 원칙에 따라 영유아 및 고령자 여부가 중요합니다. 나이 범위를 구간화(Binning)하여 `영유아(Baby)`, `아동(Child)`, `청소년(Teenager)`, `성인(Adult)`, `노년(Senior)` 등의 범주형 피처를 생성할 수 있습니다.
+  * 결측치(Missing Value)가 존재하는 경우, 이름의 호칭(Title: Mr, Miss, Mrs, Master 등)별 평균/중앙값으로 정밀하게 대체하는 전략이 유용합니다.
 
-## 제거 권장 컬럼
+### 💡 sibsp & parch (가족 동반 변수)
+* **의미**: 
+  * `sibsp`: 형제, 자매, 의붓형제, 의붓자매, 배우자(남편/아내)가 포함됩니다. (약혼자나 동거인은 제외됨)
+  * `parch`: 부모(부/모), 자녀(아들/딸), 의붓자녀가 포함됩니다. 단, **보모(Nanny)와 함께 여행한 아이들의 경우 부모가 동반하지 않았으므로 `parch = 0`으로 기록**되어 있습니다.
+* **피처 엔지니어링 포인트**:
+  * **가족 크기(FamilySize)**: `sibsp` + `parch` + 1 (본인 포함) 공식을 통해 총 가족 구성원 수를 도출할 수 있습니다. 가족이 너무 많거나(대가족) 아예 없는 경우(독신) 생존율에 차이가 있을 수 있습니다.
+  * **동반자 여부(IsAlone)**: 가족 크기가 1명(본인 혼자)인지 아니면 동반 가족이 있는지 여부를 나타내는 이진(0 또는 1) 변수를 만들 수 있습니다. 혼자 온 승객보다 가족 단위 승객의 구조율이 다를 수 있음을 반영합니다.
 
-| 컬럼 | 이유 |
-|------|------|
-| `PassengerId` | 단순 ID, 예측 무관 |
-| `Name` | Title 추출 후 불필요 |
-| `Ticket` | TicketFreq 파생 후 원본 제거 가능 |
-| `Cabin` | Deck·HasCabin 파생 후 원본 제거 가능 |
+### 💡 ticket & cabin & fare (티켓, 객실 및 운임)
+* **피처 엔지니어링 포인트**:
+  * `cabin`(객실 번호)의 첫 글자(알파벳)는 선박의 구역(Deck A~G)을 나타냅니다. 이 알파벳만 추출하여 탑승 위치별 생존율을 분석할 수 있으며, 결측치는 'Unknown' 등으로 처리하거나 티켓 가격에 맞춰 유추할 수 있습니다.
+  * `ticket`(티켓 번호)이 동일한 승객들은 가족이거나 지인(친구, 단체)일 확률이 높습니다. 같은 티켓 번호를 가진 사람들의 그룹을 만들어 그룹 내 생존율을 연동하는 고난도 피처 엔지니어링이 가능합니다.
