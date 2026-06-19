@@ -58,7 +58,36 @@ async def init_user_tables() -> None:
 
         await drop_membership_inquiries_table(conn)
         await migrate_legacy_domain_intake_records(conn)
+        await _seed_dev_admin_if_empty(conn)
     log.info("user tables ready (create_all + column patches)")
+
+
+async def _seed_dev_admin_if_empty(conn) -> None:
+    """로컬/Docker 개발용 기본 관리자 — admins 테이블이 비어 있을 때만 생성."""
+    from user.adapter.outbound.pg.password_hasher import hash_password
+
+    existing = await conn.execute(
+        text("SELECT 1 FROM admins WHERE deleted_at IS NULL LIMIT 1")
+    )
+    if existing.scalar_one_or_none() is not None:
+        return
+
+    email = "admin@example.com"
+    username = "admin"
+    password_hash = hash_password("admin1234")
+    await conn.execute(
+        text(
+            """
+            INSERT INTO admins (email, username, password_hash)
+            VALUES (:email, :username, :password_hash)
+            """
+        ),
+        {"email": email, "username": username, "password_hash": password_hash},
+    )
+    log.warning(
+        "Dev admin seeded — email=%s password=admin1234 (change in production)",
+        email,
+    )
 
 
 async def init_secom_tables() -> None:

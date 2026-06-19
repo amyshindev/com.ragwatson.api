@@ -18,11 +18,13 @@ from adapters.db_check_adapter import db_check_adapter
 from domain_intake.router import router as domain_intake_router
 from audio.adapter.inbound.api import audio_router
 from titanic.adapter.inbound.api.router_registry import titanic_router
+from siliconvalley.adapter.inbound.api.router_registry import siliconvalley_router
 from core.config import is_database_configured
 from database import dispose_engine
 from db.session import DbSession
 from core.matrix.keymaker_api import keymaker
 from user.adapter.inbound.api.schemas import LoginRequest, LoginResponse, SignupRequest, SignupResponse
+from user.adapter.inbound.api.v1.admin_login_router import admin_login_router
 from user.adapter.inbound.api.v1.login_router import login_router
 from user.adapter.inbound.api.v1.signup_router import signup_router
 from user.adapter.outbound.pg.login_pg_repository import LoginPgRepository
@@ -92,8 +94,10 @@ app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
 app.include_router(domain_intake_router)
 app.include_router(audio_router)
 app.include_router(titanic_router)
+app.include_router(siliconvalley_router)
 app.include_router(signup_router)
 app.include_router(login_router)
+app.include_router(admin_login_router)
 
 app.add_middleware(
     CORSMiddleware,
