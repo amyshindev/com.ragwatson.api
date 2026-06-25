@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
+import uuid
 
 from sqlalchemy import BigInteger, Boolean, DateTime, Float, ForeignKey, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
@@ -18,9 +18,7 @@ if TYPE_CHECKING:
 class GenerationLog(Base):
     __tablename__ = "generation_logs"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     workspace_id: Mapped[int | None] = mapped_column(
         BigInteger, ForeignKey("studio_workspaces.id"), nullable=True
     )
@@ -57,9 +55,7 @@ class GenerationLog(Base):
         server_default=func.now(),
         nullable=False,
     )
-    completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     audio_feature: Mapped[AudioFeature | None] = relationship(
         back_populates="generation_logs",

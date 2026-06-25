@@ -6,7 +6,6 @@ from siliconvalley.app.dtos.dinesh_dash_dto import DineshDashQuery, DineshDashRe
 
 
 class DineshDashPort(ABC):
-
     @abstractmethod
     async def introduce_myself(self, query: DineshDashQuery) -> DineshDashResponse:
         pass

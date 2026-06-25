@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -13,7 +12,7 @@ class Fare:
             raise ValueError("Fare는 음수일 수 없습니다.")
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Fare:
+    def from_raw(cls, raw: str | None) -> Fare:
         if raw is None or raw.strip() == "":
             raise ValueError("Fare는 필수 값입니다.")
         try:

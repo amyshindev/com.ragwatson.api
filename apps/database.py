@@ -2,7 +2,6 @@
 
 from core.database import database_manager as _database
 
-
 Base = _database.Base
 DbSession = _database.DbSession
 _ensure_engine = _database._ensure_engine

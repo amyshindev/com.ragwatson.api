@@ -2,10 +2,6 @@
 
 import logging
 
-from fastapi import HTTPException
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from domain_intake.repository import DomainIntakeRepositories
 from domain_intake.schemas import (
     DomainAcceptedResponse,
@@ -14,11 +10,15 @@ from domain_intake.schemas import (
     GalleryCreate,
     GalleryItemRead,
     LibraryCreate,
-    MagazineCreate,
     MagazineArticleRead,
+    MagazineCreate,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
+from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from user.adapter.outbound.orm.user_model import UserRecord
 from user.domain.entities.user import UserRole
 

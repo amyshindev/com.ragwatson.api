@@ -3,7 +3,6 @@
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from studioanalytics.app.services.studio_analytics_service import (
     StudioAnalyticsService,
 )

@@ -1,29 +1,33 @@
 import asyncio
-import logging
-import sys
 from contextlib import asynccontextmanager
-from typing import List
-
+import logging
 from pathlib import Path
+import sys
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+from adapters.db_check_adapter import db_check_adapter
+from database import dispose_engine
+from db.session import DbSession
+from domain_intake.router import router as domain_intake_router
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 
-from adapters.db_check_adapter import db_check_adapter
-from domain_intake.router import router as domain_intake_router
-from audio.adapter.inbound.api import audio_router
-from titanic.adapter.inbound.api.router_registry import titanic_router
 from siliconvalley.adapter.inbound.api.router_registry import siliconvalley_router
+
+from audio.adapter.inbound.api import audio_router
 from core.config import is_database_configured
-from database import dispose_engine
-from db.session import DbSession
 from core.matrix.keymaker_api import keymaker
-from user.adapter.inbound.api.schemas import LoginRequest, LoginResponse, SignupRequest, SignupResponse
+from titanic.adapter.inbound.api.router_registry import titanic_router
+from user.adapter.inbound.api.schemas import (
+    LoginRequest,
+    LoginResponse,
+    SignupRequest,
+    SignupResponse,
+)
 from user.adapter.inbound.api.v1.admin_login_router import admin_login_router
 from user.adapter.inbound.api.v1.login_router import login_router
 from user.adapter.inbound.api.v1.signup_router import signup_router
@@ -31,6 +35,8 @@ from user.adapter.outbound.pg.login_pg_repository import LoginPgRepository
 from user.adapter.outbound.pg.signup_pg_repository import SignupPgRepository
 from user.app.use_cases.login_interactor import LoginInteractor
 from user.app.use_cases.signup_interactor import SignupInteractor
+
+
 def _configure_logging() -> None:
     logging.basicConfig(
         level=logging.INFO,
@@ -63,8 +69,8 @@ async def _startup_db() -> None:
         return
     from sqlalchemy.exc import OperationalError
 
-    from user.app.db_init import init_user_tables
     from titanic.app.db_init import init_titanic_tables
+    from user.app.db_init import init_user_tables
 
     try:
         await init_user_tables()
@@ -78,7 +84,7 @@ async def _startup_db() -> None:
         )
 
 
-@asynccontextmanager    # context란 core를 말함
+@asynccontextmanager  # context란 core를 말함
 async def lifespan(app: FastAPI):
     _configure_logging()
     await _startup_db()
@@ -86,7 +92,6 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         await dispose_engine()
-
 
 
 app = FastAPI(title="Amy Shin Main Page", lifespan=lifespan)
@@ -123,7 +128,7 @@ class TitanicQARequest(BaseModel):
 class TitanicQAResponse(BaseModel):
     answer: str
     confidence: float
-    sources: List[str]
+    sources: list[str]
 
 
 @app.get("/")
@@ -166,7 +171,7 @@ async def chat(body: ChatRequest) -> ChatResponse:
         raise HTTPException(
             status_code=500,
             detail="Model returned no text (empty or blocked).",
-        )
+        ) from None
 
     return ChatResponse(reply=text)
 

@@ -31,19 +31,18 @@ _ML_COLUMN_MAP = {
 
 
 class CalTesterInteractor(CalTesterUseCase):
-
     def __init__(self, repository: CalTesterPort):
         self.repository = repository
 
     async def get_model_test(self, test_set: dict[str, Any]) -> CalTesterResponse:
-        '''로즈가 제안한 10개 모델의 트레이닝 정도를 점수화해서 최고 성능 모델을 뽑는 메소드
+        """로즈가 제안한 10개 모델의 트레이닝 정도를 점수화해서 최고 성능 모델을 뽑는 메소드
 
         Args:
             test_set: {
                 "df": pd.DataFrame,  # Survived/survived 라벨 포함
                 "trained_strategies": dict[str, RoseModelStrategy],  # Jack이 학습시킨 모델들
             }
-        '''
+        """
         logger.info("[CalTesterInteractor] 모델 채점 시작")
 
         trained_strategies: dict[str, RoseModelStrategy] = test_set["trained_strategies"]
@@ -58,35 +57,46 @@ class CalTesterInteractor(CalTesterUseCase):
         for algorithm_key, strategy in trained_strategies.items():
             try:
                 predictions = strategy.predict(x_test)
-                correct = sum(prediction == label for prediction, label in zip(predictions, y_test))
+                correct = sum(
+                    prediction == label
+                    for prediction, label in zip(predictions, y_test, strict=True)
+                )
                 test_accuracy = correct / len(y_test)
-                scored.append({
-                    "algorithm": algorithm_key,
-                    "model_name": strategy.name,
-                    "test_accuracy": test_accuracy,
-                })
+                scored.append(
+                    {
+                        "algorithm": algorithm_key,
+                        "model_name": strategy.name,
+                        "test_accuracy": test_accuracy,
+                    }
+                )
                 logger.info(
                     "[CalTesterInteractor] %s | test_accuracy=%.4f",
                     strategy.name,
                     test_accuracy,
                 )
             except Exception as error:
-                logger.warning("[CalTesterInteractor] %s 채점 실패 | error=%s", algorithm_key, error)
-                scored.append({
-                    "algorithm": algorithm_key,
-                    "model_name": algorithm_key,
-                    "test_accuracy": -1.0,
-                    "error": str(error),
-                })
+                logger.warning(
+                    "[CalTesterInteractor] %s 채점 실패 | error=%s", algorithm_key, error
+                )
+                scored.append(
+                    {
+                        "algorithm": algorithm_key,
+                        "model_name": algorithm_key,
+                        "test_accuracy": -1.0,
+                        "error": str(error),
+                    }
+                )
 
         scored.sort(key=lambda row: row["test_accuracy"], reverse=True)
 
         rankings: list[dict[str, Any]] = []
         for index, row in enumerate(scored, start=1):
-            rankings.append({
-                "rank": index,
-                **row,
-            })
+            rankings.append(
+                {
+                    "rank": index,
+                    **row,
+                }
+            )
 
         best = rankings[0]
         return {
@@ -102,17 +112,21 @@ class CalTesterInteractor(CalTesterUseCase):
         }
 
     async def introduce_myself(self, schema: CalTesterSchema) -> CalTesterResponse:
-        '''칼 테스터의 자기소개 인터랙트'''
+        """칼 테스터의 자기소개 인터랙트"""
 
-        return await self.repository.introduce_myself(CalTesterQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            CalTesterQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )
 
 
 def _normalize_test_columns(df: pd.DataFrame) -> pd.DataFrame:
     normalized = df.rename(
-        columns={source: target for source, target in _ML_COLUMN_MAP.items() if source in df.columns}
+        columns={
+            source: target for source, target in _ML_COLUMN_MAP.items() if source in df.columns
+        }
     )
     if "gender" not in normalized.columns and "Sex" in df.columns:
         normalized["gender"] = df["Sex"]
@@ -124,7 +138,7 @@ def _normalize_test_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _preprocess_test(df: pd.DataFrame) -> tuple[list[list[float]], list[int]]:
-    '''캘 테스트용 피처 전처리. Jack 학습과 동일한 변환을 독립 적용한다.'''
+    """캘 테스트용 피처 전처리. Jack 학습과 동일한 변환을 독립 적용한다."""
     frame = _normalize_test_columns(df.copy())
 
     y_test = frame["survived"].astype(int).tolist()
@@ -142,10 +156,25 @@ def _preprocess_test(df: pd.DataFrame) -> tuple[list[list[float]], list[int]]:
     frame["gender"] = frame["gender"].astype(str).str.lower().map({"male": 0, "female": 1})
 
     bins = [-1, 0, 5, 12, 18, 24, 35, 60, np.inf]
-    age_labels = ["Unknown", "Baby", "Child", "Teenager", "Student", "Young Adult", "Adult", "Senior"]
+    age_labels = [
+        "Unknown",
+        "Baby",
+        "Child",
+        "Teenager",
+        "Student",
+        "Young Adult",
+        "Adult",
+        "Senior",
+    ]
     age_title_mapping = {
-        0: "Unknown", 1: "Baby", 2: "Child", 3: "Teenager",
-        4: "Student", 5: "Young Adult", 6: "Adult", 7: "Senior",
+        0: "Unknown",
+        1: "Baby",
+        2: "Child",
+        3: "Teenager",
+        4: "Student",
+        5: "Young Adult",
+        6: "Adult",
+        7: "Senior",
     }
     age_mapping = {label: code for code, label in age_title_mapping.items()}
 
@@ -159,9 +188,7 @@ def _preprocess_test(df: pd.DataFrame) -> tuple[list[list[float]], list[int]]:
 
     frame["fare"] = pd.to_numeric(frame["fare"], errors="coerce").fillna(0)
     frame["FareBand"] = (
-        pd.qcut(frame["fare"], 4, labels=[1, 2, 3, 4], duplicates="drop")
-        .fillna(1)
-        .astype(int)
+        pd.qcut(frame["fare"], 4, labels=[1, 2, 3, 4], duplicates="drop").fillna(1).astype(int)
     )
 
     drop_cols = ["name", "age", "fare", "ticket", "cabin", "passenger_id"]

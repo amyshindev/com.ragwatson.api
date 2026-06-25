@@ -5,7 +5,6 @@ from titanic.domain.entities.passenger_rose_model_entity import Booking
 
 
 class TitanicBookingMapper:
-
     @staticmethod
     def to_entity(orm: TitanicBookingOrm) -> Booking:
         return Booking(

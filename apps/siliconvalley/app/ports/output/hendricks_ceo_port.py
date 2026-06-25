@@ -6,7 +6,6 @@ from siliconvalley.app.dtos.hendricks_ceo_dto import HendricksCeoQuery, Hendrick
 
 
 class HendricksCeoPort(ABC):
-
     @abstractmethod
     async def introduce_myself(self, query: HendricksCeoQuery) -> HendricksCeoResponse:
         pass

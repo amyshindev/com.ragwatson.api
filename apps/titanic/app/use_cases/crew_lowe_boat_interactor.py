@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 import numpy as np
 import pandas as pd
 
@@ -13,16 +11,14 @@ from titanic.domain.value_objects.title_vo import Title
 
 
 class LoweBoatInteractor(LoweBoatUseCase):
-
     def __init__(self, repository: LoweBoatPort):
         self.repository = repository
 
-    
     def feature_engineering(self, train_set):
         train = train_set.copy()
 
         # 1. Label 분리
-        y_label = train["survived"].astype(int).tolist()
+        _y_label = train["survived"].astype(int).tolist()
         train = train.drop("survived", axis=1)
 
         # 2. 호칭 추출 및 Nominal 변환
@@ -33,10 +29,25 @@ class LoweBoatInteractor(LoweBoatUseCase):
 
         # 4. 나이 구간 Ordinal 변환 및 결측치 처리
         bins = [-1, 0, 5, 12, 18, 24, 35, 60, np.inf]
-        age_labels = ["Unknown", "Baby", "Child", "Teenager", "Student", "Young Adult", "Adult", "Senior"]
+        age_labels = [
+            "Unknown",
+            "Baby",
+            "Child",
+            "Teenager",
+            "Student",
+            "Young Adult",
+            "Adult",
+            "Senior",
+        ]
         age_title_mapping = {
-            0: "Unknown", 1: "Baby", 2: "Child", 3: "Teenager",
-            4: "Student", 5: "Young Adult", 6: "Adult", 7: "Senior",
+            0: "Unknown",
+            1: "Baby",
+            2: "Child",
+            3: "Teenager",
+            4: "Student",
+            5: "Young Adult",
+            6: "Adult",
+            7: "Senior",
         }
         age_mapping = {v: k for k, v in age_title_mapping.items()}
 
@@ -52,23 +63,17 @@ class LoweBoatInteractor(LoweBoatUseCase):
         # 6. 요금 Ordinal 변환 (train 기준 4분위 구간 정의)
         train["fare"] = pd.to_numeric(train["fare"], errors="coerce").fillna(0)
         train["FareBand"] = (
-            pd.qcut(train["fare"], 4, labels=[1, 2, 3, 4], duplicates="drop")
-            .fillna(1).astype(int)
+            pd.qcut(train["fare"], 4, labels=[1, 2, 3, 4], duplicates="drop").fillna(1).astype(int)
         )
 
         # 7. 불필요 컬럼 드롭
         drop_cols = ["name", "age", "fare", "ticket", "cabin", "passenger_id"]
         train = train.drop(columns=[c for c in drop_cols if c in train.columns])
 
-
-
     async def introduce_myself(self, schema: LoweBoatSchema) -> LoweBoatResponse:
-        '''?? ????? ???? ????'''
+        """?? ????? ???? ????"""
 
-        return await self.repository.introduce_myself(LoweBoatQuery(
-            id = schema.id,
-            name = schema.name
-        ))
+        return await self.repository.introduce_myself(LoweBoatQuery(id=schema.id, name=schema.name))
 
 
 CrewLoweBoatInteractor = LoweBoatInteractor

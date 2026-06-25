@@ -15,6 +15,6 @@ async def introduce_myself(
     return await character.introduce_myself(
         BighettiHrSchema(
             id=5,
-            name='Bighetti (HR)',
+            name="Bighetti (HR)",
         )
     )

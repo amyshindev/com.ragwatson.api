@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import csv
-import logging
 from io import StringIO
+import logging
 from typing import Any
 
+from db.session import DbSession
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 
-from db.session import DbSession
 from titanic.adapter.inbound.api.schemas.crew_james_director_schema import CrewJamesDirectorSchema
 from titanic.app.ports.input.crew_james_director_use_case import CrewJamesDirectorUseCase
 from titanic.dependencies.crew_james_director_provider import get_crew_james_director_use_case
@@ -26,11 +26,14 @@ async def upload_titanic_csv(
 ) -> dict[str, str | int]:
     log.info("[CrewJamesDirectorRouter] upload start filename=%s", file.filename)
     if file.content_type not in _ALLOWED_CONTENT_TYPES:
-        raise HTTPException(status_code=400, detail="CSV \ud30c\uc77c\uc744 \uc5c5\ub85c\ub4dc\ud574\uc8fc\uc138\uc694.")
+        raise HTTPException(
+            status_code=400,
+            detail="CSV \ud30c\uc77c\uc744 \uc5c5\ub85c\ub4dc\ud574\uc8fc\uc138\uc694.",
+        )
 
     schema = _parse_csv((await file.read()).decode("utf-8", errors="replace"))
     log.info(
-        "1\uFE0F\u20E3  [CrewJamesDirectorRouter] "
+        "1\ufe0f\u20e3  [CrewJamesDirectorRouter] "
         "\uc5c5\ub85c\ub4dc\ub41c CSV \ud30c\uc77c\uc5d0\uc11c \uc2a4\ud0a4\ub9c8\ub85c \uc62e\uaca8\uc9c4 "
         "\uc0c1\uc704 5\uac1c \ub808\ucf54\ub4dc (\uc804\uccb4 %s\uac74):",
         len(schema),

@@ -7,10 +7,10 @@ import matplotlib
 
 matplotlib.use("Agg")
 
+from fastapi.responses import StreamingResponse
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from fastapi.responses import StreamingResponse
 
 from titanic.adapter.inbound.api.schemas.crew_hartley_violin_schema import HartleyViolinSchema
 from titanic.app.dtos.crew_hartley_violin_dto import HartleyViolinQuery, HartleyViolinResponse
@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 
 
 class HartleyViolinInteractor(HartleyViolinUseCase):
-
     def __init__(self, repository: HartleyViolinPort | None = None):
         self.repository = repository
 
@@ -36,11 +35,7 @@ class HartleyViolinInteractor(HartleyViolinUseCase):
         frame = df.copy()
         if "Sex" in frame.columns:
             frame["Sex"] = (
-                frame["Sex"]
-                .astype(str)
-                .str.lower()
-                .map({"male": 0, "female": 1})
-                .fillna(0)
+                frame["Sex"].astype(str).str.lower().map({"male": 0, "female": 1}).fillna(0)
             )
         numeric = frame.select_dtypes(include=["number"])
         if numeric.empty:
@@ -48,7 +43,7 @@ class HartleyViolinInteractor(HartleyViolinUseCase):
         return numeric
 
     def build_correlation_matrix(self) -> pd.DataFrame:
-        '''Pandas로 수치형 피처 간 피어슨 상관계수 행렬을 계산한다.'''
+        """Pandas로 수치형 피처 간 피어슨 상관계수 행렬을 계산한다."""
         numeric = self._prepare_numeric_frame(self._load_titanic_frame())
         correlation = numeric.corr()
         logger.info(
@@ -58,7 +53,7 @@ class HartleyViolinInteractor(HartleyViolinUseCase):
         return correlation
 
     def build_correlation_heatmap_buffer(self) -> io.BytesIO:
-        '''Seaborn/Matplotlib 히트맵을 메모리(BytesIO)에 PNG로 저장한다.'''
+        """Seaborn/Matplotlib 히트맵을 메모리(BytesIO)에 PNG로 저장한다."""
         correlation = self.build_correlation_matrix()
 
         figure, _ = plt.subplots(figsize=(8, 6))
@@ -75,19 +70,21 @@ class HartleyViolinInteractor(HartleyViolinUseCase):
             plt.close(figure)
 
     def get_correlation_heatmap_response(self) -> StreamingResponse:
-        '''BytesIO 버퍼를 FastAPI StreamingResponse(image/png)로 반환한다.'''
+        """BytesIO 버퍼를 FastAPI StreamingResponse(image/png)로 반환한다."""
         buffer = self.build_correlation_heatmap_buffer()
         return StreamingResponse(buffer, media_type="image/png")
 
     async def introduce_myself(self, schema: HartleyViolinSchema) -> HartleyViolinResponse:
-        '''하틀리 바이올린의 자기소개 인터랙트'''
+        """하틀리 바이올린의 자기소개 인터랙트"""
         if self.repository is None:
             raise RuntimeError("introduce_myself는 DB 레포지토리가 필요합니다.")
 
-        return await self.repository.introduce_myself(HartleyViolinQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            HartleyViolinQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )
 
 
 CrewHartleyViolinInteractor = HartleyViolinInteractor

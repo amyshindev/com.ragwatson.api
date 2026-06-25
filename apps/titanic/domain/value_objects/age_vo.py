@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -17,7 +16,7 @@ class Age:
             raise ValueError("Age는 120을 초과할 수 없습니다.")
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Age:
+    def from_raw(cls, raw: str | None) -> Age:
         if raw is None or raw.strip() == "":
             return cls(value=None)
         try:

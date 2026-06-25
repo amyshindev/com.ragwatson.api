@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class SurvivedType(int, Enum):
@@ -15,7 +14,7 @@ class Survived:
     value: SurvivedType | None
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Survived:
+    def from_raw(cls, raw: str | None) -> Survived:
         if raw is None or raw.strip() == "":
             return cls(value=None)
         text = raw.strip()

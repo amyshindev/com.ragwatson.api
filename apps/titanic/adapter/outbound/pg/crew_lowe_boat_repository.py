@@ -11,12 +11,11 @@ log = logging.getLogger(__name__)
 
 
 class LoweBoatPgRepository(LoweBoatPort):
-
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def introduce_myself(self, query: LoweBoatQuery) -> LoweBoatResponse:
-        '''로우 구명보트의 자기 소개 레포지토리 구현 메소드'''
+        """로우 구명보트의 자기 소개 레포지토리 구현 메소드"""
         log.info("[LoweBoatPgRepository] introduce_myself id=%s", query.id)
         return LoweBoatResponse(
             id=query.id * 10000,

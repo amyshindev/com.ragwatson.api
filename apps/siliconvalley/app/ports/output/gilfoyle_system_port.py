@@ -6,7 +6,6 @@ from siliconvalley.app.dtos.gilfoyle_system_dto import GilfoyleSystemQuery, Gilf
 
 
 class GilfoyleSystemPort(ABC):
-
     @abstractmethod
     async def introduce_myself(self, query: GilfoyleSystemQuery) -> GilfoyleSystemResponse:
         pass

@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, EmailStr, Field
 
-from user.domain.entities.user import User, UserRole
+from user.domain.entities.user import User
 
 if TYPE_CHECKING:
     pass

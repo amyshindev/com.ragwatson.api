@@ -2,9 +2,8 @@
 
 import logging
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from library.app.services.library_service import LibraryService
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

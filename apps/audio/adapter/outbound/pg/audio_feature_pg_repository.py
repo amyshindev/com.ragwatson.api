@@ -1,5 +1,5 @@
-import logging
 from datetime import datetime, timezone
+import logging
 from uuid import UUID
 
 from sqlalchemy import select
@@ -80,20 +80,14 @@ class AudioFeaturePgRepository(AudioFeatureRepository):
         await self._session.refresh(row)
         return row
 
-    async def update_inference_result(
-        self, feature_id: UUID, result: dict
-    ) -> AudioFeature:
+    async def update_inference_result(self, feature_id: UUID, result: dict) -> AudioFeature:
         payload = dict(result)
         if payload.get("processing_status") == "done":
             payload.setdefault("inferred_at", datetime.now(timezone.utc))
         return await self._update_fields(feature_id, payload, _INFERENCE_FIELDS)
 
-    async def update_visual_mapping(
-        self, feature_id: UUID, mapping: dict
-    ) -> AudioFeature:
+    async def update_visual_mapping(self, feature_id: UUID, mapping: dict) -> AudioFeature:
         return await self._update_fields(feature_id, mapping, _VISUAL_MAPPING_FIELDS)
 
-    async def update_beat_analysis(
-        self, feature_id: UUID, analysis: dict
-    ) -> AudioFeature:
+    async def update_beat_analysis(self, feature_id: UUID, analysis: dict) -> AudioFeature:
         return await self._update_fields(feature_id, analysis, _BEAT_FIELDS)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -13,7 +12,7 @@ class Ticket:
             raise ValueError("Ticket은 필수 값입니다.")
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Ticket:
+    def from_raw(cls, raw: str | None) -> Ticket:
         if raw is None or raw.strip() == "":
             raise ValueError("Ticket은 필수 값입니다.")
         return cls(value=raw.strip())

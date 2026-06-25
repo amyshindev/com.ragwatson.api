@@ -35,7 +35,9 @@ _ML_COLUMN_MAP = {
 
 def _normalize_train_columns(df: pd.DataFrame) -> pd.DataFrame:
     normalized = df.rename(
-        columns={source: target for source, target in _ML_COLUMN_MAP.items() if source in df.columns}
+        columns={
+            source: target for source, target in _ML_COLUMN_MAP.items() if source in df.columns
+        }
     )
     if "gender" not in normalized.columns and "Sex" in df.columns:
         normalized["gender"] = df["Sex"]
@@ -47,7 +49,7 @@ def _normalize_train_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _preprocess_train(df: pd.DataFrame) -> tuple[list[list[float]], list[int]]:
-    '''잭 학습용 피처 전처리. survived 라벨을 분리해 X, y를 반환한다.'''
+    """잭 학습용 피처 전처리. survived 라벨을 분리해 X, y를 반환한다."""
     frame = df.copy()
 
     y_label = frame["survived"].astype(int).tolist()
@@ -65,10 +67,25 @@ def _preprocess_train(df: pd.DataFrame) -> tuple[list[list[float]], list[int]]:
     frame["gender"] = frame["gender"].astype(str).str.lower().map({"male": 0, "female": 1})
 
     bins = [-1, 0, 5, 12, 18, 24, 35, 60, np.inf]
-    age_labels = ["Unknown", "Baby", "Child", "Teenager", "Student", "Young Adult", "Adult", "Senior"]
+    age_labels = [
+        "Unknown",
+        "Baby",
+        "Child",
+        "Teenager",
+        "Student",
+        "Young Adult",
+        "Adult",
+        "Senior",
+    ]
     age_title_mapping = {
-        0: "Unknown", 1: "Baby", 2: "Child", 3: "Teenager",
-        4: "Student", 5: "Young Adult", 6: "Adult", 7: "Senior",
+        0: "Unknown",
+        1: "Baby",
+        2: "Child",
+        3: "Teenager",
+        4: "Student",
+        5: "Young Adult",
+        6: "Adult",
+        7: "Senior",
     }
     age_mapping = {label: code for code, label in age_title_mapping.items()}
 
@@ -82,9 +99,7 @@ def _preprocess_train(df: pd.DataFrame) -> tuple[list[list[float]], list[int]]:
 
     frame["fare"] = pd.to_numeric(frame["fare"], errors="coerce").fillna(0)
     frame["FareBand"] = (
-        pd.qcut(frame["fare"], 4, labels=[1, 2, 3, 4], duplicates="drop")
-        .fillna(1)
-        .astype(int)
+        pd.qcut(frame["fare"], 4, labels=[1, 2, 3, 4], duplicates="drop").fillna(1).astype(int)
     )
 
     drop_cols = ["name", "age", "fare", "ticket", "cabin", "passenger_id"]
@@ -94,12 +109,11 @@ def _preprocess_train(df: pd.DataFrame) -> tuple[list[list[float]], list[int]]:
 
 
 class JackTrainerInteractor(JackTrainerUseCase):
-
     def __init__(self, repository: JackTrainerPort):
         self.repository = repository
 
     async def get_model_train(self, train_set: pd.DataFrame) -> dict[str, Any]:
-        '''로즈가 제안한 모델들을 훈련시키는 메소드'''
+        """로즈가 제안한 모델들을 훈련시키는 메소드"""
         logger.info("[JackTrainerInteractor] 학습 파이프라인 시작")
 
         normalized = _normalize_train_columns(train_set.copy())
@@ -120,13 +134,21 @@ class JackTrainerInteractor(JackTrainerUseCase):
                 trained_strategies[key] = strategy
                 trained_names.append(strategy.name)
                 predictions = strategy.predict(x_train)
-                train_accuracy = sum(pred == label for pred, label in zip(predictions, y_label)) / len(y_label)
-                train_results.append({
-                    "algorithm": key,
-                    "model_name": strategy.name,
-                    "train_accuracy": train_accuracy,
-                })
-                logger.info("[JackTrainerInteractor] %s 학습 완료 | train_accuracy=%.4f", strategy.name, train_accuracy)
+                train_accuracy = sum(
+                    pred == label for pred, label in zip(predictions, y_label, strict=True)
+                ) / len(y_label)
+                train_results.append(
+                    {
+                        "algorithm": key,
+                        "model_name": strategy.name,
+                        "train_accuracy": train_accuracy,
+                    }
+                )
+                logger.info(
+                    "[JackTrainerInteractor] %s 학습 완료 | train_accuracy=%.4f",
+                    strategy.name,
+                    train_accuracy,
+                )
             except Exception as error:
                 logger.warning("[JackTrainerInteractor] %s 학습 실패 | error=%s", key, error)
 
@@ -140,15 +162,14 @@ class JackTrainerInteractor(JackTrainerUseCase):
             "train_results": train_results,
         }
 
-
-
-
     async def introduce_myself(self, schema: JackTrainerSchema) -> JackTrainerResponse:
-        '''잭 트레이너의 자기소개 인터렉트'''
-        return await self.repository.introduce_myself(JackTrainerQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        """잭 트레이너의 자기소개 인터렉트"""
+        return await self.repository.introduce_myself(
+            JackTrainerQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )
 
 
 PassengerJackTrainerInteractor = JackTrainerInteractor

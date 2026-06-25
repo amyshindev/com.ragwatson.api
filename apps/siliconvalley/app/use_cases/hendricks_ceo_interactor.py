@@ -11,13 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 class HendricksCeoInteractor(HendricksCeoUseCase):
-
     def __init__(self, repository: HendricksCeoPort):
         self.repository = repository
 
     async def introduce_myself(self, schema: HendricksCeoSchema) -> HendricksCeoResponse:
         logger.info("[HendricksCeoInteractor] introduce_myself id=%s", schema.id)
-        return await self.repository.introduce_myself(HendricksCeoQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            HendricksCeoQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )

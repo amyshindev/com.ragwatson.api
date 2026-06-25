@@ -1,11 +1,12 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.matrix.grid_oracle_database_manager import get_db
 from siliconvalley.adapter.outbound.pg.hendricks_ceo_repository import HendricksCeoPgRepository
 from siliconvalley.app.ports.input.hendricks_ceo_use_case import HendricksCeoUseCase
 from siliconvalley.app.ports.output.hendricks_ceo_port import HendricksCeoPort
 from siliconvalley.app.use_cases.hendricks_ceo_interactor import HendricksCeoInteractor
+
+from core.matrix.grid_oracle_database_manager import get_db
 
 
 def get_hendricks_ceo_repository(

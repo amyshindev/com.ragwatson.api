@@ -31,9 +31,7 @@ class TrainingExportInteractor(TrainingExportUseCase):
     ) -> list[TrainingRecord]:
         if format not in {"jsonl", "csv"}:
             raise ValueError(f"Unsupported format: {format}")
-        records = await self._repository.export_labeled_dataset(
-            min_aesthetic_score, limit
-        )
+        records = await self._repository.export_labeled_dataset(min_aesthetic_score, limit)
         log.info("[TrainingExportInteractor] export count=%s format=%s", len(records), format)
         return records
 

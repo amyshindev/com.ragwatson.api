@@ -28,9 +28,7 @@ class GenerationLogInteractor(GenerationLogUseCase):
         self._repository = repository
 
     async def log_generation(self, body: GenerationLogCreate) -> GenerationLogRead:
-        row = await run_committed(
-            self._session, lambda: self._repository.create(body)
-        )
+        row = await run_committed(self._session, lambda: self._repository.create(body))
         log.info("[GenerationLogInteractor] log_generation id=%s", row.id)
         return GenerationLogRead.model_validate(row)
 
@@ -56,9 +54,7 @@ class GenerationLogInteractor(GenerationLogUseCase):
         rows = await self._repository.list_by_user(user_id, status, limit, offset)
         return [GenerationLogRead.model_validate(r) for r in rows]
 
-    async def update_result(
-        self, generation_id: UUID, result: dict
-    ) -> GenerationLogRead:
+    async def update_result(self, generation_id: UUID, result: dict) -> GenerationLogRead:
         if await self._repository.get(generation_id) is None:
             raise HTTPException(status_code=404, detail="GenerationLog not found")
         row = await run_committed(
@@ -67,9 +63,7 @@ class GenerationLogInteractor(GenerationLogUseCase):
         )
         return GenerationLogRead.model_validate(row)
 
-    async def update_loop_meta(
-        self, generation_id: UUID, meta: dict
-    ) -> GenerationLogRead:
+    async def update_loop_meta(self, generation_id: UUID, meta: dict) -> GenerationLogRead:
         if await self._repository.get(generation_id) is None:
             raise HTTPException(status_code=404, detail="GenerationLog not found")
         row = await run_committed(

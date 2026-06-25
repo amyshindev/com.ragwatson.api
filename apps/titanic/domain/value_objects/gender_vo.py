@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class GenderType(str, Enum):
@@ -16,7 +15,7 @@ class Gender:
     value: GenderType
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Gender:
+    def from_raw(cls, raw: str | None) -> Gender:
         if raw is None or raw.strip() == "":
             return cls(value=GenderType.UNKNOWN)
         normalized = raw.strip().lower()

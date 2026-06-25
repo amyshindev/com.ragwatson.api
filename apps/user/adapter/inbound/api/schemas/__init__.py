@@ -4,7 +4,6 @@ from user.adapter.inbound.api.schemas.user_schema import (
     SignupRequest,
     SignupResponse,
     UserResponse,
-    UserRole,
 )
 
 __all__ = [
@@ -13,5 +12,4 @@ __all__ = [
     "SignupRequest",
     "SignupResponse",
     "UserResponse",
-    "UserRole",
 ]

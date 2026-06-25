@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
+import uuid
 
 from sqlalchemy import BigInteger, DateTime, Float, ForeignKey, Integer, String, Text, func
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, UUID
@@ -17,9 +17,7 @@ if TYPE_CHECKING:
 class AudioFeature(Base):
     __tablename__ = "audio_features"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     workspace_id: Mapped[int | None] = mapped_column(
         BigInteger, ForeignKey("studio_workspaces.id"), nullable=True
     )
@@ -44,20 +42,14 @@ class AudioFeature(Base):
     source_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     duration_sec: Mapped[float | None] = mapped_column(Float, nullable=True)
 
-    processing_status: Mapped[str] = mapped_column(
-        String(30), nullable=False, default="pending"
-    )
+    processing_status: Mapped[str] = mapped_column(String(30), nullable=False, default="pending")
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     predicted_visual_style: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    predicted_color_palette: Mapped[list[str] | None] = mapped_column(
-        ARRAY(String), nullable=True
-    )
+    predicted_color_palette: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
     visual_embedding: Mapped[list[float] | None] = mapped_column(ARRAY(Float), nullable=True)
     model_version: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    inferred_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    inferred_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     visual_motion_intensity: Mapped[float | None] = mapped_column(Float, nullable=True)
     visual_texture_type: Mapped[str | None] = mapped_column(String(50), nullable=True)

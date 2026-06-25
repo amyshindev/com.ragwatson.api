@@ -2,9 +2,8 @@
 
 import logging
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from board.app.repositories.faq_repository import FaqRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

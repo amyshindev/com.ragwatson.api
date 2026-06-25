@@ -7,17 +7,15 @@ from titanic.app.ports.output.passenger_molly_scaler_port import MollyScalerPort
 
 
 class MollyScalerInteractor(MollyScalerUseCase):
-    
     def __init__(self, repository: MollyScalerPort):
         self.repository = repository
 
     async def introduce_myself(self, schema: MollyScalerSchema) -> MollyScalerResponse:
-        '''?? ????? ???? ????'''
+        """?? ????? ???? ????"""
 
-        return await self.repository.introduce_myself(MollyScalerQuery(
-            id = schema.id,
-            name = schema.name
-        ))
+        return await self.repository.introduce_myself(
+            MollyScalerQuery(id=schema.id, name=schema.name)
+        )
 
 
 PassengerMollyScalerInteractor = MollyScalerInteractor

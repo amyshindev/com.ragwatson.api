@@ -100,9 +100,7 @@ class TrainingExportPgRepository(TrainingExportRepository):
         avg_aesthetic, avg_loop, avg_sync = avg_result.one()
 
         labeled = await self._session.scalar(
-            select(func.count(VisualRating.id)).where(
-                VisualRating.aesthetic_score >= 3
-            )
+            select(func.count(VisualRating.id)).where(VisualRating.aesthetic_score >= 3)
         )
 
         platform_result = await self._session.execute(

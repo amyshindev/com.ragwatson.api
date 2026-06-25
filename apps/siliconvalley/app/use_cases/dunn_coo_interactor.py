@@ -11,13 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 class DunnCooInteractor(DunnCooUseCase):
-
     def __init__(self, repository: DunnCooPort):
         self.repository = repository
 
     async def introduce_myself(self, schema: DunnCooSchema) -> DunnCooResponse:
         logger.info("[DunnCooInteractor] introduce_myself id=%s", schema.id)
-        return await self.repository.introduce_myself(DunnCooQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            DunnCooQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )

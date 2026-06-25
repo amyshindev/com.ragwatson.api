@@ -7,12 +7,10 @@ from audio.adapter.outbound.orm.generation_log_orm import GenerationLog
 
 class GenerationLogRepository(ABC):
     @abstractmethod
-    async def create(self, body: GenerationLogCreate) -> GenerationLog:
-        ...
+    async def create(self, body: GenerationLogCreate) -> GenerationLog: ...
 
     @abstractmethod
-    async def get(self, generation_id: UUID) -> GenerationLog | None:
-        ...
+    async def get(self, generation_id: UUID) -> GenerationLog | None: ...
 
     @abstractmethod
     async def list_by_user(
@@ -21,17 +19,10 @@ class GenerationLogRepository(ABC):
         status: str | None = None,
         limit: int = 20,
         offset: int = 0,
-    ) -> list[GenerationLog]:
-        ...
+    ) -> list[GenerationLog]: ...
 
     @abstractmethod
-    async def update_result(
-        self, generation_id: UUID, result: dict
-    ) -> GenerationLog:
-        ...
+    async def update_result(self, generation_id: UUID, result: dict) -> GenerationLog: ...
 
     @abstractmethod
-    async def update_loop_meta(
-        self, generation_id: UUID, meta: dict
-    ) -> GenerationLog:
-        ...
+    async def update_loop_meta(self, generation_id: UUID, meta: dict) -> GenerationLog: ...

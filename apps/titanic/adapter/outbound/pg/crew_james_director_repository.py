@@ -64,7 +64,9 @@ class CrewJamesDirectorPgRepository(JamesDirectorPort):
 
         for start in range(0, len(person_commands), _BATCH_SIZE):
             chunk = person_commands[start : start + _BATCH_SIZE]
-            insert_stmt = pg_insert(PassengerJackTrainerOrm).values([_person_row(cmd) for cmd in chunk])
+            insert_stmt = pg_insert(PassengerJackTrainerOrm).values(
+                [_person_row(cmd) for cmd in chunk]
+            )
             upsert_stmt = insert_stmt.on_conflict_do_update(
                 index_elements=[PassengerJackTrainerOrm.passenger_id],
                 set_={
@@ -80,7 +82,9 @@ class CrewJamesDirectorPgRepository(JamesDirectorPort):
 
         if passenger_ids:
             await self._session.execute(
-                delete(PassengerRoseModelOrm).where(PassengerRoseModelOrm.passenger_id.in_(passenger_ids))
+                delete(PassengerRoseModelOrm).where(
+                    PassengerRoseModelOrm.passenger_id.in_(passenger_ids)
+                )
             )
 
         booking_rows = [

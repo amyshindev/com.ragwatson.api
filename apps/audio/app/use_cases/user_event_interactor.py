@@ -22,9 +22,7 @@ class UserEventInteractor(UserEventUseCase):
         self._repository = repository
 
     async def log_event(self, body: UserEventCreate) -> UserEventRead:
-        row = await run_committed(
-            self._session, lambda: self._repository.create(body)
-        )
+        row = await run_committed(self._session, lambda: self._repository.create(body))
         log.info("[UserEventInteractor] log_event id=%s", row.id)
         return UserEventRead.model_validate(row)
 

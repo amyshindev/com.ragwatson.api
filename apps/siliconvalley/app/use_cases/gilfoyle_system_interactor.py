@@ -11,13 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 class GilfoyleSystemInteractor(GilfoyleSystemUseCase):
-
     def __init__(self, repository: GilfoyleSystemPort):
         self.repository = repository
 
     async def introduce_myself(self, schema: GilfoyleSystemSchema) -> GilfoyleSystemResponse:
         logger.info("[GilfoyleSystemInteractor] introduce_myself id=%s", schema.id)
-        return await self.repository.introduce_myself(GilfoyleSystemQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            GilfoyleSystemQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )

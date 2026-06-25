@@ -28,9 +28,7 @@ class AudioFeatureInteractor(AudioFeatureUseCase):
         self._repository = repository
 
     async def ingest(self, body: AudioFeatureCreate) -> AudioFeatureRead:
-        row = await run_committed(
-            self._session, lambda: self._repository.create(body)
-        )
+        row = await run_committed(self._session, lambda: self._repository.create(body))
         log.info("[AudioFeatureInteractor] ingest id=%s", row.id)
         return AudioFeatureRead.model_validate(row)
 
@@ -46,15 +44,11 @@ class AudioFeatureInteractor(AudioFeatureUseCase):
             raise HTTPException(status_code=404, detail="AudioFeature not found")
         return AudioFeatureStatusRead.model_validate(row)
 
-    async def list_by_user(
-        self, user_id: int, limit: int, offset: int
-    ) -> list[AudioFeatureRead]:
+    async def list_by_user(self, user_id: int, limit: int, offset: int) -> list[AudioFeatureRead]:
         rows = await self._repository.list_by_user(user_id, limit, offset)
         return [AudioFeatureRead.model_validate(r) for r in rows]
 
-    async def update_inference_result(
-        self, feature_id: UUID, result: dict
-    ) -> AudioFeatureRead:
+    async def update_inference_result(self, feature_id: UUID, result: dict) -> AudioFeatureRead:
         if await self._repository.get(feature_id) is None:
             raise HTTPException(status_code=404, detail="AudioFeature not found")
         row = await run_committed(
@@ -63,9 +57,7 @@ class AudioFeatureInteractor(AudioFeatureUseCase):
         )
         return AudioFeatureRead.model_validate(row)
 
-    async def update_visual_mapping(
-        self, feature_id: UUID, mapping: dict
-    ) -> AudioFeatureRead:
+    async def update_visual_mapping(self, feature_id: UUID, mapping: dict) -> AudioFeatureRead:
         if await self._repository.get(feature_id) is None:
             raise HTTPException(status_code=404, detail="AudioFeature not found")
         row = await run_committed(
@@ -74,9 +66,7 @@ class AudioFeatureInteractor(AudioFeatureUseCase):
         )
         return AudioFeatureRead.model_validate(row)
 
-    async def update_beat_analysis(
-        self, feature_id: UUID, analysis: dict
-    ) -> AudioFeatureRead:
+    async def update_beat_analysis(self, feature_id: UUID, analysis: dict) -> AudioFeatureRead:
         if await self._repository.get(feature_id) is None:
             raise HTTPException(status_code=404, detail="AudioFeature not found")
         row = await run_committed(

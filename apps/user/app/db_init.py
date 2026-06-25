@@ -1,9 +1,9 @@
 import logging
 
+import database
 from sqlalchemy import text
 
 from core.config import is_database_configured
-import database
 
 log = logging.getLogger(__name__)
 
@@ -66,9 +66,7 @@ async def _seed_dev_admin_if_empty(conn) -> None:
     """로컬/Docker 개발용 기본 관리자 — admins 테이블이 비어 있을 때만 생성."""
     from user.adapter.outbound.pg.password_hasher import hash_password
 
-    existing = await conn.execute(
-        text("SELECT 1 FROM admins WHERE deleted_at IS NULL LIMIT 1")
-    )
+    existing = await conn.execute(text("SELECT 1 FROM admins WHERE deleted_at IS NULL LIMIT 1"))
     if existing.scalar_one_or_none() is not None:
         return
 

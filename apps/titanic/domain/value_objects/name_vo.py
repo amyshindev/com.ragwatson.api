@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -15,7 +14,7 @@ class Name:
             raise ValueError("Name은 200자를 초과할 수 없습니다.")
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Name:
+    def from_raw(cls, raw: str | None) -> Name:
         if raw is None or raw.strip() == "":
             raise ValueError("Name은 필수 값입니다.")
         return cls(value=raw.strip())

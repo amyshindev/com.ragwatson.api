@@ -11,12 +11,11 @@ log = logging.getLogger(__name__)
 
 
 class RoseModelPgRepository(RoseModelPort):
-
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def introduce_myself(self, query: RoseModelQuery) -> RoseModelResponse:
-        '''로즈 모델의 자기 소개 레포지토리 구현 메소드'''
+        """로즈 모델의 자기 소개 레포지토리 구현 메소드"""
         log.info("[RoseModelPgRepository] introduce_myself id=%s", query.id)
         return RoseModelResponse(
             id=query.id * 10000,

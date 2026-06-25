@@ -20,26 +20,46 @@ Revision ID: e5f6a7b8c9d0
 Revises: d4e5f6a7b8c9
 Create Date: 2026-06-05
 """
-from typing import Sequence, Union
 
-import sqlalchemy as sa
+from collections.abc import Sequence
+
 from alembic import op
-from sqlalchemy.dialects import postgresql
+import sqlalchemy as sa
 
 revision: str = "e5f6a7b8c9d0"
-down_revision: Union[str, Sequence[str], None] = "d4e5f6a7b8c9"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "d4e5f6a7b8c9"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # 시드 데이터
 # ──────────────────────────────────────────────────────────────────────────────
 _PLATFORM_SEED = [
-    {"platform_name": "spotify_canvas", "default_aspect_ratio": "9:16", "default_resolution": "1080x1920", "default_duration_sec": 8.0},
-    {"platform_name": "tiktok",         "default_aspect_ratio": "9:16", "default_resolution": "1080x1920", "default_duration_sec": 15.0},
-    {"platform_name": "shorts",         "default_aspect_ratio": "9:16", "default_resolution": "1080x1920", "default_duration_sec": 60.0},
-    {"platform_name": "universal",      "default_aspect_ratio": "1:1",  "default_resolution": "1080x1080", "default_duration_sec": 30.0},
+    {
+        "platform_name": "spotify_canvas",
+        "default_aspect_ratio": "9:16",
+        "default_resolution": "1080x1920",
+        "default_duration_sec": 8.0,
+    },
+    {
+        "platform_name": "tiktok",
+        "default_aspect_ratio": "9:16",
+        "default_resolution": "1080x1920",
+        "default_duration_sec": 15.0,
+    },
+    {
+        "platform_name": "shorts",
+        "default_aspect_ratio": "9:16",
+        "default_resolution": "1080x1920",
+        "default_duration_sec": 60.0,
+    },
+    {
+        "platform_name": "universal",
+        "default_aspect_ratio": "1:1",
+        "default_resolution": "1080x1080",
+        "default_duration_sec": 30.0,
+    },
 ]
 
 
@@ -161,8 +181,10 @@ def upgrade() -> None:
     )
     op.create_foreign_key(
         "fk_studio_workspaces_user_id",
-        "studio_workspaces", "users",
-        ["user_id"], ["id"],
+        "studio_workspaces",
+        "users",
+        ["user_id"],
+        ["id"],
         ondelete="SET NULL",
     )
     op.create_index("ix_studio_workspaces_user_id", "studio_workspaces", ["user_id"])
@@ -211,8 +233,10 @@ def upgrade() -> None:
     )
     op.create_foreign_key(
         "fk_gallery_items_created_by_admins",
-        "gallery_items", "admins",
-        ["created_by"], ["id"],
+        "gallery_items",
+        "admins",
+        ["created_by"],
+        ["id"],
         ondelete="SET NULL",
     )
     op.create_index("ix_gallery_items_created_by", "gallery_items", ["created_by"])
@@ -290,6 +314,7 @@ def downgrade() -> None:
 # 헬퍼 함수
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 def _drop_fk_if_exists(conn, table: str, ref_table: str, col: str) -> None:
     """특정 컬럼의 FK 제약이 있으면 DROP한다. 없으면 skip."""
     result = conn.execute(
@@ -329,8 +354,10 @@ def _add_created_by_fk(conn, table: str) -> None:
 
     op.create_foreign_key(
         f"fk_{table}_created_by_admins",
-        table, "admins",
-        ["created_by"], ["id"],
+        table,
+        "admins",
+        ["created_by"],
+        ["id"],
         ondelete="SET NULL",
     )
     op.create_index(f"ix_{table}_created_by", table, ["created_by"])

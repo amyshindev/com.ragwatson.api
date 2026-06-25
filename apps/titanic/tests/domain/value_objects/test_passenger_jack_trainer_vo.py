@@ -5,7 +5,7 @@ from titanic.domain.value_objects.gender_vo import Gender, GenderType
 from titanic.domain.value_objects.name_vo import Name
 from titanic.domain.value_objects.parch_vo import Parch
 from titanic.domain.value_objects.sib_sp_vo import SibSp
-from titanic.domain.value_objects.survived_vo import Survived, SurvivedType
+from titanic.domain.value_objects.survived_vo import Survived
 from titanic.domain.value_objects.title_vo import Title
 
 

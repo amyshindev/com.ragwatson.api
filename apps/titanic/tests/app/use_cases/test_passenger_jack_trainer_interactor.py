@@ -1,17 +1,16 @@
-import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from titanic.app.use_cases.passenger_jack_trainer_interactor import JackTrainerInteractor
-from titanic.app.dtos.passenger_jack_trainer_dto import JackTrainerQuery, JackTrainerResponse
+import pytest
+
 from titanic.adapter.inbound.api.schemas.passenger_jack_trainer_schema import JackTrainerSchema
+from titanic.app.dtos.passenger_jack_trainer_dto import JackTrainerQuery, JackTrainerResponse
+from titanic.app.use_cases.passenger_jack_trainer_interactor import JackTrainerInteractor
 
 
 @pytest.fixture
 def mock_repository():
     repo = MagicMock()
-    repo.introduce_myself = AsyncMock(
-        return_value=JackTrainerResponse(id=9, name="Jack Dawson")
-    )
+    repo.introduce_myself = AsyncMock(return_value=JackTrainerResponse(id=9, name="Jack Dawson"))
     return repo
 
 

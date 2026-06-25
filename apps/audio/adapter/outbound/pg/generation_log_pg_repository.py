@@ -1,5 +1,5 @@
-import logging
 from datetime import datetime, timezone
+import logging
 from uuid import UUID
 
 from sqlalchemy import select
@@ -88,12 +88,8 @@ class GenerationLogPgRepository(GenerationLogRepository):
         await self._session.refresh(row)
         return row
 
-    async def update_result(
-        self, generation_id: UUID, result: dict
-    ) -> GenerationLog:
+    async def update_result(self, generation_id: UUID, result: dict) -> GenerationLog:
         return await self._update_fields(generation_id, result, _RESULT_FIELDS)
 
-    async def update_loop_meta(
-        self, generation_id: UUID, meta: dict
-    ) -> GenerationLog:
+    async def update_loop_meta(self, generation_id: UUID, meta: dict) -> GenerationLog:
         return await self._update_fields(generation_id, meta, _LOOP_META_FIELDS)

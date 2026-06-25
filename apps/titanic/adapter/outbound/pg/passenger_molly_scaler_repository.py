@@ -11,12 +11,11 @@ log = logging.getLogger(__name__)
 
 
 class MollyScalerPgRepository(MollyScalerPort):
-
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def introduce_myself(self, query: MollyScalerQuery) -> MollyScalerResponse:
-        '''몰리 스케일러의 자기 소개 레포지토리 구현 메소드'''
+        """몰리 스케일러의 자기 소개 레포지토리 구현 메소드"""
         log.info("[MollyScalerPgRepository] introduce_myself id=%s", query.id)
         return MollyScalerResponse(
             id=query.id * 10000,

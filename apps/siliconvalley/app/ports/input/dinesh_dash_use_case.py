@@ -7,7 +7,6 @@ from siliconvalley.app.dtos.dinesh_dash_dto import DineshDashResponse
 
 
 class DineshDashUseCase(ABC):
-
     @abstractmethod
     async def introduce_myself(self, schema: DineshDashSchema) -> DineshDashResponse:
         pass

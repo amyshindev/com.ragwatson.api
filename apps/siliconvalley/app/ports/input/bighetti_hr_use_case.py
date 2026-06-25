@@ -7,7 +7,6 @@ from siliconvalley.app.dtos.bighetti_hr_dto import BighettiHrResponse
 
 
 class BighettiHrUseCase(ABC):
-
     @abstractmethod
     async def introduce_myself(self, schema: BighettiHrSchema) -> BighettiHrResponse:
         pass

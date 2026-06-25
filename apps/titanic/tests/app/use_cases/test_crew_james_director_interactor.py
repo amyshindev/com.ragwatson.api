@@ -27,20 +27,20 @@ def interactor(mock_session, mock_repository):
 
 
 def _schema(**overrides) -> CrewJamesDirectorSchema:
-    defaults = dict(
-        passenger_id="1",
-        survived="0",
-        pclass="3",
-        name="Braund, Mr. Owen",
-        gender="male",
-        age="22",
-        sibsp="1",
-        parch="0",
-        ticket="A/5 21171",
-        fare="7.25",
-        cabin=None,
-        embarked="S",
-    )
+    defaults = {
+        "passenger_id": "1",
+        "survived": "0",
+        "pclass": "3",
+        "name": "Braund, Mr. Owen",
+        "gender": "male",
+        "age": "22",
+        "sibsp": "1",
+        "parch": "0",
+        "ticket": "A/5 21171",
+        "fare": "7.25",
+        "cabin": None,
+        "embarked": "S",
+    }
     defaults.update(overrides)
     return CrewJamesDirectorSchema(**defaults)
 

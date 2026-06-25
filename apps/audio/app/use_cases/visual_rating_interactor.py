@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 from uuid import UUID
 
-from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from audio.adapter.inbound.api.schemas.visual_ratings import (
@@ -30,15 +29,11 @@ class VisualRatingInteractor(VisualRatingUseCase):
         self._repository = repository
 
     async def submit_rating(self, body: VisualRatingCreate) -> VisualRatingRead:
-        row = await run_committed(
-            self._session, lambda: self._repository.create(body)
-        )
+        row = await run_committed(self._session, lambda: self._repository.create(body))
         log.info("[VisualRatingInteractor] submit_rating id=%s", row.id)
         return VisualRatingRead.model_validate(row)
 
-    async def get_ratings_by_generation(
-        self, generation_id: UUID
-    ) -> list[VisualRatingRead]:
+    async def get_ratings_by_generation(self, generation_id: UUID) -> list[VisualRatingRead]:
         rows = await self._repository.list_by_generation(generation_id)
         return [VisualRatingRead.model_validate(r) for r in rows]
 
@@ -56,9 +51,7 @@ class VisualRatingInteractor(VisualRatingUseCase):
         data = await self._repository.get_platform_avg(generation_id, platform)
         return VisualRatingPlatformAvgRead(**data)
 
-    async def flag_rating(
-        self, rating_id: UUID, flag: str, reason: str | None
-    ) -> VisualRatingRead:
+    async def flag_rating(self, rating_id: UUID, flag: str, reason: str | None) -> VisualRatingRead:
         row = await run_committed(
             self._session,
             lambda: self._repository.flag_rating(rating_id, flag, reason),

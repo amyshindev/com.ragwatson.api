@@ -9,6 +9,7 @@
     1. Ollama 실행 (기본 http://127.0.0.1:11434)
     2. ollama pull anpigon/eeve-korean-10.8b
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -52,8 +53,8 @@ def _model_pulled(model: str) -> bool:
 
 
 def run_korean_ai(user_text: str, *, model: str = OLLAMA_MODEL) -> str:
-    import ollama
     from kiwipiepy import Kiwi
+    import ollama
 
     kiwi = Kiwi()
 
@@ -105,8 +106,7 @@ class TestKiwiPreprocess:
 class TestKoreanAiOllama:
     def test_chat_returns_non_empty_reply(self):
         question = (
-            "자연어처리는 넘흐 재밌어요. "
-            "올라마와 키위 라이브러리의 장점을 한 문장으로 요약해줘."
+            "자연어처리는 넘흐 재밌어요. 올라마와 키위 라이브러리의 장점을 한 문장으로 요약해줘."
         )
         reply = run_korean_ai(question)
         assert isinstance(reply, str)

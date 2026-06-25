@@ -3,7 +3,6 @@
 import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from studioworkspace.app.repositories.studio_workspace_repository import (
     StudioWorkspaceRepository,
 )

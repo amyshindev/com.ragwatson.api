@@ -2,7 +2,7 @@
 
 from domain_intake.models.faq_entry import FaqEntry
 from domain_intake.models.gallery_item import GalleryItem
-from domain_intake.models.genre import Genre, GalleryItemGenre
+from domain_intake.models.genre import GalleryItemGenre, Genre
 from domain_intake.models.library_item import LibraryItem
 from domain_intake.models.magazine_article import MagazineArticle
 from domain_intake.models.platform_spec import PlatformSpec

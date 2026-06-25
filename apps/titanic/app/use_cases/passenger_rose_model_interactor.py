@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -31,7 +32,6 @@ from titanic.app.ports.input.passenger_rose_model_use_case import (
 )
 from titanic.app.ports.output.passenger_rose_model_port import RoseModelPort
 from titanic.app.use_cases.crew_walter_roaster_reader import WalterReader
-
 
 # titanic-algorithms.md §4 로드맵 — Baseline → Scaling Up → TOP 10 전체
 ROSE_BASELINE_ALGORITHMS: tuple[TitanicAlgorithm, ...] = (
@@ -151,7 +151,6 @@ ALGORITHM_STRATEGIES: dict[TitanicAlgorithm, RoseModelAlgorithmStrategy] = {
 
 
 class RoseModelInteractor(RoseModelUseCase):
-
     def __init__(
         self,
         repository: RoseModelPort | None = None,
@@ -190,10 +189,12 @@ class RoseModelInteractor(RoseModelUseCase):
         if self.repository is None:
             return RoseModelResponse(id=schema.id, name=schema.name)
 
-        return await self.repository.introduce_myself(RoseModelQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            RoseModelQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )
 
     def get_model_name(self) -> str:
         return self._strategy.display_name
@@ -271,7 +272,9 @@ class RoseModelInteractor(RoseModelUseCase):
 
         return self._fallback_training_data()
 
-    def _train_algorithm(self, algorithm: TitanicAlgorithm, X: pd.DataFrame, y: pd.Series) -> dict[str, Any]:
+    def _train_algorithm(
+        self, algorithm: TitanicAlgorithm, X: pd.DataFrame, y: pd.Series
+    ) -> dict[str, Any]:
         self.set_algorithm(algorithm)
         self.train(X, y)
         accuracy = self.get_accuracy(X, y)
@@ -287,7 +290,7 @@ class RoseModelInteractor(RoseModelUseCase):
         X: pd.DataFrame | None = None,
         y: pd.Series | None = None,
     ) -> dict[str, Any]:
-        '''로즈가 제안한 모델들(titanic-algorithms.md TOP 10)을 훈련하고 최고 성능 전략을 채택한다'''
+        """로즈가 제안한 모델들(titanic-algorithms.md TOP 10)을 훈련하고 최고 성능 전략을 채택한다"""
 
         features, labels = self._resolve_training_data(X, y)
         results: list[dict[str, Any]] = []

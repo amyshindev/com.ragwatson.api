@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import logging
 from collections.abc import Awaitable, Callable
+import logging
 from typing import TypeVar
 
 from fastapi import HTTPException
@@ -22,9 +22,7 @@ async def run_committed(session: AsyncSession, work: Callable[[], Awaitable[T]])
         return result
     except IntegrityError as exc:
         await session.rollback()
-        raise HTTPException(
-            status_code=409, detail="Duplicate or invalid FK"
-        ) from exc
+        raise HTTPException(status_code=409, detail="Duplicate or invalid FK") from exc
     except OperationalError as exc:
         await session.rollback()
         raise HTTPException(status_code=503, detail="DB unavailable") from exc

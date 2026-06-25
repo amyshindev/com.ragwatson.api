@@ -1,9 +1,8 @@
 from datetime import datetime
 
+from database import Base
 from sqlalchemy import DateTime, Float, String, func
 from sqlalchemy.orm import Mapped, mapped_column
-
-from database import Base
 
 
 class PlatformSpec(Base):
@@ -23,9 +22,7 @@ class PlatformSpec(Base):
     __tablename__ = "platform_specs"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    platform_name: Mapped[str] = mapped_column(
-        String(50), unique=True, index=True, nullable=False
-    )
+    platform_name: Mapped[str] = mapped_column(String(50), unique=True, index=True, nullable=False)
     default_aspect_ratio: Mapped[str | None] = mapped_column(String(10), nullable=True)
     default_resolution: Mapped[str | None] = mapped_column(String(30), nullable=True)
     default_duration_sec: Mapped[float | None] = mapped_column(Float, nullable=True)

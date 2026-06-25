@@ -27,9 +27,7 @@ class PassengerEntity:
             return False
         if self.age.is_minor:
             return False
-        if self.has_family():
-            return False
-        return True
+        return not self.has_family()
 
     def has_family(self) -> bool:
         return self.sib_sp.has_sibling_or_spouse or self.parch.has_parent_or_child
@@ -47,14 +45,12 @@ class PassengerEntity:
 
     @classmethod
     def from_orm(cls, orm: Any) -> PassengerEntity:
-        name = (
-            Name(str(orm.name))
-            if getattr(orm, "name", None) is not None
-            else None
-        )
+        name = Name(str(orm.name)) if getattr(orm, "name", None) is not None else None
         return cls(
             id=int(getattr(orm, "id", 0) or 0),
-            passenger_id=(str(orm.passenger_id) if getattr(orm, "passenger_id", None) is not None else None),
+            passenger_id=(
+                str(orm.passenger_id) if getattr(orm, "passenger_id", None) is not None else None
+            ),
             name=name,
             gender=Gender.from_raw(getattr(orm, "gender", None)),
             age=Age.from_raw(getattr(orm, "age", None)),

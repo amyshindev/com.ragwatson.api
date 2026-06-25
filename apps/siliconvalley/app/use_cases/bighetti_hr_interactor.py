@@ -11,13 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 class BighettiHrInteractor(BighettiHrUseCase):
-
     def __init__(self, repository: BighettiHrPort):
         self.repository = repository
 
     async def introduce_myself(self, schema: BighettiHrSchema) -> BighettiHrResponse:
         logger.info("[BighettiHrInteractor] introduce_myself id=%s", schema.id)
-        return await self.repository.introduce_myself(BighettiHrQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            BighettiHrQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )

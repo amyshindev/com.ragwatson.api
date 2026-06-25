@@ -11,13 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 class DineshDashInteractor(DineshDashUseCase):
-
     def __init__(self, repository: DineshDashPort):
         self.repository = repository
 
     async def introduce_myself(self, schema: DineshDashSchema) -> DineshDashResponse:
         logger.info("[DineshDashInteractor] introduce_myself id=%s", schema.id)
-        return await self.repository.introduce_myself(DineshDashQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            DineshDashQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )

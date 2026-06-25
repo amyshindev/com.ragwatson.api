@@ -7,17 +7,15 @@ from titanic.app.ports.output.passenger_isidor_couple_port import IsidorCouplePo
 
 
 class IsidorCoupleInteractor(IsidorCoupleUseCase):
-    
     def __init__(self, repository: IsidorCouplePort):
         self.repository = repository
 
     async def introduce_myself(self, schema: IsidorCoupleSchema) -> IsidorCoupleResponse:
-        '''???? ??? ???? ????'''
+        """???? ??? ???? ????"""
 
-        return await self.repository.introduce_myself(IsidorCoupleQuery(
-            id = schema.id,
-            name = schema.name
-        ))
+        return await self.repository.introduce_myself(
+            IsidorCoupleQuery(id=schema.id, name=schema.name)
+        )
 
 
 PassengerIsidorCoupleInteractor = IsidorCoupleInteractor

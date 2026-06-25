@@ -1,15 +1,12 @@
 """POST /api/domain/* — 폼 연동 (도메인별 PostgreSQL 테이블)."""
 
+from collections.abc import Awaitable, Callable
 import logging
 from typing import Annotated
-from collections.abc import Awaitable, Callable
 
-from fastapi import APIRouter, Header, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from db.session import DbSession
 from domain_intake.controller import DomainIntakeController
 from domain_intake.repository import DomainIntakeRepositories
-from domain_intake.service import DomainIntakeService
 from domain_intake.schemas import (
     DomainAcceptedResponse,
     FaqCreate,
@@ -17,12 +14,14 @@ from domain_intake.schemas import (
     GalleryCreate,
     GalleryItemRead,
     LibraryCreate,
-    MagazineCreate,
     MagazineArticleRead,
+    MagazineCreate,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
-from db.session import DbSession
+from domain_intake.service import DomainIntakeService
+from fastapi import APIRouter, Header, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 
 log = logging.getLogger(__name__)
 

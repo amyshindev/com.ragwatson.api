@@ -15,6 +15,6 @@ async def introduce_myself(
     return await character.introduce_myself(
         GilfoyleSystemSchema(
             id=2,
-            name='Bertram Gilfoyle (System)',
+            name="Bertram Gilfoyle (System)",
         )
     )

@@ -4,19 +4,21 @@ import logging
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from titanic.app.dtos.crew_andrews_architect_dto import AndrewsArchitectQuery, AndrewsArchitectResponse
+from titanic.app.dtos.crew_andrews_architect_dto import (
+    AndrewsArchitectQuery,
+    AndrewsArchitectResponse,
+)
 from titanic.app.ports.output.crew_andrews_architect_port import AndrewsArchitectPort
 
 log = logging.getLogger(__name__)
 
 
 class AndrewsArchitectPgRepository(AndrewsArchitectPort):
-
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def introduce_myself(self, query: AndrewsArchitectQuery) -> AndrewsArchitectResponse:
-        '''앤드류 설계자의 자기 소개 레포지토리 구현 메소드'''
+        """앤드류 설계자의 자기 소개 레포지토리 구현 메소드"""
         log.info("[AndrewsArchitectPgRepository] introduce_myself id=%s", query.id)
         return AndrewsArchitectResponse(
             id=query.id * 10000,

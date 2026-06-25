@@ -9,16 +9,17 @@ v4: USERS.role 체크 → ADMINS 테이블 존재 여부 체크로 변경.
     async def admin_endpoint(admin: AdminRecord = Depends(admin_required)):
         ...
 """
+
 from __future__ import annotations
 
 import logging
 
+from db.session import DbSession
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.session import DbSession
 from user.adapter.outbound.orm.admin_model import AdminRecord
 from user.domain.entities.admin import Admin
 

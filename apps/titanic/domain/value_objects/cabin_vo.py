@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -9,7 +8,7 @@ class Cabin:
     value: str | None
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Cabin:
+    def from_raw(cls, raw: str | None) -> Cabin:
         if raw is None or raw.strip() == "":
             return cls(value=None)
         return cls(value=raw.strip())

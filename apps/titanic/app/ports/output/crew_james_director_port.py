@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any
 
 from titanic.app.dtos.crew_james_director_dto import BookingCommand, PersonCommand
 
@@ -12,8 +11,7 @@ class JamesDirectorPort(ABC):
         self,
         person_commands: list[PersonCommand],
         booking_commands: list[BookingCommand],
-    ) -> int:
-        ...
+    ) -> int: ...
 
 
 CrewJamesDirectorPort = JamesDirectorPort

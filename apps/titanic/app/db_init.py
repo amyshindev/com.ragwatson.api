@@ -1,8 +1,8 @@
 import logging
 
+import database
 from sqlalchemy import select
 
-import database
 from core.config import is_database_configured
 from titanic.adapter.outbound.orm.passenger_jack_trainer_orm import PassengerJackTrainerOrm
 
@@ -29,11 +29,10 @@ async def init_titanic_tables() -> None:
     database._ensure_engine()
     assert database.engine is not None
 
-    async with database.AsyncSessionLocal() as session:
-        async with session.begin():
-            result = await session.execute(select(PassengerJackTrainerOrm).limit(1))
-            person = result.scalar_one_or_none()
-            if person is None:
-                log.info("Titanic persons table is empty.")
-            else:
-                log.info("Titanic persons table already contains data.")
+    async with database.AsyncSessionLocal() as session, session.begin():
+        result = await session.execute(select(PassengerJackTrainerOrm).limit(1))
+        person = result.scalar_one_or_none()
+        if person is None:
+            log.info("Titanic persons table is empty.")
+        else:
+            log.info("Titanic persons table already contains data.")

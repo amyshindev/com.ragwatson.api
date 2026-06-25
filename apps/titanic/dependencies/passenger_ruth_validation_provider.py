@@ -2,7 +2,9 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.matrix.grid_oracle_database_manager import get_db
-from titanic.adapter.outbound.pg.passenger_ruth_validation_repository import RuthValidationPgRepository
+from titanic.adapter.outbound.pg.passenger_ruth_validation_repository import (
+    RuthValidationPgRepository,
+)
 from titanic.app.ports.input.passenger_ruth_validation_use_case import RuthValidationUseCase
 from titanic.app.ports.output.passenger_ruth_validation_port import RuthValidationPort
 from titanic.app.use_cases.passenger_ruth_validation_interactor import RuthValidationInteractor

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import ClassVar, Optional
+import re
+from typing import ClassVar
 
 _TITLE_PATTERN = re.compile(r"([A-Za-z]+)\.")
 
 
 class TitleCategory(str, Enum):
-    '''Name에서 추출한 호칭 — nominal 인코딩 전 범주'''
+    """Name에서 추출한 호칭 — nominal 인코딩 전 범주"""
 
     UNKNOWN = "Unknown"
     MR = "Mr"
@@ -22,13 +22,23 @@ class TitleCategory(str, Enum):
 
 @dataclass(frozen=True)
 class Title:
-    '''승객 이름(Name)에서 호칭을 추출하고 nominal 정수로 변환한다.'''
+    """승객 이름(Name)에서 호칭을 추출하고 nominal 정수로 변환한다."""
 
     category: TitleCategory
 
-    _RARE_RAW: ClassVar[frozenset[str]] = frozenset({
-        "Capt", "Col", "Don", "Dr", "Major", "Rev", "Jonkheer", "Dona", "Mme",
-    })
+    _RARE_RAW: ClassVar[frozenset[str]] = frozenset(
+        {
+            "Capt",
+            "Col",
+            "Don",
+            "Dr",
+            "Major",
+            "Rev",
+            "Jonkheer",
+            "Dona",
+            "Mme",
+        }
+    )
     _ROYAL_RAW: ClassVar[frozenset[str]] = frozenset({"Countess", "Lady", "Sir"})
     _ALIASES: ClassVar[dict[str, str]] = {"Mlle": "Mr", "Ms": "Miss"}
     _NOMINAL_CODES: ClassVar[dict[TitleCategory, int]] = {
@@ -42,7 +52,7 @@ class Title:
     }
 
     @classmethod
-    def from_name(cls, name: Optional[str]) -> Title:
+    def from_name(cls, name: str | None) -> Title:
         if name is None or not name.strip():
             return cls(category=TitleCategory.UNKNOWN)
 
@@ -53,7 +63,7 @@ class Title:
         return cls.from_raw(match.group(1))
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Title:
+    def from_raw(cls, raw: str | None) -> Title:
         if raw is None or not str(raw).strip():
             return cls(category=TitleCategory.UNKNOWN)
 

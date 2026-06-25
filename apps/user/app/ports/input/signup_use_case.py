@@ -7,5 +7,4 @@ from user.adapter.inbound.api.schemas import SignupRequest, SignupResponse
 
 class SignupUseCase(ABC):
     @abstractmethod
-    async def signup(self, req: SignupRequest) -> SignupResponse:
-        ...
+    async def signup(self, req: SignupRequest) -> SignupResponse: ...

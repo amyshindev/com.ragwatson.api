@@ -2,9 +2,6 @@
 
 import logging
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from domain_intake.models.faq_entry import FaqEntry
 from domain_intake.models.gallery_item import GalleryItem
 from domain_intake.models.library_item import LibraryItem
@@ -19,6 +16,8 @@ from domain_intake.schemas import (
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

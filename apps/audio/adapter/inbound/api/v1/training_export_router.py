@@ -18,9 +18,7 @@ async def export_training_set(
     use_case: TrainingExportUseCase = Depends(get_training_export_use_case),
 ) -> list[TrainingRecord]:
     try:
-        return await use_case.export_labeled_dataset(
-            min_aesthetic_score, limit, format
-        )
+        return await use_case.export_labeled_dataset(min_aesthetic_score, limit, format)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 

@@ -2,8 +2,6 @@
 
 import logging
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from domain_intake.schemas import (
     DomainAcceptedResponse,
     FaqCreate,
@@ -11,12 +9,13 @@ from domain_intake.schemas import (
     GalleryCreate,
     GalleryItemRead,
     LibraryCreate,
-    MagazineCreate,
     MagazineArticleRead,
+    MagazineCreate,
     StudioAnalyticsCreate,
     StudioWorkspaceCreate,
 )
 from domain_intake.service import DomainIntakeService
+from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 

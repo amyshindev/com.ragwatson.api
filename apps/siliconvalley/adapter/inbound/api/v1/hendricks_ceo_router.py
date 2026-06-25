@@ -15,6 +15,6 @@ async def introduce_myself(
     return await character.introduce_myself(
         HendricksCeoSchema(
             id=1,
-            name='Richard Hendricks (CEO)',
+            name="Richard Hendricks (CEO)",
         )
     )

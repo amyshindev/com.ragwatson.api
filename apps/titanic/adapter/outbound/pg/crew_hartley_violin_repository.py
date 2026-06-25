@@ -11,12 +11,11 @@ log = logging.getLogger(__name__)
 
 
 class HartleyViolinPgRepository(HartleyViolinPort):
-
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def introduce_myself(self, query: HartleyViolinQuery) -> HartleyViolinResponse:
-        '''하틀리 바이올리니스트의 자기 소개 레포지토리 구현 메소드'''
+        """하틀리 바이올리니스트의 자기 소개 레포지토리 구현 메소드"""
         log.info("[HartleyViolinPgRepository] introduce_myself id=%s", query.id)
         return HartleyViolinResponse(
             id=query.id * 10000,

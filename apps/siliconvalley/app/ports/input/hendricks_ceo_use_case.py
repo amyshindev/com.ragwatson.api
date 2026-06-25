@@ -7,7 +7,6 @@ from siliconvalley.app.dtos.hendricks_ceo_dto import HendricksCeoResponse
 
 
 class HendricksCeoUseCase(ABC):
-
     @abstractmethod
     async def introduce_myself(self, schema: HendricksCeoSchema) -> HendricksCeoResponse:
         pass

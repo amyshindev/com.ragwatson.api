@@ -13,13 +13,12 @@ log = logging.getLogger(__name__)
 
 
 class WalterRoasterPgRepository(WalterRoasterPort):
-
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
         self._reader = WalterReader()
 
     async def introduce_myself(self, query: WalterRoasterQuery) -> WalterRoasterResponse:
-        '''월터 로스터의 자기 소개 레포지토리 구현 메소드'''
+        """월터 로스터의 자기 소개 레포지토리 구현 메소드"""
         log.info("[WalterRoasterPgRepository] introduce_myself id=%s", query.id)
         return WalterRoasterResponse(
             id=query.id * 10000,
@@ -27,7 +26,7 @@ class WalterRoasterPgRepository(WalterRoasterPort):
         )
 
     def get_train_set(self) -> pd.DataFrame:
-        '''Survived 컬럼이 있는 데이터 전체를 데이터프레임으로 반환하는 메소드'''
+        """Survived 컬럼이 있는 데이터 전체를 데이터프레임으로 반환하는 메소드"""
         dataset = self._reader.get_dataset()
         if dataset.empty or "Survived" not in dataset.columns:
             log.warning("[WalterRoasterPgRepository] get_train_set | Survived 컬럼 없음")
@@ -38,7 +37,7 @@ class WalterRoasterPgRepository(WalterRoasterPort):
         return train_set
 
     def get_test_set(self) -> pd.DataFrame:
-        '''Survived 컬럼이 없는 데이터 전체를 데이터프레임으로 반환하는 메소드'''
+        """Survived 컬럼이 없는 데이터 전체를 데이터프레임으로 반환하는 메소드"""
         dataset = self._reader.get_dataset()
         if dataset.empty:
             log.warning("[WalterRoasterPgRepository] get_test_set | 데이터 없음")

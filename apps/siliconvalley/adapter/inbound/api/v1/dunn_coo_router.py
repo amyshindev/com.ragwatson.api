@@ -15,6 +15,6 @@ async def introduce_myself(
     return await character.introduce_myself(
         DunnCooSchema(
             id=4,
-            name='Dunn (COO)',
+            name="Dunn (COO)",
         )
     )

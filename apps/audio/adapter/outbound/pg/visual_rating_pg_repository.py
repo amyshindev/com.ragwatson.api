@@ -73,9 +73,7 @@ class VisualRatingPgRepository(VisualRatingRepository):
             "lose_count": lose_count,
         }
 
-    async def get_platform_avg(
-        self, generation_id: UUID, platform: str | None
-    ) -> dict:
+    async def get_platform_avg(self, generation_id: UUID, platform: str | None) -> dict:
         stmt = select(
             VisualRating.platform,
             func.avg(VisualRating.loop_smoothness_score),
@@ -104,9 +102,7 @@ class VisualRatingPgRepository(VisualRatingRepository):
             "total_count": int(total or 0),
         }
 
-    async def flag_rating(
-        self, rating_id: UUID, flag: str, reason: str | None
-    ) -> VisualRating:
+    async def flag_rating(self, rating_id: UUID, flag: str, reason: str | None) -> VisualRating:
         result = await self._session.execute(
             select(VisualRating).where(VisualRating.id == rating_id)
         )

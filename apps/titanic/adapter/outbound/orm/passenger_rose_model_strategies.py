@@ -267,7 +267,10 @@ class PCAKMeansStrategy(RoseModelStrategy):
 
     def predict(self, X) -> list[int]:
         X_reduced = self._pca.transform(self._scaler.transform(X))
-        return [self._cluster_to_label.get(int(cluster), 0) for cluster in self._kmeans.predict(X_reduced)]
+        return [
+            self._cluster_to_label.get(int(cluster), 0)
+            for cluster in self._kmeans.predict(X_reduced)
+        ]
 
     def predict_proba(self, X) -> list[float]:
         return [float(value) for value in self.predict(X)]

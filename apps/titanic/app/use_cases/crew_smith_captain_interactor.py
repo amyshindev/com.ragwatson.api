@@ -49,7 +49,6 @@ _SUPERLATIVE_MARKERS = ("제일", "가장", "최고", "최소", "최연", "top")
 
 
 class SmithCaptainInteractor(SmithCaptainUseCase):
-
     def __init__(
         self,
         repository: SmithCaptainPort,
@@ -76,7 +75,9 @@ class SmithCaptainInteractor(SmithCaptainUseCase):
         self.rose.set_strategy(trained_strategies[algorithm_key])
         return self.rose
 
-    def _resolve_eval_dataframe(self, train_set: pd.DataFrame, test_set: pd.DataFrame) -> pd.DataFrame:
+    def _resolve_eval_dataframe(
+        self, train_set: pd.DataFrame, test_set: pd.DataFrame
+    ) -> pd.DataFrame:
         if "Survived" in test_set.columns or "survived" in test_set.columns:
             return test_set
 
@@ -109,7 +110,20 @@ class SmithCaptainInteractor(SmithCaptainUseCase):
         ):
             return True
         lookup_markers = ("이름", "누구", "누가", "검색", "찾")
-        context_markers = ("나이", "세", "탑승", "승객", "많", "어리", "어린", "제일", "가장", "요금", "비싼", "싼")
+        context_markers = (
+            "나이",
+            "세",
+            "탑승",
+            "승객",
+            "많",
+            "어리",
+            "어린",
+            "제일",
+            "가장",
+            "요금",
+            "비싼",
+            "싼",
+        )
         return any(marker in message for marker in lookup_markers) and any(
             marker in message for marker in context_markers
         )
@@ -156,9 +170,9 @@ class SmithCaptainInteractor(SmithCaptainUseCase):
         return self._has_age_context(message) or self._has_superlative(message)
 
     def _is_highest_fare_question(self, message: str) -> bool:
-        return any(marker in message for marker in ("요금", "티켓", "운임", "비싼", "높은")) and any(
-            marker in message for marker in ("제일", "가장", "최고", "많", "비싼", "높")
-        )
+        return any(
+            marker in message for marker in ("요금", "티켓", "운임", "비싼", "높은")
+        ) and any(marker in message for marker in ("제일", "가장", "최고", "많", "비싼", "높"))
 
     def _build_passenger_search_reply(self, message: str, train_set: pd.DataFrame) -> str:
         if train_set.empty:
@@ -239,17 +253,19 @@ class SmithCaptainInteractor(SmithCaptainUseCase):
         gender = profile.get("gender", "male")
         title = "Mr." if gender == "male" else "Miss."
         return pd.DataFrame(
-            [{
-                "Survived": 0,
-                "Pclass": profile.get("pclass", 3),
-                "Name": profile.get("name", f"Guest, {title} Unknown"),
-                "Sex": gender,
-                "Age": profile.get("age", 30.0),
-                "SibSp": profile.get("sibsp", 0),
-                "Parch": profile.get("parch", 0),
-                "Fare": profile.get("fare", 7.0),
-                "Embarked": profile.get("embarked", "S"),
-            }]
+            [
+                {
+                    "Survived": 0,
+                    "Pclass": profile.get("pclass", 3),
+                    "Name": profile.get("name", f"Guest, {title} Unknown"),
+                    "Sex": gender,
+                    "Age": profile.get("age", 30.0),
+                    "SibSp": profile.get("sibsp", 0),
+                    "Parch": profile.get("parch", 0),
+                    "Fare": profile.get("fare", 7.0),
+                    "Embarked": profile.get("embarked", "S"),
+                }
+            ]
         )
 
     def _preprocess_passenger_for_prediction(self, profile: dict[str, Any]) -> list[list[float]]:
@@ -301,14 +317,18 @@ class SmithCaptainInteractor(SmithCaptainUseCase):
             .sort_values(ascending=False)
         )
         ranked = ranked.drop(
-            labels=[label for label in ranked.index if str(label) in {"PassengerId", "passenger_id"}],
+            labels=[
+                label for label in ranked.index if str(label) in {"PassengerId", "passenger_id"}
+            ],
             errors="ignore",
         )
 
         lines = ["생존율(`Survived`)과 상관이 큰 변수 순서입니다."]
         for index, (feature, value) in enumerate(ranked.items(), start=1):
             label = _FEATURE_LABELS.get(str(feature), str(feature))
-            direction = "양의 상관" if correlation.loc[feature, survived_column] >= 0 else "음의 상관"
+            direction = (
+                "양의 상관" if correlation.loc[feature, survived_column] >= 0 else "음의 상관"
+            )
             lines.append(f"{index}. {label} (`{feature}`) → {value:.2f} ({direction})")
 
         lines.append(
@@ -392,10 +412,12 @@ class SmithCaptainInteractor(SmithCaptainUseCase):
         test_set = self.walter.get_test_set()
         train_result = await self.jack.get_model_train(train_set)
         eval_df = self._resolve_eval_dataframe(train_set, test_set)
-        test_result = await self.cal.get_model_test({
-            "df": eval_df,
-            "trained_strategies": train_result["trained_strategies"],
-        })
+        test_result = await self.cal.get_model_test(
+            {
+                "df": eval_df,
+                "trained_strategies": train_result["trained_strategies"],
+            }
+        )
         question = self.andrews.analyze_intent(message)
         intent = self._resolve_intent(message, question)
 
@@ -424,12 +446,14 @@ class SmithCaptainInteractor(SmithCaptainUseCase):
         return ChatResponse(reply=reply, accuracy=best_accuracy)
 
     async def introduce_myself(self, schema: SmithCaptainSchema) -> SmithCaptainResponse:
-        '''스미스 선장의 자기소개 인터렉트'''
+        """스미스 선장의 자기소개 인터렉트"""
 
-        return await self.repository.introduce_myself(SmithCaptainQuery(
-            id=schema.id,
-            name=schema.name,
-        ))
+        return await self.repository.introduce_myself(
+            SmithCaptainQuery(
+                id=schema.id,
+                name=schema.name,
+            )
+        )
 
 
 CrewSmithCaptainInteractor = SmithCaptainInteractor

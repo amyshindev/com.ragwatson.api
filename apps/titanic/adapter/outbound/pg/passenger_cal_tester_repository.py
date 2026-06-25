@@ -11,12 +11,11 @@ log = logging.getLogger(__name__)
 
 
 class CalTesterPgRepository(CalTesterPort):
-
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def introduce_myself(self, query: CalTesterQuery) -> CalTesterResponse:
-        '''칼 테스터의 자기 소개 레포지토리 구현 메소드'''
+        """칼 테스터의 자기 소개 레포지토리 구현 메소드"""
         log.info("[CalTesterPgRepository] introduce_myself id=%s", query.id)
         return CalTesterResponse(
             id=query.id * 10000,

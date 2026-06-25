@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -13,7 +12,7 @@ class Parch:
             raise ValueError("Parch는 음수일 수 없습니다.")
 
     @classmethod
-    def from_raw(cls, raw: Optional[str]) -> Parch:
+    def from_raw(cls, raw: str | None) -> Parch:
         if raw is None or raw.strip() == "":
             return cls(value=0)
         try:

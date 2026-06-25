@@ -1,9 +1,9 @@
 import logging
 
+from db.session import DbSession
 from fastapi import APIRouter, HTTPException
 
 from core.config import is_database_configured
-from db.session import DbSession
 from user.adapter.inbound.api.schemas.admin_schema import AdminLoginRequest, AdminLoginResponse
 from user.adapter.outbound.pg.admin_login_pg_repository import AdminLoginPgRepository
 from user.app.use_cases.admin_login_interactor import AdminLoginInteractor

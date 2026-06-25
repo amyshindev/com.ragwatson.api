@@ -6,8 +6,7 @@ from audio.adapter.outbound.orm.user_event_orm import UserEvent
 
 class UserEventRepository(ABC):
     @abstractmethod
-    async def create(self, body: UserEventCreate) -> UserEvent:
-        ...
+    async def create(self, body: UserEventCreate) -> UserEvent: ...
 
     @abstractmethod
     async def list_by_user(
@@ -15,5 +14,4 @@ class UserEventRepository(ABC):
         user_id: int,
         event_type: str | None = None,
         limit: int = 50,
-    ) -> list[UserEvent]:
-        ...
+    ) -> list[UserEvent]: ...

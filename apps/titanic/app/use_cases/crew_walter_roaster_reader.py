@@ -32,7 +32,9 @@ class WalterReader:
             "parch": "Parch",
             "fare": "Fare",
         }
-        normalized = df.rename(columns={key: value for key, value in rename_map.items() if key in df.columns})
+        normalized = df.rename(
+            columns={key: value for key, value in rename_map.items() if key in df.columns}
+        )
         if "Sex" not in normalized.columns and "gender" in df.columns:
             normalized["Sex"] = df["gender"]
         return normalized

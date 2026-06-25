@@ -12,7 +12,7 @@ from titanic.app.dtos.passenger_rose_model_dto import RoseModelResponse
 
 
 class TitanicAlgorithm(str, Enum):
-    '''titanic-algorithms.md TOP 10 — 런타임 전략 키'''
+    """titanic-algorithms.md TOP 10 — 런타임 전략 키"""
 
     XGBOOST = "xgboost"
     RANDOM_FOREST = "random_forest"
@@ -30,7 +30,7 @@ ScalingMode = Literal["standard", "minmax", "none"]
 
 
 class RoseModelAlgorithmStrategy(ABC):
-    '''타이타닉 생존 분류 알고리즘 전략 (Strategy)'''
+    """타이타닉 생존 분류 알고리즘 전략 (Strategy)"""
 
     @property
     @abstractmethod
@@ -45,7 +45,7 @@ class RoseModelAlgorithmStrategy(ABC):
     @property
     @abstractmethod
     def scaling(self) -> ScalingMode:
-        '''standard: 아웃라이어 유무 · interval/ratio | minmax: 균일 분포 | none: 파이프라인 내장'''
+        """standard: 아웃라이어 유무 · interval/ratio | minmax: 균일 분포 | none: 파이프라인 내장"""
         pass
 
     @abstractmethod
@@ -54,15 +54,14 @@ class RoseModelAlgorithmStrategy(ABC):
 
 
 class RoseModelUseCase(ABC):
-
     @abstractmethod
     async def introduce_myself(self, schema: RoseModelSchema) -> RoseModelResponse:
-        '''로즈 모델의 자기소개 메소드'''
+        """로즈 모델의 자기소개 메소드"""
         pass
 
     @abstractmethod
     def set_algorithm(self, algorithm: TitanicAlgorithm | str) -> None:
-        '''학습·추론에 사용할 알고리즘 전략을 선택한다'''
+        """학습·추론에 사용할 알고리즘 전략을 선택한다"""
         pass
 
     @abstractmethod
@@ -95,7 +94,7 @@ class RoseModelUseCase(ABC):
         X: pd.DataFrame | None = None,
         y: pd.Series | None = None,
     ) -> dict[str, Any]:
-        '''titanic-algorithms.md 로드맵 — 로즈가 제안한 TOP 10 모델을 순차 훈련하고 최적 모델을 선택한다'''
+        """titanic-algorithms.md 로드맵 — 로즈가 제안한 TOP 10 모델을 순차 훈련하고 최적 모델을 선택한다"""
         pass
 
 

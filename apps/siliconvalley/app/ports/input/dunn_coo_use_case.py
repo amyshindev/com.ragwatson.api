@@ -7,7 +7,6 @@ from siliconvalley.app.dtos.dunn_coo_dto import DunnCooResponse
 
 
 class DunnCooUseCase(ABC):
-
     @abstractmethod
     async def introduce_myself(self, schema: DunnCooSchema) -> DunnCooResponse:
         pass
