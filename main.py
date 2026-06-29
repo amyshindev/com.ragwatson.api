@@ -16,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 
+from automata.adapter.inbound.api.router_registry import automata_router
 from siliconvalley.adapter.inbound.api.router_registry import siliconvalley_router
 
 from audio.adapter.inbound.api import audio_router
@@ -100,6 +101,7 @@ app.include_router(domain_intake_router)
 app.include_router(audio_router)
 app.include_router(titanic_router)
 app.include_router(siliconvalley_router)
+app.include_router(automata_router)
 app.include_router(signup_router)
 app.include_router(login_router)
 app.include_router(admin_login_router)

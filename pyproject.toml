@@ -46,7 +46,7 @@ max-complexity = 10
 [tool.ruff.lint.isort]
 combine-as-imports = true
 force-sort-within-sections = true
-known-first-party = ["core", "titanic", "siliconvalley", "audio", "user"]
+known-first-party = ["core", "titanic", "siliconvalley", "automata", "audio", "user"]
 section-order = [
     "future",
     "standard-library",
