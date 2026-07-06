@@ -24,6 +24,7 @@ if ($listeners) {
 Set-Location $PSScriptRoot
 $env:PYTHONPATH = ".;apps"
 $env:PYTHONIOENCODING = "utf-8"
+$env:KMP_DUPLICATE_LIB_OK = "TRUE"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 chcp 65001 | Out-Null
 Write-Host "Starting backend: http://127.0.0.1:$port (logs appear in this terminal)"

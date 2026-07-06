@@ -1,0 +1,18 @@
+from fastapi import APIRouter
+
+from sherlock_holmes.adapter.inbound.api.v1.detective_sherlock_holmes_router import detective_sherlock_holmes_router
+from sherlock_holmes.adapter.inbound.api.v1.doctor_watson_chronicler_router import watson_chronicler_router
+from sherlock_holmes.adapter.inbound.api.v1.inspector_lestrade_official_router import lestrade_official_router
+from sherlock_holmes.adapter.inbound.api.v1.mrs_hudson_housekeeper_router import hudson_housekeeper_router
+from sherlock_holmes.adapter.inbound.api.v1.brother_mycroft_strategist_router import mycroft_strategist_router
+from sherlock_holmes.adapter.inbound.api.v1.professor_moriarty_rival_router import moriarty_rival_router
+
+sherlock_holmes_router = APIRouter()
+sherlock_holmes_router.include_router(detective_sherlock_holmes_router)
+sherlock_holmes_router.include_router(watson_chronicler_router)
+sherlock_holmes_router.include_router(lestrade_official_router)
+sherlock_holmes_router.include_router(hudson_housekeeper_router)
+sherlock_holmes_router.include_router(mycroft_strategist_router)
+sherlock_holmes_router.include_router(moriarty_rival_router)
+
+__all__ = ["sherlock_holmes_router"]

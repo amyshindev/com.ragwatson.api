@@ -20,6 +20,7 @@ class FakerMailerN8nRepository(FakerMailerPort):
             "to": command.to,
             "subject": command.subject,
             "body": command.body,
+            "body_html": command.body_html or command.body,
         }
         result = await self._client.send_event(payload)
         status = "sent" if result.ok else f"failed:{result.status_code}"

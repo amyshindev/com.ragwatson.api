@@ -1,0 +1,10 @@
+path: C:/Users/hi/Documents/com.ragwatson/backend/apps/vision/adapter/outbound/datasets/prepared_face_yolo
+train: images/train
+val: images/val
+nc: 5
+names:
+  0: ben_afflek
+  1: elton_john
+  2: jerry_seinfeld
+  3: madonna
+  4: mindy_kaling

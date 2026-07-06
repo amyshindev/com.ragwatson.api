@@ -18,6 +18,9 @@ from sqlalchemy import text
 
 from automata.adapter.inbound.api.router_registry import automata_router
 from siliconvalley.adapter.inbound.api.router_registry import siliconvalley_router
+from ontology.adapter.inbound.api.router_registry import ontology_router
+from sherlock_holmes.adapter.inbound.api.router_registry import sherlock_holmes_router
+from vision.adapter.inbound.api.router_registry import vision_router
 
 from audio.adapter.inbound.api import audio_router
 from core.config import is_database_configured
@@ -71,11 +74,13 @@ async def _startup_db() -> None:
     from sqlalchemy.exc import OperationalError
 
     from titanic.app.db_init import init_titanic_tables
+    from automata.app.db_init import init_automata_tables
     from user.app.db_init import init_user_tables
 
     try:
         await init_user_tables()
         await init_titanic_tables()
+        await init_automata_tables()
         log.info("DB ready (tables)")
     except OperationalError as exc:
         log.warning(
@@ -102,6 +107,9 @@ app.include_router(audio_router)
 app.include_router(titanic_router)
 app.include_router(siliconvalley_router)
 app.include_router(automata_router)
+app.include_router(ontology_router)
+app.include_router(sherlock_holmes_router)
+app.include_router(vision_router)
 app.include_router(signup_router)
 app.include_router(login_router)
 app.include_router(admin_login_router)

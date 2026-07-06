@@ -10,6 +10,7 @@ class GmailSendCommand:
     to: str
     subject: str
     body: str
+    body_html: str | None = None
 
 
 @dataclass(frozen=True)

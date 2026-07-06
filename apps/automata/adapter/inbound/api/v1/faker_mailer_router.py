@@ -7,6 +7,7 @@ from automata.adapter.inbound.api.schemas.faker_mailer_schema import (
     FakerEmailResponseSchema,
 )
 from automata.app.ports.input.faker_mailer_use_case import FakerMailerUseCase
+from automata.app.use_cases.faker_mailer_interactor import SpamEmailBlockedError
 from automata.dependencies.faker_mailer_provider import get_faker_mailer_use_case
 
 logger = logging.getLogger(__name__)
@@ -21,6 +22,12 @@ async def send_faker_email(
 ) -> FakerEmailResponseSchema:
     try:
         result = await faker_mailer.send_email(body)
+    except SpamEmailBlockedError as exc:
+        logger.warning("[faker_mailer_router] spam blocked label=%s", exc.label)
+        raise HTTPException(
+            status_code=422,
+            detail=f"스팸으로 분류되어 발송이 차단되었습니다 ({exc.label}, score={exc.score}): {exc.detail}",
+        ) from exc
     except RuntimeError as exc:
         logger.warning("[faker_mailer_router] ExaONE unavailable: %s", exc)
         raise HTTPException(

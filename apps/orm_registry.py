@@ -16,6 +16,8 @@ def import_all_models() -> None:
     from audio.adapter.outbound.orm.generation_log_orm import GenerationLog  # noqa: F401
     from audio.adapter.outbound.orm.user_event_orm import UserEvent  # noqa: F401
     from audio.adapter.outbound.orm.visual_rating_orm import VisualRating  # noqa: F401
+    from automata.adapter.outbound.orm.automata_contact_orm import AutomataContactOrm  # noqa: F401
+    from automata.adapter.outbound.orm.automata_inbound_mail_orm import AutomataInboundMailOrm  # noqa: F401
     from titanic.adapter.outbound.orm.passenger_jack_trainer_orm import (
         PassengerJackTrainerOrm,  # noqa: F401
     )
